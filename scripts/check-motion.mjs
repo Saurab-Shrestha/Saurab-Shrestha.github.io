@@ -9,6 +9,7 @@
  *   2. the nav scrollspy marks the section you are actually in
  *   3. under prefers-reduced-motion nothing is left stuck at opacity 0
  *   4. cumulative layout shift stays under the 0.1 "good" threshold
+ *   5. project-card hover moves every part it is supposed to move
  *
  * Usage: npm run serve &  then: node scripts/check-motion.mjs
  */
@@ -171,6 +172,54 @@ try {
     console.log(`  scrollspy in #${id.padEnd(9)} nav marks ${got}`);
     if (!ok) fail.push(`scrollspy: inside #${id} the nav marked "${got}"`);
   }
+  // ── 5. Orchestrated card hover ────────────────────────────────────────────
+  // Several parts move together; any one silently dropping out is invisible
+  // in a screenshot but obvious here.
+  await send('Emulation.setEmulatedMedia', { features: [] });
+  await send('Page.navigate', { url: `${URL_BASE}/` });
+  await sleep(2800);
+
+  // Scroll first, settle, *then* read coordinates — a rect taken in the same
+  // tick as scrollIntoView is stale and the pointer lands nowhere.
+  await evaluate(`document.querySelectorAll('.pcard')[1]?.scrollIntoView({ block: 'center' })`);
+  await sleep(800);
+  const cardPoint = await evaluate(`(() => {
+    const c = document.querySelectorAll('.pcard')[1];
+    if (!c) return null;
+    const r = c.getBoundingClientRect();
+    return { x: Math.round(r.x + r.width / 2), y: Math.round(r.y + r.height / 2) };
+  })()`);
+
+  if (!cardPoint) {
+    fail.push('no project card found to hover');
+  } else {
+    const snapshot = `(() => {
+      const c = document.querySelectorAll('.pcard')[1];
+      const g = s => getComputedStyle(c.querySelector(s));
+      return {
+        hovered: c.matches(':hover'),
+        num: g('.pcard-num').color,
+        desc: g('.pcard-desc').color,
+        visual: g('.pcard-visual').transform,
+        arrow: g('.pcard-cta svg').transform,
+      };
+    })()`;
+    const rest = await evaluate(snapshot);
+    await send('Input.dispatchMouseEvent', { type: 'mouseMoved', x: cardPoint.x, y: cardPoint.y });
+    await sleep(700);
+    const hot = await evaluate(snapshot);
+
+    const moved = [
+      ['number colour', rest.num !== hot.num],
+      ['description colour', rest.desc !== hot.desc],
+      ['visual lift', rest.visual !== hot.visual && hot.visual !== 'none'],
+      ['cta arrow', rest.arrow !== hot.arrow && hot.arrow !== 'none'],
+    ];
+    const stuck = moved.filter(([, ok]) => !ok).map(([name]) => name);
+    console.log(`  hover    ${moved.length - stuck.length}/${moved.length} parts respond${stuck.length ? ' — stuck: ' + stuck.join(', ') : ''}`);
+    if (!hot.hovered) fail.push('card never entered :hover — harness problem, not a result');
+    else if (stuck.length) fail.push(`card hover did not move: ${stuck.join(', ')}`);
+  }
 } catch (err) {
   fail.push(`harness: ${err.message}`);
 } finally {
@@ -183,4 +232,4 @@ if (fail.length) {
   console.error('✗ motion checks failed:\n' + fail.map(f => '  - ' + f).join('\n'));
   process.exit(1);
 }
-console.log('✓ reveals fire once, scrollspy tracks, reduced motion shows all, layout stable');
+console.log('✓ reveals once, scrollspy tracks, reduced motion safe, layout stable, hover orchestrated');

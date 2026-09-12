@@ -35,18 +35,12 @@ const HeroSection: React.FC = () => {
           An agentic research system that tracks hypotheses,
           maps contradictions, and knows when it's done.
         </p>
-        {/* Grouped by role rather than listed flat, so "what he specialises in"
-            and "what he ships with" don't read as one undifferentiated row. */}
+        {/* Technical anchors only. "Bhaktapur, Nepal" was here as well as on the
+            photo card and in the About details — three times on one page. */}
         <div className="hero-chips">
-          <span className="chip chip--anchor">Bhaktapur, Nepal</span>
-          <span className="chip-group" aria-label="Specialism">
-            <span className="chip chip--primary">LangGraph</span>
-            <span className="chip chip--primary">Qdrant</span>
-          </span>
-          <span className="chip-group" aria-label="Stack">
-            <span className="chip">FastAPI</span>
-            <span className="chip">React</span>
-          </span>
+          <span className="chip chip--primary">LangGraph</span>
+          <span className="chip chip--primary">Qdrant</span>
+          <span className="chip">FastAPI</span>
         </div>
         <div className="hero-actions">
           <Link to="/work" className="btn-primary">View My Work</Link>

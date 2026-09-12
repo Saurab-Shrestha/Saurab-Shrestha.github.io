@@ -1,21 +1,39 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Github, Linkedin, Mail, Phone } from 'lucide-react';
+import { ArrowUpRight, ArrowUp } from 'lucide-react';
 import { appConfig } from '../../config/app.config';
 import { asset } from '../lib/asset';
 import ThemeToggle from './ThemeToggle';
 
 const Footer: React.FC = () => {
-  const socialLinks = [
-    { label: 'LinkedIn', href: appConfig.social.linkedin, icon: Linkedin },
-    { label: 'GitHub', href: appConfig.social.github, icon: Github },
-    { label: 'Resume', href: asset('assets/Saurab-Shrestha-CV.pdf'), text: 'CV' },
-  ];
+  const [timeString, setTimeString] = useState<string>('');
+
+  useEffect(() => {
+    const updateTime = () => {
+      const now = new Date();
+      setTimeString(
+        now.toLocaleTimeString('en-US', {
+          timeZone: 'Asia/Kathmandu',
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: true,
+        })
+      );
+    };
+    updateTime();
+    const timer = setInterval(updateTime, 1000 * 30);
+    return () => clearInterval(timer);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   return (
     <footer className="site-footer">
-      <div className="footer-connect">
-        <div className="footer-profile">
+      <div className="footer-colophon">
+        {/* Column 1: Identity, Role, Telemetry */}
+        <div className="footer-identity">
           <div className="footer-profile-head">
             <img
               src={asset('assets/saurab-me-avatar.webp')}
@@ -28,51 +46,80 @@ const Footer: React.FC = () => {
             />
             <div>
               <p className="footer-name">Saurab Shrestha</p>
-              <p>AI Engineer</p>
+              <p className="footer-role">AI / ML Engineer</p>
             </div>
           </div>
 
-          <div className="footer-contact-block">
-            <p className="footer-block-label">Contact me</p>
-            <div className="footer-contact-links">
-              <a href={`mailto:${appConfig.contact.email}`}>
-                <Mail size={15} aria-hidden="true" />
-                {appConfig.contact.email}
-              </a>
-              <a href={`tel:${appConfig.contact.phone.replace(/\s/g, '')}`}>
-                <Phone size={15} aria-hidden="true" />
-                {appConfig.contact.phone}
-              </a>
-            </div>
+          <p className="footer-bio">
+            Building agentic research systems, stateful AI workflows, and resilient full-stack products.
+          </p>
+
+          <div className="footer-telemetry">
+            <span className="telemetry-dot" aria-hidden="true" />
+            <span className="telemetry-text">
+              Bhaktapur, Nepal · {timeString ? `${timeString} NPT` : 'NPT (UTC+5:45)'}
+            </span>
           </div>
         </div>
 
-        <div className="footer-cta-copy">
-          <h2>Let's Connect</h2>
-          <p>Feel free to reach out for collaborations, project ideas, or a friendly hello.</p>
-
-          <nav className="footer-socials" aria-label="Social links">
-            {socialLinks.map((link) => (
-              <a key={link.href} href={link.href} target="_blank" rel="noreferrer" aria-label={link.label}>
-                {link.icon ? <link.icon size={16} aria-hidden="true" /> : <span>{link.text}</span>}
+        {/* Column 2: Navigation */}
+        <div className="footer-nav-col">
+          <p className="footer-col-label">Navigation</p>
+          <ul className="footer-links-list">
+            <li><Link to="/work">Selected Work</Link></li>
+            <li><Link to="/blog">Writing &amp; Notes</Link></li>
+            <li><a href="#about">About &amp; Stack</a></li>
+            <li><a href="#contact">Get In Touch</a></li>
+            <li>
+              <a
+                href={asset('assets/Saurab-Shrestha-CV.pdf')}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Curriculum Vitae <ArrowUpRight size={13} aria-hidden="true" />
               </a>
-            ))}
-          </nav>
+            </li>
+          </ul>
+        </div>
+
+        {/* Column 3: Network */}
+        <div className="footer-nav-col">
+          <p className="footer-col-label">Network</p>
+          <ul className="footer-links-list">
+            <li>
+              <a href={appConfig.social.github} target="_blank" rel="noreferrer">
+                GitHub <ArrowUpRight size={13} aria-hidden="true" />
+              </a>
+            </li>
+            <li>
+              <a href={appConfig.social.linkedin} target="_blank" rel="noreferrer">
+                LinkedIn <ArrowUpRight size={13} aria-hidden="true" />
+              </a>
+            </li>
+            <li>
+              <a href={`mailto:${appConfig.contact.email}`}>
+                Email <ArrowUpRight size={13} aria-hidden="true" />
+              </a>
+            </li>
+          </ul>
         </div>
       </div>
 
       <div className="footer-bottom">
-        <p>Made with <span aria-label="love">♥</span> by Saurab</p>
-        <ThemeToggle />
-        <nav className="footer-mini-nav" aria-label="Footer navigation">
-          {[
-            { label: 'Work', to: '/work' },
-            { label: 'Writing', to: '/blog' },
-            { label: 'Contact', to: '/#contact' },
-          ].map(({ label, to }) => (
-            <Link key={label} to={to}>{label}</Link>
-          ))}
-        </nav>
+        <p className="footer-copy">
+          &copy; {new Date().getFullYear()} Saurab Shrestha. All rights reserved.
+        </p>
+        <div className="footer-bottom-actions">
+          <ThemeToggle />
+          <button
+            type="button"
+            onClick={scrollToTop}
+            className="footer-back-to-top"
+            aria-label="Back to top of page"
+          >
+            Top <ArrowUp size={13} aria-hidden="true" />
+          </button>
+        </div>
       </div>
     </footer>
   );
