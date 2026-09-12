@@ -48,7 +48,9 @@
   --z-cursor:      510;
   --z-skip:        600;
 
-  --container: 1280px;
+  --container: 1280px;   /* page shell */
+  --content:   1200px;   /* text column inside the shell */
+  --gutter:    48px;     /* minimum edge padding before the content centres */
 
   --dur-reveal: 560ms;   /* 820ms read as sluggish for a translate-and-fade */
 
@@ -233,7 +235,7 @@ body::after {
   position: fixed; top: 0; left: 0; right: 0;
   z-index: var(--z-nav);
   display: flex; align-items: center; justify-content: space-between;
-  padding: 0 max(48px, calc((100% - 1200px) / 2));
+  padding: 0 max(var(--gutter), calc((100% - var(--content)) / 2));
   height: 56px;
   border-bottom: 1px solid var(--border);
   background: var(--nav-bg);
@@ -349,7 +351,7 @@ body::after {
   min-height: 100dvh;
   display: grid; grid-template-columns: 1fr 1fr;
   align-items: center;
-  padding: 120px max(48px, calc((100% - 1200px) / 2)) 80px;
+  padding: 120px max(var(--gutter), calc((100% - var(--content)) / 2)) 80px;
   position: relative; overflow: hidden; gap: 0;
 }
 
@@ -693,11 +695,11 @@ h1 {
 
 .section-divider {
   height: 1px; background: var(--border);
-  margin: 0 max(48px, calc((100% - 1200px) / 2));
+  margin: 0 max(var(--gutter), calc((100% - var(--content)) / 2));
 }
 
 section {
-  padding: 96px max(48px, calc((100% - 1200px) / 2));
+  padding: 96px max(var(--gutter), calc((100% - var(--content)) / 2));
 }
 
 .section-label {
@@ -1425,7 +1427,7 @@ a.contact-link-row:hover { background: var(--surface); }
 /* ─── FOOTER ─────────────────────────────────────────── */
 .site-footer {
   position: relative;
-  padding: 56px max(48px, calc((100% - 1200px) / 2)) 30px;
+  padding: 56px max(var(--gutter), calc((100% - var(--content)) / 2)) 30px;
   border-top: 1px solid var(--border);
   background: var(--bg);
 }
@@ -1611,6 +1613,8 @@ a.contact-link-row:hover { background: var(--surface); }
   margin: 0;
 }
 
+.footer-bottom .theme-toggle { grid-column: 1; justify-self: start; }
+
 .footer-bottom p span {
   color: var(--danger);
 }
@@ -1678,7 +1682,8 @@ a.contact-link-row:hover { background: var(--surface); }
   }
 
   .footer-bottom p,
-  .footer-mini-nav {
+  .footer-mini-nav,
+  .footer-bottom .theme-toggle {
     grid-column: auto;
   }
 
@@ -1759,6 +1764,16 @@ a.contact-link-row:hover { background: var(--surface); }
 ::-webkit-scrollbar-thumb { transition: background var(--dur-fast) var(--ease-soft); }
 
 /* ─── MOBILE ─────────────────────────────────────────── */
+/* Breakpoints are per-component, chosen where that component's layout actually
+   breaks, not snapped to a shared scale:
+     1024  wide-screen trims
+      900  nav collapses to the hamburger; hero goes single-column
+      860  project rows stack
+      820  footer columns stack
+      768  general small-screen type and spacing
+      480  narrow-phone adjustments
+   Collapsing 820 and 860 into 900/768 would make the footer and project rows
+   stack earlier than they need to, so they stay. */
 @media (max-width: 900px) {
   body { cursor: auto; }
   #cursor-dot, #cursor-ring { display: none; }
