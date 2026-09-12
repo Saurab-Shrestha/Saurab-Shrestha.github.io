@@ -35,12 +35,18 @@ const HeroSection: React.FC = () => {
           An agentic research system that tracks hypotheses,
           maps contradictions, and knows when it's done.
         </p>
+        {/* Grouped by role rather than listed flat, so "what he specialises in"
+            and "what he ships with" don't read as one undifferentiated row. */}
         <div className="hero-chips">
           <span className="chip chip--anchor">Bhaktapur, Nepal</span>
-          <span className="chip">LangGraph</span>
-          <span className="chip">FastAPI</span>
-          <span className="chip">Qdrant</span>
-          <span className="chip">Research systems</span>
+          <span className="chip-group" aria-label="Specialism">
+            <span className="chip chip--primary">LangGraph</span>
+            <span className="chip chip--primary">Qdrant</span>
+          </span>
+          <span className="chip-group" aria-label="Stack">
+            <span className="chip">FastAPI</span>
+            <span className="chip">React</span>
+          </span>
         </div>
         <div className="hero-actions">
           <Link to="/work" className="btn-primary">View My Work</Link>

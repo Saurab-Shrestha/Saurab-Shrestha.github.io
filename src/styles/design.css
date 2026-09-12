@@ -781,89 +781,200 @@ h3 {
 /* ─── ABOUT ──────────────────────────────────────────── */
 #about { background: var(--bg); }
 
-.about-grid {
-  display: grid; grid-template-columns: 1fr 1fr;
-  gap: 80px; align-items: start;
+.about-head { margin-bottom: 48px; }
+
+/* Two columns of wildly different height left ~430px of empty column on the
+   right. A bento grid distributes the weight instead. */
+.bento {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 16px;
+}
+
+.bento-cell {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.bento-cell--story  { grid-column: span 7; }
+.bento-cell--status { grid-column: span 5; }
+.bento-cell--stack  { grid-column: span 7; }
+.bento-cell--spec   { grid-column: span 5; }
+
+.bento-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 16px;
 }
 
 .about-body {
   font-family: var(--font-sans);
-  color: var(--muted); line-height: 1.9;
-  font-size: 15px; margin-bottom: 32px;
+  color: var(--muted);
+  line-height: 1.85;
+  font-size: 15px;
+  max-width: 60ch;
+  text-wrap: pretty;
+}
+.about-body + .about-body { margin-top: 16px; }
+
+/* ── Availability ── */
+.status-line {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-sans);
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--accent3);
+  margin-bottom: 22px;
 }
 
-/* spec-sheet skills table */
-.skills-list {
-  margin-top: 36px; display: flex;
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent3);
+  flex-shrink: 0;
+  position: relative;
+}
+.status-dot::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: var(--accent3);
+  animation: status-ping 2.6s var(--ease-out) infinite;
+}
+@keyframes status-ping {
+  0%   { transform: scale(1);   opacity: 0.7; }
+  70%  { transform: scale(2.6); opacity: 0; }
+  100% { transform: scale(2.6); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .status-dot::after { animation: none; }
+}
+
+.status-meta {
+  display: flex;
   flex-direction: column;
-  border: 1px solid var(--border);
+  gap: 12px;
+  margin-bottom: auto;
+  padding-bottom: 20px;
 }
-
-.skills-list-header {
-  display: flex; justify-content: space-between;
-  padding: 7px 14px;
-  background: var(--surface2);
-  border-bottom: 1px solid var(--border);
-}
-
-.skills-list-header span {
-  font-family: var(--font-mono);
-  font-size: 9px; letter-spacing: 0.14em;
-  text-transform: uppercase; color: var(--muted2);
-}
-
-.skill-row {
-  display: flex; align-items: baseline;
+.status-meta div {
+  display: flex;
   justify-content: space-between;
-  padding: 10px 14px;
-  border-bottom: 1px solid var(--border);
+  align-items: baseline;
   gap: 16px;
-  transition: background var(--dur-fast) var(--ease-soft);
 }
-
-.skill-row:last-child { border-bottom: none; }
-.skill-row:hover { background: var(--surface); }
-
-.skill-name {
+.status-meta dt {
   font-family: var(--font-mono);
-  font-size: 12px; font-weight: 500;
-  color: var(--text); white-space: nowrap;
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
 }
-
-.skill-desc {
+.status-meta dd {
   font-family: var(--font-mono);
-  font-size: 11px; color: var(--muted);
+  font-size: 12px;
+  color: var(--text);
   text-align: right;
 }
 
-/* spec sheet right column */
-.about-spec-sheet {
-  border: 1px solid var(--border);
-  overflow: hidden;
-}
+.local-time { font-variant-numeric: tabular-nums; }
+.local-time-zone { color: var(--muted); }
 
-.info-row {
-  display: flex; justify-content: space-between;
-  align-items: flex-start;
-  padding: 11px 14px;
-  border-bottom: 1px solid var(--border);
-  transition: background var(--dur-fast) var(--ease-soft);
-}
-
-.info-row:last-child { border-bottom: none; }
-.info-row:hover { background: var(--surface); }
-
-.info-label {
+.status-email {
   font-family: var(--font-mono);
-  font-size: 9px; letter-spacing: 0.14em;
-  text-transform: uppercase; color: var(--muted);
-  padding-top: 1px;
+  font-size: 12px;
+  color: var(--accent-text);
+  text-decoration: none;
+  border-top: 1px solid var(--border);
+  padding-top: 16px;
+  overflow-wrap: anywhere;
+}
+.status-email:hover { text-decoration: underline; }
+
+/* ── Capability groups ── */
+.stack-group + .stack-group {
+  margin-top: 22px;
+  padding-top: 22px;
+  border-top: 1px solid var(--border);
 }
 
-.info-value {
+.stack-group-name {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent-text);
+  margin-bottom: 12px;
+}
+
+.stack-items { list-style: none; }
+.stack-items li {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 7px 0;
+}
+.stack-items li + li { border-top: 1px solid var(--border); }
+
+.stack-name {
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--text);
+  white-space: nowrap;
+}
+.stack-note {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--muted);
+  text-align: right;
+}
+
+/* ── Spec rows ── */
+.spec-rows { display: flex; flex-direction: column; }
+.spec-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 11px 0;
+}
+.spec-row + .spec-row { border-top: 1px solid var(--border); }
+.spec-row dt {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding-top: 2px;
+  white-space: nowrap;
+}
+.spec-row dd {
   font-family: var(--font-sans);
-  font-size: 13px; color: var(--text);
-  text-align: right; max-width: 200px;
+  font-size: 13px;
+  color: var(--text);
+  text-align: right;
+}
+
+@media (max-width: 900px) {
+  .bento { grid-template-columns: 1fr; }
+  .bento-cell--story,
+  .bento-cell--status,
+  .bento-cell--stack,
+  .bento-cell--spec { grid-column: span 1; }
+  .bento-cell { padding: 20px; }
 }
 
 /* ─── TIMELINE ───────────────────────────────────────── */
@@ -926,8 +1037,16 @@ h3 {
   position: relative;
   z-index: var(--z-base);
 }
-.tl-entry--experience .tl-dot { border-color: var(--accent3); }
-.tl-entry--education  .tl-dot { border-color: var(--muted2); }
+/* Track is carried by shape, not colour — filled for experience, hollow for
+   education. Keeps mint reserved for status and works without colour vision. */
+.tl-entry--experience .tl-dot {
+  background: var(--muted);
+  border-color: var(--muted);
+}
+.tl-entry--education .tl-dot {
+  background: var(--bg);
+  border-color: var(--border2);
+}
 
 .tl-entry-body { min-width: 0; }
 
@@ -957,7 +1076,8 @@ h3 {
   padding: 2px 7px;
   border: 1px solid var(--border);
 }
-.tl-entry--experience .tl-track { color: var(--accent3); border-color: color-mix(in oklab, var(--accent3) 30%, transparent); }
+/* Track is a category, not a state — mint stays reserved for status. */
+.tl-entry--experience .tl-track { color: var(--text); border-color: var(--border2); }
 
 .tl-badge {
   font-family: var(--font-mono);
@@ -1003,9 +1123,32 @@ h3 {
   text-wrap: pretty;
 }
 
+/* ── Weighting ──
+   The current role carries the most weight; secondary schooling the least. */
+.tl-entry--primary .tl-entry-body {
+  border-left: 2px solid var(--accent);
+  padding-left: 18px;
+  margin-left: -2px;
+}
+.tl-entry--primary .tl-title { font-size: 20px; }
+.tl-entry--primary .tl-desc { font-size: 15px; color: var(--text); }
+.tl-entry--primary .tl-dot {
+  width: 13px;
+  height: 13px;
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.tl-entry--compact { padding-bottom: 32px; }
+.tl-entry--compact .tl-title { font-size: 15px; font-weight: 500; }
+.tl-entry--compact .tl-desc { font-size: 13.5px; }
+.tl-entry--compact .tl-dot { width: 9px; height: 9px; }
+
 @media (max-width: 768px) {
   .tl-entry { gap: 18px; padding-bottom: 36px; }
   .tl-desc { font-size: 14px; }
+  .tl-entry--primary .tl-title { font-size: 18px; }
+  .tl-entry--primary .tl-entry-body { padding-left: 14px; }
 }
 
 /* ─── PROJECTS ───────────────────────────────────────── */
@@ -2782,4 +2925,79 @@ a.contact-link-row:hover { background: var(--surface); }
   clip-path: inset(50%);
   white-space: nowrap;
   border: 0;
+}
+
+/* ─── WRITING ROWS ───────────────────────────────────── */
+/* Mouse-follow spotlight. Gated to fine pointers: on touch the variables never
+   update, so the gradient would sit frozen wherever the first tap landed. */
+.writing-entry { position: relative; isolation: isolate; }
+
+@media (hover: hover) and (pointer: fine) {
+  .writing-entry::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    opacity: 0;
+    background: radial-gradient(
+      380px circle at var(--mx, 50%) var(--my, 50%),
+      color-mix(in oklab, var(--accent) 9%, transparent) 0%,
+      transparent 65%
+    );
+    transition: opacity var(--dur-med) var(--ease-out);
+  }
+  .writing-entry:hover::before { opacity: 1; }
+}
+
+.writing-entry-main .writing-entry-tag {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent-text);
+  margin-bottom: 8px;
+}
+
+.writing-entry-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 5px;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+/* The arrow now points out-of-page (↗) rather than right, matching what the
+   link does. Translating it on hover reads as "leaves this page". */
+.writing-entry-arrow {
+  transition: transform var(--dur-fast) var(--ease-out),
+              color var(--dur-fast) var(--ease-soft);
+}
+@media (hover: hover) and (pointer: fine) {
+  .writing-entry:hover .writing-entry-arrow {
+    transform: translate(3px, -3px);
+    color: var(--accent-text);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .writing-entry-arrow { transition: none; }
+  .writing-entry:hover .writing-entry-arrow { transform: none; }
+}
+
+/* ─── HERO CHIPS ─────────────────────────────────────── */
+.chip-group {
+  display: inline-flex;
+  gap: 0;
+}
+/* Grouped chips share a border so each group reads as one unit. */
+.chip-group .chip + .chip { border-left: none; }
+
+/* The specialism carries a top rule in the accent; the rest stay neutral so the
+   emphasis means something. */
+.chip--primary {
+  color: var(--text);
+  border-top-color: var(--accent);
 }

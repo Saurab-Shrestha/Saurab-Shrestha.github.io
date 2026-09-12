@@ -8,6 +8,7 @@
  *      (elements used to re-run their entrance every single time)
  *   2. the nav scrollspy marks the section you are actually in
  *   3. under prefers-reduced-motion nothing is left stuck at opacity 0
+ *   4. cumulative layout shift stays under the 0.1 "good" threshold
  *
  * Usage: npm run serve &  then: node scripts/check-motion.mjs
  */
@@ -68,6 +69,23 @@ try {
 
   await send('Page.enable');
   await send('Runtime.enable');
+
+  // Installed before the document runs so buffered entries are captured.
+  await send('Page.addScriptToEvaluateOnNewDocument', {
+    source: `
+      window.__cls = 0; window.__clsSources = [];
+      new PerformanceObserver(list => {
+        for (const e of list.getEntries()) {
+          if (e.hadRecentInput) continue;
+          window.__cls += e.value;
+          for (const s of (e.sources || [])) {
+            if (s.node) window.__clsSources.push(s.node.tagName.toLowerCase() + '.' + ((typeof s.node.className === 'string' && s.node.className.split(' ')[0]) || '-'));
+          }
+        }
+      }).observe({ type: 'layout-shift', buffered: true });
+    `,
+  });
+
   await send('Page.navigate', { url: `${URL_BASE}/` });
   await sleep(3500);
 
@@ -118,6 +136,13 @@ try {
     return out;
   })()`);
 
+  // ── 4. Layout stability ───────────────────────────────────────────────────
+  // The home route once scored 0.32 because it was lazily loaded: the short
+  // Suspense fallback was swapped for the full page and shoved the footer down.
+  const vitals = await evaluate(`({ cls: +window.__cls.toFixed(4), sources: [...new Set(window.__clsSources)].slice(0, 4) })`);
+  console.log(`  cls      ${vitals.cls}${vitals.sources.length ? '  from ' + vitals.sources.join(', ') : ''}`);
+  if (vitals.cls > 0.1) fail.push(`layout shift ${vitals.cls} exceeds the 0.1 threshold (${vitals.sources.join(', ')})`);
+
   // ── 3. Reduced motion leaves nothing invisible ────────────────────────────
   // .reveal starts at opacity 0; if the reduced-motion override ever stops
   // applying, the entire page renders blank for those users.
@@ -158,4 +183,4 @@ if (fail.length) {
   console.error('✗ motion checks failed:\n' + fail.map(f => '  - ' + f).join('\n'));
   process.exit(1);
 }
-console.log('✓ reveals fire once, scrollspy tracks sections, reduced motion shows everything');
+console.log('✓ reveals fire once, scrollspy tracks, reduced motion shows all, layout stable');

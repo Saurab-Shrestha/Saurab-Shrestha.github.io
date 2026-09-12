@@ -14,6 +14,12 @@ interface TimelineItem {
   org: string;
   desc: string;
   status?: 'current' | 'completed' | 'showcased';
+  /**
+   * Visual weight. Recruiters read the last three years; secondary schooling
+   * carried the same presence as the current role, which flattened the whole
+   * progression into a checklist.
+   */
+  emphasis?: 'primary' | 'compact';
 }
 
 const TRACK_LABEL: Record<Track, string> = {
@@ -30,6 +36,7 @@ const ITEMS: TimelineItem[] = [
     org: 'Quickfox Consulting',
     desc: 'Building full-stack web applications and AI-powered chatbots for clients. Delivered chatbots, automation scripts, and ML-based solutions.',
     status: 'current',
+    emphasis: 'primary',
   },
   {
     year: '2023',
@@ -74,6 +81,7 @@ const ITEMS: TimelineItem[] = [
     org: 'Premier College',
     desc: 'Science stream, 3.38 GPA. Strong foundation in mathematics and physics — the lens I still use for ML problems.',
     status: 'completed',
+    emphasis: 'compact',
   },
 ];
 
@@ -101,7 +109,15 @@ const JourneyTimeline: React.FC = () => (
 
       <ol className="tl-spine">
         {ordered.map((item, i) => (
-          <li key={`${item.title}-${i}`} className={`tl-entry tl-entry--${item.track} reveal`}>
+          <li
+            key={`${item.title}-${i}`}
+            className={[
+              'tl-entry',
+              `tl-entry--${item.track}`,
+              item.emphasis ? `tl-entry--${item.emphasis}` : '',
+              'reveal',
+            ].filter(Boolean).join(' ')}
+          >
             <div className="tl-marker" aria-hidden="true">
               <span className="tl-dot" />
             </div>
