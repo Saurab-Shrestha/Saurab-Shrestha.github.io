@@ -188,7 +188,9 @@ const CodeBlock: React.FC<{ lang: string; code: string }> = ({ lang, code }) => 
   }, [code, lang, isPython]);
 
   return (
-    <div style={{
+    // Deliberately dark in both themes — a terminal reads as a terminal. The
+    // class marks it so theme checks don't flag it as an off-theme surface.
+    <div className="code-block" style={{
       marginBottom: '36px',
       borderRadius: '10px',
       overflow: 'hidden',
@@ -212,7 +214,7 @@ const CodeBlock: React.FC<{ lang: string; code: string }> = ({ lang, code }) => 
             marginLeft: '10px',
             fontFamily: 'DM Mono, monospace',
             fontSize: '10px',
-            color: '#4a6fa5',
+            color: '#7fa3d4',
             letterSpacing: '0.12em',
             textTransform: 'uppercase',
           }}>
@@ -223,7 +225,7 @@ const CodeBlock: React.FC<{ lang: string; code: string }> = ({ lang, code }) => 
               marginLeft: '8px',
               fontFamily: 'DM Mono, monospace',
               fontSize: '10px',
-              color: '#2a4060',
+              color: '#6b8fc4',
             }}>
               {lines.length} lines
             </span>
@@ -241,7 +243,7 @@ const CodeBlock: React.FC<{ lang: string; code: string }> = ({ lang, code }) => 
               borderRadius: '4px',
               padding: '3px 8px',
               cursor: 'pointer',
-              color: showLines ? '#82aaff' : '#2a4060',
+              color: showLines ? '#82aaff' : '#6b8fc4',
               fontFamily: 'DM Mono, monospace',
               fontSize: '10px',
               transition: 'background 220ms cubic-bezier(0.4,0,0.2,1), border-color 220ms cubic-bezier(0.4,0,0.2,1), color 220ms cubic-bezier(0.4,0,0.2,1)',
@@ -262,7 +264,7 @@ const CodeBlock: React.FC<{ lang: string; code: string }> = ({ lang, code }) => 
               borderRadius: '5px',
               padding: '3px 10px',
               cursor: 'pointer',
-              color: copied ? '#82aaff' : '#4a6fa5',
+              color: copied ? '#82aaff' : '#7fa3d4',
               fontFamily: 'DM Mono, monospace',
               fontSize: '10px',
               letterSpacing: '0.05em',
@@ -300,7 +302,7 @@ const CodeBlock: React.FC<{ lang: string; code: string }> = ({ lang, code }) => 
         fontFamily: 'DM Mono, monospace',
       }}>
         <code style={{ display: 'block' }}>
-          {lines.map((line, li) => (
+          {lines.map((_line, li) => (
             <div
               key={li}
               style={{
@@ -317,7 +319,7 @@ const CodeBlock: React.FC<{ lang: string; code: string }> = ({ lang, code }) => 
                   paddingRight: '16px',
                   paddingLeft: '16px',
                   textAlign: 'right',
-                  color: '#2a4060',
+                  color: '#6b8fc4',
                   fontSize: '11px',
                   borderRight: '1px solid #1e2d3d',
                   marginRight: '16px',
@@ -360,7 +362,7 @@ function processInline(text: string, ctxKey: string, basePath?: string): React.R
         const math = part.slice(2, -2);
         try {
           const html = window.katex?.renderToString(math, { displayMode: true, throwOnError: false }) || part;
-          return <div key={`${ctxKey}-math-block-${i}-${j}`} className="md-math" dangerouslySetInnerHTML={{ __html: html }} />;
+          return <span key={`${ctxKey}-math-block-${i}-${j}`} className="md-math" dangerouslySetInnerHTML={{ __html: html }} />;
         } catch { return part; }
       }
       // Inline math $...$
@@ -511,7 +513,7 @@ interface ListItem {
   key: string;
 }
 
-function renderListItems(items: ListItem[]): React.ReactNode {
+function renderListItems(items: ListItem[], basePath?: string): React.ReactNode {
   if (items.length === 0) return null;
 
   const result: React.ReactNode[] = [];
@@ -528,7 +530,7 @@ function renderListItems(items: ListItem[]): React.ReactNode {
       j++;
     }
 
-    const childNode = children.length > 0 ? renderListItems(children) : null;
+    const childNode = children.length > 0 ? renderListItems(children, basePath) : null;
 
     result.push(
       <li key={item.key} className="md-li">
@@ -606,7 +608,7 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, headings, 
       const Tag = listOrdered ? 'ol' : 'ul';
       nodes.push(
         <Tag key={key} className="md-list">
-          {renderListItems(listItems)}
+          {renderListItems(listItems, basePath)}
         </Tag>
       );
       listItems = [];

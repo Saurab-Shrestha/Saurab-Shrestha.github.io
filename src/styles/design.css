@@ -2370,6 +2370,7 @@ a.contact-link-row:hover { background: var(--surface); }
 }
 
 .md-math {
+  display: block;          /* a <span>, so it can live inside a <p> legally */
   margin: 1.5rem 0;
   overflow-x: auto;
   overflow-y: hidden;

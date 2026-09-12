@@ -1,24 +1,47 @@
 #!/usr/bin/env bash
 # Render every route in headless Chrome against `npm run serve` and assert that
-# each one actually produced DOM, has exactly one <h1>, and emits no internal
-# link that skips the deploy base path.
+# each one actually produced DOM, has exactly one <h1>, shows real content rather
+# than an error or not-found page, and emits no internal link that skips the
+# deploy base path.
+#
+# The content check exists because ErrorBoundary and NotFound both render an
+# <h1> — a route crashing into the error page satisfied "exactly one h1" and
+# passed silently while every blog post was broken.
 #
 # Usage: npm run build && npm run serve &  then: bash scripts/smoke.sh
 set -uo pipefail
 
 BASE="${BASE:-http://localhost:4173/SaurabShrestha}"
 CHROME="${CHROME:-/Applications/Google Chrome.app/Contents/MacOS/Google Chrome}"
-ROUTES=("" "work" "work/neuralnoodle" "work/hdes" "work/tdd" "work/svufe" "blog" "blog/understanding-transformer" "blog/django-stripe" "nope")
+# "route|expected" — expected is a substring the real page must contain.
+# The catch-all is the one route that is supposed to render NotFound.
+ROUTES=(
+  "|Standard RAG"
+  "work|Selected"
+  "work/neuralnoodle|NeuralNoodle"
+  "work/hdes|Home Decor"
+  "work/tdd|Tomato"
+  "work/svufe|Signature"
+  "blog|engineering"
+  "blog/understanding-transformer|Understanding Transformers"
+  "blog/django-stripe|Django"
+  "blog/disease-detection|Disease Detection"
+  "nope|No such page"
+)
 
 [ -x "$CHROME" ] || { echo "Chrome not found at $CHROME"; exit 2; }
 
 fails=0
-for r in "${ROUTES[@]}"; do
-  dom=$("$CHROME" --headless --disable-gpu --no-sandbox --virtual-time-budget=6000 \
+for entry in "${ROUTES[@]}"; do
+  r="${entry%%|*}"
+  expect="${entry#*|}"
+  dom=$("$CHROME" --headless --no-sandbox --enable-unsafe-swiftshader --virtual-time-budget=8000 \
         --dump-dom "$BASE/$r" 2>/dev/null)
-  result=$(printf '%s' "$dom" | python3 -c '
-import sys, re
+  result=$(EXPECT="$expect" ROUTE="$r" printf '%s' "$dom" | EXPECT="$expect" ROUTE="$r" python3 -c '
+import sys, re, os
 s = sys.stdin.read()
+expect = os.environ["EXPECT"]
+route = os.environ["ROUTE"]
 m = re.search(r"<div id=\"root\">(.*)</div>\s*<script|<div id=\"root\">(.*)$", s, re.S)
 root = next((g for g in (m.groups() if m else []) if g), "") if m else ""
 strip = lambda t: re.sub(r"<[^>]+>", "", t).strip()
@@ -26,6 +49,16 @@ strip = lambda t: re.sub(r"<[^>]+>", "", t).strip()
 problems = []
 if len(root) < 500:
     problems.append(f"root nearly empty ({len(root)} bytes)")
+
+# A route that crashed renders ErrorBoundary; one that failed to resolve renders
+# NotFound. Both look like a valid page to a naive h1 count.
+text = re.sub(r"<[^>]+>", " ", root)
+if "Something broke" in text:
+    problems.append("rendered the ErrorBoundary")
+if route != "nope" and "No such" in text:
+    problems.append("rendered NotFound")
+if expect not in text:
+    problems.append(f"missing expected content {expect!r}")
 
 h1 = re.findall(r"<h1[^>]*>(.*?)</h1>", root, re.S)
 if len(h1) != 1:

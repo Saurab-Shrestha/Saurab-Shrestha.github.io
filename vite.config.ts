@@ -5,9 +5,19 @@ import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
 import { appConfig } from './config/app.config';
 
-// GitHub Pages serves this repo as a project page at /SaurabShrestha/.
-// `base` must match or every emitted asset URL 404s in production.
-const BASE = '/SaurabShrestha/';
+// GitHub Pages serves this repo as a project page at /SaurabShrestha/, so the
+// built asset URLs must carry that prefix or they all 404 in production.
+//
+// The dev server has no such constraint, and inheriting the prefix there just
+// means localhost:3000/ 404s and every hand-typed path needs it. So: root in
+// dev, prefixed everywhere the built output is involved.
+//
+// `vite preview` runs with command === 'serve' but serves the *built* files, so
+// it needs the production base too — otherwise it hosts at / while index.html
+// asks for /SaurabShrestha/assets/*, and nothing boots.
+// import.meta.env.BASE_URL follows automatically; asset() and the router
+// basename both read it.
+const PROD_BASE = '/SaurabShrestha/';
 
 // GitHub Pages has no SPA rewrite: a hard refresh on /work returns GitHub's own
 // 404 page. Serving a copy of index.html as 404.html lets the SPA boot and route
@@ -20,8 +30,8 @@ const spaFallback = () => ({
   },
 });
 
-export default defineConfig({
-  base: BASE,
+export default defineConfig(({ command, isPreview }) => ({
+  base: command === 'build' || isPreview ? PROD_BASE : '/',
   plugins: [react(), tailwindcss(), spaFallback()],
   resolve: {
     alias: {
@@ -62,4 +72,4 @@ export default defineConfig({
   css: {
     devSourcemap: true,
   },
-});
+}));

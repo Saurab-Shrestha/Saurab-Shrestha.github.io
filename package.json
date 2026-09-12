@@ -9,7 +9,7 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "preview": "vite preview",
-    "type-check": "tsc --noEmit",
+    "type-check": "tsc -b --force",
     "clean": "rm -rf dist",
     "build:clean": "npm run clean && npm run build",
     "serve": "vite preview --port 4173",
