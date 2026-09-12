@@ -1,4 +1,6 @@
 import React, { useState, useId } from 'react';
+import CopyEmail from '../../components/CopyEmail';
+import { appConfig } from '../../../config/app.config';
 
 type Status = 'idle' | 'sending' | 'success' | 'error';
 
@@ -96,10 +98,12 @@ const ContactSection: React.FC = () => {
             </div>
             <h2>Let's build<br /><em>something.</em></h2>
             <p>A project idea, a collaboration, or just a chat about technology — I'd love to hear from you.</p>
+            <CopyEmail email={appConfig.contact.email} />
+
             <div className="contact-links">
-              <a href="mailto:shresthasaurab030@gmail.com" className="contact-link-row">
+              <a href={`mailto:${appConfig.contact.email}`} className="contact-link-row">
                 <span className="contact-link-label">Email</span>
-                <span className="contact-link-value">shresthasaurab030@gmail.com</span>
+                <span className="contact-link-value">{appConfig.contact.email}</span>
               </a>
               <div className="contact-link-row">
                 <span className="contact-link-label">Location</span>
@@ -220,7 +224,7 @@ const ContactSection: React.FC = () => {
                     {status === 'sending' ? 'Sending…' : 'Send Message'}
                   </button>
                   <a
-                    href="mailto:shresthasaurab030@gmail.com"
+                    href={`mailto:${appConfig.contact.email}`}
                     className="btn-ghost"
                     style={{ flex: 1, textAlign: 'center' }}
                   >

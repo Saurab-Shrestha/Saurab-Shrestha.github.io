@@ -18,6 +18,12 @@
   --accent-hover: #e8471f;
   --danger: #c0392b;        /* 5.19:1 on light --bg */
   --code-bg: #0a1628;
+  --photo-blend: multiply;      /* sinks the cutout into the cream paper */
+  --photo-filter: contrast(1.04);
+  --photo-glow: transparent;
+  --browser-chrome-bg: var(--surface2);
+  --browser-shadow: oklch(16% 0.012 50 / 0.07);
+  --screenshot-filter: none;
   --cursor-ring: oklch(30% 0.012 50 / 0.25);
   --cursor-ring-hover: oklch(16% 0.012 50 / 0.5);
   --text:     oklch(16% 0.012 50);
@@ -99,6 +105,15 @@
   --nav-bg: oklch(15% 0.008 55 / 0.92);
   --accent-hover: #ff7a58;
   --danger: #ff6b5a;        /* 7.04:1 on dark --bg */
+  /* multiply against a near-black ground crushes the subject — the cutout has a
+     real alpha channel, so normal blending needs no background knock-out. */
+  --photo-blend: normal;
+  --photo-filter: contrast(1.03) brightness(1.06);
+  --photo-glow: oklch(62% 0.06 50 / 0.14);
+  --browser-chrome-bg: oklch(23% 0.010 55);
+  --browser-shadow: oklch(0% 0 0 / 0.5);
+  /* Pull a bright capture down toward the page's luminance range. */
+  --screenshot-filter: brightness(0.9) contrast(1.02) saturate(0.95);
   --cursor-ring: oklch(90% 0.01 60 / 0.28);
   --cursor-ring-hover: oklch(94% 0.006 60 / 0.55);
 
@@ -127,7 +142,16 @@
   --nav-bg: oklch(15% 0.008 55 / 0.92);
   --accent-hover: #ff7a58;
   --danger: #ff6b5a;        /* 7.04:1 on dark --bg */
-    --cursor-ring: oklch(90% 0.01 60 / 0.28);
+    /* multiply against a near-black ground crushes the subject — the cutout has a
+     real alpha channel, so normal blending needs no background knock-out. */
+  --photo-blend: normal;
+  --photo-filter: contrast(1.03) brightness(1.06);
+  --photo-glow: oklch(62% 0.06 50 / 0.14);
+  --browser-chrome-bg: oklch(23% 0.010 55);
+  --browser-shadow: oklch(0% 0 0 / 0.5);
+  /* Pull a bright capture down toward the page's luminance range. */
+  --screenshot-filter: brightness(0.9) contrast(1.02) saturate(0.95);
+  --cursor-ring: oklch(90% 0.01 60 / 0.28);
     --cursor-ring-hover: oklch(94% 0.006 60 / 0.55);
   
     color-scheme: dark;
@@ -599,10 +623,29 @@ h1 {
 }
 
 .photo-inner img {
-  width: 100%; height: 100%;
-  object-fit: cover; object-position: center 18%;
-  filter: contrast(1.04);
-  mix-blend-mode: multiply;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 18%;
+  filter: var(--photo-filter);
+  mix-blend-mode: var(--photo-blend);
+  position: relative;
+  z-index: 1;
+}
+
+/* Ambient separation behind the cutout. Transparent in light mode, where the
+   paper already provides the separation. */
+.photo-inner::before {
+  content: '';
+  position: absolute;
+  inset: -12%;
+  background: radial-gradient(
+    ellipse 58% 52% at 52% 42%,
+    var(--photo-glow) 0%,
+    transparent 70%
+  );
+  pointer-events: none;
+  z-index: 0;
 }
 
 .photo-frame-meta {
@@ -2612,4 +2655,131 @@ a.contact-link-row:hover { background: var(--surface); }
   .eg-stage { aspect-ratio: 4 / 3; }
   .eg-columns { grid-template-columns: 1fr; gap: 24px; }
   .eg-caption { padding: 18px; }
+}
+
+/* ─── BROWSER MOCKUP ─────────────────────────────────── */
+/* Light-UI screenshots on a dark page read as blown-out slabs. Framing them as
+   application windows makes them legible as artefacts rather than background. */
+.browser-mockup {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: var(--browser-chrome-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 1px 2px var(--browser-shadow),
+              0 8px 24px var(--browser-shadow);
+}
+
+.browser-chrome {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  height: 26px;
+  padding: 0 11px;
+  background: var(--browser-chrome-bg);
+  border-bottom: 1px solid var(--border);
+}
+
+.browser-dots {
+  display: inline-flex;
+  gap: 6px;
+}
+.browser-dots i {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--border2);
+}
+/* Faint hue so they read as window controls without shouting macOS. */
+.browser-dots i:nth-child(1) { background: color-mix(in oklab, #ff5f57 55%, var(--border2)); }
+.browser-dots i:nth-child(2) { background: color-mix(in oklab, #febc2e 55%, var(--border2)); }
+.browser-dots i:nth-child(3) { background: color-mix(in oklab, #28c840 55%, var(--border2)); }
+
+.browser-viewport {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  background: var(--surface2);
+}
+.browser-viewport img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  display: block;
+  /* Takes the glare off a white capture without washing out the content. */
+  filter: var(--screenshot-filter);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .browser-mockup { box-shadow: none; }
+}
+
+/* ─── COPY EMAIL ─────────────────────────────────────── */
+.copy-email { margin: 28px 0 32px; }
+
+.copy-email-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  max-width: 100%;
+  padding: 10px 10px 10px 16px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  cursor: pointer;
+  transition: border-color var(--dur-fast) var(--ease-soft),
+              background var(--dur-fast) var(--ease-soft);
+}
+
+.copy-email-address {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.copy-email-action {
+  flex-shrink: 0;
+  padding: 5px 10px;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--on-accent);
+  background: var(--accent-strong);
+  border-radius: 2px;
+  /* Width is reserved for the longest label so the pill doesn't resize on
+     click — a button that changes size under the cursor feels broken. */
+  min-width: 76px;
+  text-align: center;
+}
+
+.copy-email-btn.is-copied .copy-email-action { background: var(--accent3); }
+.copy-email-btn.is-failed .copy-email-action { background: var(--danger); }
+
+@media (hover: hover) and (pointer: fine) {
+  .copy-email-btn:hover {
+    border-color: var(--border2);
+    background: var(--surface2);
+  }
+}
+
+@media (max-width: 480px) {
+  .copy-email-btn { font-size: 12px; gap: 10px; }
+}
+
+/* Visually hidden but announced. */
+.sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
 }

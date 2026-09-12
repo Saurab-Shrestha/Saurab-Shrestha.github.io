@@ -121,14 +121,28 @@ const ProjectThumbnail: React.FC<Props> = ({ spec, name }) => {
   }
 
   if (kind === 'img') {
+    // Raster screenshots are light-UI captures. Dropped edge-to-edge onto a dark
+    // page they read as blown-out rectangles, so they sit inside a window frame
+    // that marks them as screenshots rather than page background.
+    //
+    // No address bar: these projects have no public URL, and simulating one
+    // would invent a destination that doesn't exist.
     return (
-      <img
-        src={asset(value)}
-        alt={`${name} — project screenshot`}
-        loading="lazy"
-        decoding="async"
-        style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top' }}
-      />
+      <div className="browser-mockup">
+        <div className="browser-chrome" aria-hidden="true">
+          <span className="browser-dots">
+            <i /><i /><i />
+          </span>
+        </div>
+        <div className="browser-viewport">
+          <img
+            src={asset(value)}
+            alt={`${name} — screenshot of the running application`}
+            loading="lazy"
+            decoding="async"
+          />
+        </div>
+      </div>
     );
   }
 

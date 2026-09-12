@@ -21,7 +21,8 @@
     "check:routes": "bash scripts/smoke.sh",
     "check:theme": "node scripts/check-theme.mjs",
     "check:graph": "node scripts/check-graph.mjs",
-    "check:all": "npm run type-check && npm run lint && npm run check:content"
+    "check:all": "npm run type-check && npm run lint && npm run check:content",
+    "check:contact": "node scripts/check-contact.mjs"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.11",
