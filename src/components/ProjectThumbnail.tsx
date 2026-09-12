@@ -18,10 +18,10 @@ const NeuralNoodleThumbnail: React.FC = () => (
     aria-hidden="true"
     style={{ width: '100%', height: '100%', display: 'block' }}
   >
-    <rect width="480" height="270" fill="#f5f3f0" />
+    <rect width="480" height="270" fill="var(--surface)" />
     {/* Grid */}
-    <line x1="0" y1="135" x2="480" y2="135" stroke="rgba(30,20,15,0.06)" strokeWidth="1" />
-    <line x1="240" y1="0" x2="240" y2="270" stroke="rgba(30,20,15,0.06)" strokeWidth="1" />
+    <line x1="0" y1="135" x2="480" y2="135" stroke="var(--border)" strokeWidth="1" />
+    <line x1="240" y1="0" x2="240" y2="270" stroke="var(--border)" strokeWidth="1" />
     {/* Evidence nodes */}
     <circle cx="120" cy="80" r="5" fill="rgba(255,92,53,0.9)" />
     <circle cx="240" cy="50" r="5" fill="rgba(255,92,53,0.9)" />
@@ -58,10 +58,10 @@ const SvufeThumbnail: React.FC = () => (
     aria-hidden="true"
     style={{ width: '100%', height: '100%', display: 'block' }}
   >
-    <rect width="480" height="270" fill="#f0ede8" />
+    <rect width="480" height="270" fill="var(--surface2)" />
     {/* Grid */}
-    <line x1="0" y1="135" x2="480" y2="135" stroke="rgba(30,20,15,0.07)" strokeWidth="1" />
-    <line x1="240" y1="0" x2="240" y2="270" stroke="rgba(30,20,15,0.07)" strokeWidth="1" />
+    <line x1="0" y1="135" x2="480" y2="135" stroke="var(--border)" strokeWidth="1" />
+    <line x1="240" y1="0" x2="240" y2="270" stroke="var(--border)" strokeWidth="1" />
     {/* Signature A — irregular waveform */}
     <polyline
       points="32,160 60,100 88,175 116,85 144,155 172,110 200,165 228,95 240,135"
@@ -81,7 +81,7 @@ const SvufeThumbnail: React.FC = () => (
       strokeLinejoin="round"
     />
     {/* Divider */}
-    <line x1="240" y1="60" x2="240" y2="210" stroke="rgba(30,20,15,0.15)" strokeWidth="1" strokeDasharray="4 4" />
+    <line x1="240" y1="60" x2="240" y2="210" stroke="var(--border2)" strokeWidth="1" strokeDasharray="4 4" />
     {/* Verified badge */}
     <circle cx="390" cy="52" r="22" fill="rgba(29,158,117,0.15)" stroke="rgba(92,232,200,0.4)" strokeWidth="1" />
     <polyline

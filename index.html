@@ -5,7 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <link rel="icon" type="image/svg+xml" href="/SaurabShrestha/favicon.svg" />
-    <meta name="theme-color" content="#fcf9f7" />
+    <meta name="theme-color" content="#fcf9f7" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0e0a08" media="(prefers-color-scheme: dark)" />
+
+    <!-- Applies the saved theme before first paint. Without this a dark-mode
+         visitor gets a flash of the cream page on every load. Mirrors
+         applyTheme() in src/components/ThemeToggle.tsx. -->
+    <script>
+      (function () {
+        try {
+          var t = localStorage.getItem('theme');
+          if (t === 'light' || t === 'dark') {
+            document.documentElement.setAttribute('data-theme', t);
+          }
+        } catch (e) { /* blocked storage: fall back to prefers-color-scheme */ }
+      })();
+    </script>
 
     <title>Saurab Shrestha — Software Developer</title>
     <meta name="description" content="Saurab Shrestha — Software Developer specializing in AI/ML and full-stack development from Bhaktapur, Nepal." />

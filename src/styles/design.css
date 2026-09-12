@@ -1,18 +1,30 @@
 /* ─── TOKENS ─────────────────────────────────────────── */
 :root {
+  color-scheme: light;
   --bg:       oklch(98.5% 0.004 60);
   --surface:  oklch(96.5% 0.006 55);
   --surface2: oklch(93.5% 0.008 55);
   --border:   oklch(86% 0.008 55);
   --border2:  oklch(78% 0.01 55);
   --accent:   #ff5c35;   /* decorative only: borders, dots, edges, fills */
-  --accent-text:   #d93d17;  /* 4.33:1 on --bg — accent as body text */
+  --accent-text:   #c73410;  /* 5.10:1 on --bg. #d93d17 was 4.33:1 — under AA. */
   --accent-strong: #c73410;  /* 5.35:1 under white — accent as a button fill */
   --accent2:  #ffb84d;
   --accent3:  #0a7a5f;   /* 5.06:1 on --bg (was #0d9373 at 3.68:1) */
+  --on-accent: oklch(99% 0.003 60);   /* text sitting on an accent fill */
+  --grid-line: var(--grid-line);
+  --grain-opacity: 0.4;
+  --nav-bg: oklch(98.5% 0.004 60 / 0.94);
+  --accent-hover: #e8471f;
+  --danger: #c0392b;        /* 5.19:1 on light --bg */
+  --code-bg: #0a1628;
+  --cursor-ring: oklch(30% 0.012 50 / 0.25);
+  --cursor-ring-hover: oklch(16% 0.012 50 / 0.5);
   --text:     oklch(16% 0.012 50);
   --muted:    oklch(50% 0.014 50);
-  --muted2:   oklch(54% 0.01 50);  /* 4.86:1 on --bg (was 65% at 3.10:1) */
+  --muted2:   oklch(51% 0.01 50);  /* 5.52:1 on --bg, 4.76:1 on --surface2.
+                                      Sized against the darkest ground it sits on,
+                                      not just --bg (65% was 3.10:1). */
 
   --font-display: 'Instrument Serif', Georgia, serif;
   --font-sans:    'Geist', system-ui, sans-serif;
@@ -59,9 +71,70 @@
   }
 }
 
+/* ─── DARK THEME ─────────────────────────────────────── */
+/* Only the palette is redefined; every other token (motion, z-index, spacing)
+   is theme-independent and stays on :root. Contrast measured against the dark
+   --bg #0e0a08: text 16.5:1, muted 8.5:1, muted2 5.4:1, accent 6.4:1,
+   accent3 10.7:1 — so #ff5c35 finally works as text here, unlike on cream. */
+:root[data-theme="dark"] {
+  --bg:       oklch(15% 0.008 55);
+  --surface:  oklch(19% 0.009 55);
+  --surface2: oklch(23.5% 0.010 55);
+  --border:   oklch(29% 0.010 55);
+  --border2:  oklch(40% 0.012 55);
+
+  --text:     oklch(94% 0.006 60);
+  --muted:    oklch(74% 0.011 55);
+  --muted2:   oklch(64% 0.011 55);  /* 5.84:1 on --bg, 4.95:1 on --surface2 */
+
+  --accent-text:   #ff5c35;   /* 6.41:1 here — the real brand colour, usable */
+  --accent-strong: #ff5c35;
+  --accent3:       #3fd6b0;   /* 10.74:1 */
+  --on-accent:     oklch(15% 0.008 55);
+
+  --grid-line:   oklch(94% 0.006 60 / 0.05);
+  --grain-opacity: 0.22;
+  --nav-bg: oklch(15% 0.008 55 / 0.92);
+  --accent-hover: #ff7a58;
+  --danger: #ff6b5a;        /* 7.04:1 on dark --bg */
+  --cursor-ring: oklch(90% 0.01 60 / 0.28);
+  --cursor-ring-hover: oklch(94% 0.006 60 / 0.55);
+
+  color-scheme: dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {  
+    --bg:       oklch(15% 0.008 55);
+    --surface:  oklch(19% 0.009 55);
+    --surface2: oklch(23.5% 0.010 55);
+    --border:   oklch(29% 0.010 55);
+    --border2:  oklch(40% 0.012 55);
+  
+    --text:     oklch(94% 0.006 60);
+    --muted:    oklch(74% 0.011 55);
+    --muted2:   oklch(64% 0.011 55);  /* 5.84:1 on --bg, 4.95:1 on --surface2 */
+  
+    --accent-text:   #ff5c35;   /* 6.41:1 here — the real brand colour, usable */
+    --accent-strong: #ff5c35;
+    --accent3:       #3fd6b0;   /* 10.74:1 */
+    --on-accent:     oklch(15% 0.008 55);
+  
+    --grid-line:   oklch(94% 0.006 60 / 0.05);
+    --grain-opacity: 0.22;
+  --nav-bg: oklch(15% 0.008 55 / 0.92);
+  --accent-hover: #ff7a58;
+  --danger: #ff6b5a;        /* 7.04:1 on dark --bg */
+    --cursor-ring: oklch(90% 0.01 60 / 0.28);
+    --cursor-ring-hover: oklch(94% 0.006 60 / 0.55);
+  
+    color-scheme: dark;
+  }
+}
+
 ::selection {
   background: var(--accent);
-  color: oklch(99% 0.003 60);
+  color: var(--on-accent);
 }
 
 *, *::before, *::after {
@@ -101,7 +174,7 @@ body {
 #cursor-ring {
   position: fixed; top: 0; left: 0; z-index: var(--z-cursor-ring);
   width: 28px; height: 28px;
-  border: 1px solid oklch(30% 0.012 50 / 0.25);
+  border: 1px solid var(--cursor-ring);
   border-radius: 50%;
   pointer-events: none;
   will-change: transform;
@@ -113,7 +186,7 @@ body {
 body:has(a:hover) #cursor-ring,
 body:has(button:hover) #cursor-ring {
   width: 44px; height: 44px;
-  border-color: oklch(16% 0.012 50 / 0.5);
+  border-color: var(--cursor-ring-hover);
 }
 
 body:has(a:hover) #cursor-dot,
@@ -149,7 +222,7 @@ body::after {
   position: fixed; inset: 0;
   pointer-events: none; z-index: var(--z-grain);
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
-  opacity: 0.4;
+  opacity: var(--grain-opacity);
 }
 
 /* ─── APP BLOOMS ─────────────────────────────────────── */
@@ -163,7 +236,7 @@ body::after {
   padding: 0 max(48px, calc((100% - 1200px) / 2));
   height: 56px;
   border-bottom: 1px solid var(--border);
-  background: oklch(98.5% 0.004 60 / 0.94);
+  background: var(--nav-bg);
   backdrop-filter: blur(16px);
   transition: height var(--dur-med) var(--ease-out);
 }
@@ -262,8 +335,8 @@ body::after {
   font-family: var(--font-mono);
   font-size: 11px; font-weight: 500;
   letter-spacing: 0.08em; text-transform: uppercase;
-  color: oklch(99% 0.003 60);
-  background: var(--accent); border: none;
+  color: var(--on-accent);
+  background: var(--accent-strong); border: none;
   padding: 8px 18px;
   transition: background var(--dur-fast) var(--ease-soft);
   text-decoration: none;
@@ -287,8 +360,8 @@ body::after {
   inset: 56px 0 0;
   pointer-events: none;
   background-image:
-    linear-gradient(to right, oklch(16% 0.012 50 / 0.055) 1px, transparent 1px),
-    linear-gradient(to bottom, oklch(16% 0.012 50 / 0.055) 1px, transparent 1px),
+    linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px),
     linear-gradient(to right, oklch(16% 0.012 50 / 0.09) 1px, transparent 1px),
     linear-gradient(to bottom, oklch(16% 0.012 50 / 0.09) 1px, transparent 1px);
   background-size: 24px 24px, 24px 24px, 96px 96px, 96px 96px;
@@ -392,8 +465,8 @@ h1 {
   font-family: var(--font-mono);
   font-size: 11px; font-weight: 500;
   letter-spacing: 0.08em; text-transform: uppercase;
-  color: oklch(99% 0.003 60);
-  background: var(--accent); border: none;
+  color: var(--on-accent);
+  background: var(--accent-strong); border: none;
   padding: 13px 24px; cursor: pointer;
   transition: background var(--dur-fast) var(--ease-soft),
               transform var(--dur-med) var(--ease-out);
@@ -401,7 +474,7 @@ h1 {
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .btn-primary:hover { background: #ff7055; transform: translateY(-2px); }
+  .btn-primary:hover { background: var(--accent-hover); transform: translateY(-2px); }
 }
 
 .btn-ghost {
@@ -1308,17 +1381,17 @@ a.contact-link-row:hover { background: var(--surface); }
 
 /* form states */
 .field input.field-error,
-.field textarea.field-error { border-color: #e05340; }
+.field textarea.field-error { border-color: var(--danger); }
 
 .field-error-msg {
   font-family: var(--font-mono);
   font-size: 10px; letter-spacing: 0.04em;
-  color: #e05340; margin-top: -2px;
+  color: var(--danger); margin-top: -2px;
 }
 
 .form-error-banner {
   font-family: var(--font-mono);
-  font-size: 11px; color: #c0392b;
+  font-size: 11px; color: var(--danger);
   background: rgba(224, 83, 64, 0.06);
   border: 1px solid rgba(224, 83, 64, 0.2);
   padding: 10px 14px; line-height: 1.6;
@@ -1331,7 +1404,7 @@ a.contact-link-row:hover { background: var(--surface); }
 
 .contact-success-icon {
   width: 36px; height: 36px;
-  background: var(--accent3); color: oklch(99% 0.003 60);
+  background: var(--accent3); color: var(--on-accent);
   display: flex; align-items: center; justify-content: center;
   font-size: 16px; margin-bottom: 20px;
 }
@@ -1516,7 +1589,7 @@ a.contact-link-row:hover { background: var(--surface); }
   .footer-socials a:hover {
     border-color: var(--accent-text);
     background: var(--accent);
-    color: oklch(99% 0.003 60);
+    color: var(--on-accent);
     transform: translateY(-3px);
   }
 }
@@ -1539,7 +1612,7 @@ a.contact-link-row:hover { background: var(--surface); }
 }
 
 .footer-bottom p span {
-  color: #e05340;
+  color: var(--danger);
 }
 
 .footer-mini-nav {
@@ -2038,51 +2111,185 @@ a.contact-link-row:hover { background: var(--surface); }
 }
 
 /* ─── ARTICLE BODY ───────────────────────────────────── */
-/* MarkdownRenderer still inlines most of its styling; paragraphs are pulled out
-   into a class so they can respond to theme and viewport. */
+/* MarkdownRenderer used to inline every one of these as a style={{}} object,
+   which meant blog and case-study content could not respond to a theme, a media
+   query, or print. It also referenced two fonts the page never loads
+   (Bricolage Grotesque, DM Mono) so every heading silently fell back. */
+.md-body { max-width: 68ch; }
+
 .md-p {
   margin: 0 0 1.5em;
   line-height: 1.75;
   color: var(--muted);
   font-size: 16.5px;
-  max-width: 68ch;          /* 65-75 characters is the readable band */
-  text-wrap: pretty;        /* avoids orphaned last words */
+  text-wrap: pretty;
 }
 .md-p:last-child { margin-bottom: 0; }
 
-/* ─── NAV ACTIVE STATE ───────────────────────────────── */
-/* The site had no indication of where you were — the main orientation cue a
-   one-page layout needs. Colour alone isn't the signal; the underline carries it
-   for anyone who can't distinguish the two greys. */
-.nav-links a {
-  position: relative;
-}
-.nav-links a::after {
-  content: '';
-  position: absolute;
-  left: 0; right: 0; bottom: -6px;
-  height: 1px;
-  background: currentColor;
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform var(--dur-fast) var(--ease-out);
-}
-.nav-links a.is-current {
+/* ── Headings ── */
+.md-h {
   color: var(--text);
+  scroll-margin-top: 100px;
+  text-wrap: balance;
 }
-.nav-links a.is-current::after {
-  transform: scaleX(1);
+.md-h2 {
+  font-family: var(--font-display);
+  font-size: 30px;
+  font-weight: 400;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  margin: 56px 0 16px;
+}
+.md-h3 {
+  font-family: var(--font-sans);
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin: 38px 0 12px;
+}
+.md-h4, .md-h5 {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.md-h4 { font-size: 11px; margin: 30px 0 10px; }
+.md-h5 { font-size: 10px; margin: 22px 0 6px; }
+
+/* ── Inline ── */
+.md-strong { color: var(--text); font-weight: 600; }
+.md-em     { font-style: italic; color: var(--text); }
+.md-del    { color: var(--muted2); text-decoration-thickness: 1px; }
+
+.md-link {
+  color: var(--accent-text);
+  text-decoration: none;
+  border-bottom: 1px solid color-mix(in oklab, currentColor 40%, transparent);
+  padding-bottom: 1px;
+  transition: border-color var(--dur-fast) var(--ease-soft);
+}
+.md-link:hover { border-bottom-color: currentColor; }
+
+.md-code {
+  font-family: var(--font-mono);
+  font-size: 0.86em;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  padding: 2px 6px;
+  border-radius: 3px;
+  color: var(--text);
+  overflow-wrap: break-word;
 }
 
-@media (hover: hover) and (pointer: fine) {
-  .nav-links a:hover::after { transform: scaleX(1); }
+/* ── Lists ── */
+.md-list {
+  margin: 0 0 24px;
+  padding-left: 0;
+  list-style: none;
+}
+.md-li {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  margin-bottom: 8px;
+  color: var(--muted);
+  line-height: 1.7;
+}
+.md-li-marker {
+  flex-shrink: 0;
+  color: var(--muted2);
+  margin-top: 2px;
+  font-size: 14px;
+  line-height: 1;
+}
+.md-li-marker--num {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  margin-top: 4px;
+  min-width: 16px;
+  font-variant-numeric: tabular-nums;
+}
+.md-li-body { flex: 1; min-width: 0; }
+.md-li-children { margin: 6px 0 0 4px; }
+
+/* ── Blockquote ── */
+.md-quote {
+  position: relative;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 2px solid var(--accent);
+  padding: 16px 20px;
+  margin: 28px 0;
+}
+.md-quote p {
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.75;
+  font-style: italic;
+  margin: 4px 0 0;
+}
+.md-quote p:first-child { margin-top: 0; }
+
+/* ── Table ── */
+.md-table-wrap {
+  overflow-x: auto;          /* wide tables scroll inside themselves */
+  margin: 8px 0 28px;
+  border: 1px solid var(--border);
+}
+.md-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  line-height: 1.6;
+}
+.md-table th {
+  background: var(--surface2);
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 10px 16px;
+  text-align: left;
+  border-bottom: 2px solid var(--accent);
+  white-space: nowrap;
+}
+.md-table td {
+  padding: 10px 16px;
+  color: var(--muted);
+  vertical-align: top;
+  border-bottom: 1px solid var(--border);
+}
+.md-table tbody tr:nth-child(even) td { background: var(--surface); }
+.md-table tbody tr:last-child td { border-bottom: none; }
+
+/* ── Media and rules ── */
+.md-img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 6px;
+  margin: 8px 0;
+  display: block;
+  background: var(--surface);
 }
 
-.mobile-link.is-current { color: var(--accent-text); }
-.mobile-link--cta { color: var(--accent-text); }
+.md-hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 40px 0;
+}
 
-@media (prefers-reduced-motion: reduce) {
-  .nav-links a::after { transition: none; }
+.md-math {
+  margin: 1.5rem 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+@media (max-width: 768px) {
+  .md-p { font-size: 16px; }
+  .md-h2 { font-size: 26px; margin-top: 44px; }
 }
 
 /* ─── TABLE OF CONTENTS ──────────────────────────────── */
@@ -2215,4 +2422,47 @@ a.contact-link-row:hover { background: var(--surface); }
   }
 
   .toc-link { padding-block: 12px; }
+}
+
+/* ─── THEME TOGGLE ───────────────────────────────────── */
+.theme-toggle {
+  display: inline-flex;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.theme-toggle-btn {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  background: transparent;
+  border: none;
+  padding: 7px 12px;
+  cursor: pointer;
+  transition: color var(--dur-fast) var(--ease-soft),
+              background var(--dur-fast) var(--ease-soft);
+}
+.theme-toggle-btn + .theme-toggle-btn { border-left: 1px solid var(--border); }
+
+.theme-toggle-btn.is-active {
+  color: var(--text);
+  background: var(--surface2);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .theme-toggle-btn:hover { color: var(--text); }
+}
+
+@media (max-width: 900px) {
+  .theme-toggle-btn { padding: 11px 14px; }
+}
+
+/* Theme switches should be instant — a cross-fade of every surface on the page
+   reads as lag, not polish. */
+.theme-toggle-btn,
+.theme-toggle {
+  transition-property: color, background;
 }

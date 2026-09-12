@@ -360,7 +360,7 @@ function processInline(text: string, ctxKey: string, basePath?: string): React.R
         const math = part.slice(2, -2);
         try {
           const html = window.katex?.renderToString(math, { displayMode: true, throwOnError: false }) || part;
-          return <div key={`${ctxKey}-math-block-${i}-${j}`} style={{ margin: '1.5rem 0', overflowX: 'auto', overflowY: 'hidden' }} dangerouslySetInnerHTML={{ __html: html }} />;
+          return <div key={`${ctxKey}-math-block-${i}-${j}`} className="md-math" dangerouslySetInnerHTML={{ __html: html }} />;
         } catch { return part; }
       }
       // Inline math $...$
@@ -387,8 +387,14 @@ function processInline(text: string, ctxKey: string, basePath?: string): React.R
           src = src.replace(/^\.\//, cleanBase + '/');
         }
         return (
-          <img key={`${ctxKey}-img-${i}-${j}`} src={src} alt={m[1]}
-            style={{ maxWidth: '100%', borderRadius: '6px', margin: '8px 0', display: 'block' }} />
+          <img
+            key={`${ctxKey}-img-${i}-${j}`}
+            src={src}
+            alt={m[1]}
+            className="md-img"
+            loading="lazy"
+            decoding="async"
+          />
         );
       }
       return part;
@@ -401,15 +407,7 @@ function processInline(text: string, ctxKey: string, basePath?: string): React.R
     return item.split(/(`[^`]+`)/g).map((part, j) => {
       if (part.startsWith('`') && part.endsWith('`') && part.length > 2) {
         return (
-          <code key={`${ctxKey}-ic-${i}-${j}`} style={{
-            fontFamily: 'DM Mono, monospace',
-            fontSize: '12px',
-            background: 'var(--surface2)',
-            border: '1px solid var(--border)',
-            padding: '2px 6px',
-            borderRadius: '3px',
-            color: 'var(--accent3, #89ddff)',
-          }}>
+          <code key={`${ctxKey}-ic-${i}-${j}`} className="md-code">
             {part.slice(1, -1)}
           </code>
         );
@@ -424,7 +422,7 @@ function processInline(text: string, ctxKey: string, basePath?: string): React.R
     return item.split(/(~~[^~]+~~)/g).map((part, j) => {
       if (part.startsWith('~~') && part.endsWith('~~') && part.length > 4) {
         return (
-          <del key={`${ctxKey}-del-${i}-${j}`} style={{ color: 'var(--muted)', opacity: 0.5 }}>
+          <del key={`${ctxKey}-del-${i}-${j}`} className="md-del">
             {processInline(part.slice(2, -2), `${ctxKey}-del-inner-${i}-${j}`, basePath)}
           </del>
         );
@@ -440,7 +438,7 @@ function processInline(text: string, ctxKey: string, basePath?: string): React.R
       if ((part.startsWith('**') && part.endsWith('**')) || (part.startsWith('__') && part.endsWith('__'))) {
         const inner = part.slice(2, -2);
         return (
-          <strong key={`${ctxKey}-b-${i}-${j}`} style={{ color: 'var(--text)', fontWeight: 700 }}>
+          <strong key={`${ctxKey}-b-${i}-${j}`} className="md-strong">
             {processInline(inner, `${ctxKey}-b-inner-${i}-${j}`, basePath)}
           </strong>
         );
@@ -462,7 +460,7 @@ function processInline(text: string, ctxKey: string, basePath?: string): React.R
       } else {
         // A captured italic inner text — wrap it and recurse
         acc.push(
-          <em key={`${ctxKey}-em-${i}-${j}`} style={{ fontStyle: 'italic', color: 'var(--muted)' }}>
+          <em key={`${ctxKey}-em-${i}-${j}`} className="md-em">
             {processInline(part, `${ctxKey}-em-inner-${i}-${j}`, basePath)}
           </em>
         );
@@ -480,13 +478,7 @@ function processInline(text: string, ctxKey: string, basePath?: string): React.R
         return (
           <a key={`${ctxKey}-a-${i}-${j}`} href={m[2]}
             target="_blank" rel="noopener noreferrer"
-            style={{
-              color: 'var(--accent)',
-              textDecoration: 'none',
-              borderBottom: '1px solid currentColor',
-              paddingBottom: '1px',
-              transition: 'opacity 220ms cubic-bezier(0.4,0,0.2,1)',
-            }}>
+            className="md-link">
             {m[1]}
           </a>
         );
@@ -539,39 +531,16 @@ function renderListItems(items: ListItem[]): React.ReactNode {
     const childNode = children.length > 0 ? renderListItems(children) : null;
 
     result.push(
-      <li key={item.key} style={{
-        marginBottom: '6px',
-        color: 'var(--muted)',
-        display: 'flex',
-        gap: '10px',
-        alignItems: 'flex-start',
-      }}>
+      <li key={item.key} className="md-li">
         {item.ordered ? (
-          <span style={{
-            color: 'var(--muted)',
-            flexShrink: 0,
-            fontFamily: 'DM Mono, monospace',
-            fontSize: '11px',
-            marginTop: '4px',
-            minWidth: '16px',
-          }}>
-            {item.num}.
-          </span>
+          <span className="md-li-marker md-li-marker--num">{item.num}.</span>
         ) : (
-          <span style={{
-            color: 'var(--muted)',
-            flexShrink: 0,
-            marginTop: '2px',
-            fontSize: '14px',
-            lineHeight: 1,
-          }}>
-            {item.depth > 0 ? '·' : '–'}
-          </span>
+          <span className="md-li-marker">{item.depth > 0 ? '·' : '–'}</span>
         )}
-        <span style={{ flex: 1 }}>
-          {processInline(item.content, item.key)}
+        <span className="md-li-body">
+          {processInline(item.content, item.key, basePath)}
           {childNode && (
-            <div style={{ marginTop: '4px', marginLeft: '4px' }}>
+            <div className="md-li-children">
               {childNode}
             </div>
           )}
@@ -636,7 +605,7 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, headings, 
       if (listItems.length === 0) return;
       const Tag = listOrdered ? 'ol' : 'ul';
       nodes.push(
-        <Tag key={key} style={{ marginBottom: '24px', paddingLeft: 0, listStyle: 'none' }}>
+        <Tag key={key} className="md-list">
           {renderListItems(listItems)}
         </Tag>
       );
@@ -646,22 +615,10 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, headings, 
     const flushBlockquote = (key: string) => {
       if (bqLines.length === 0) return;
       nodes.push(
-        <blockquote key={key} style={{
-          position: 'relative',
-          background: 'oklch(97% 0.005 50)',
-          border: '1px solid oklch(88% 0.006 50)',
-          padding: '16px 20px',
-          margin: '28px 0',
-        }}>
+        <blockquote key={key} className="md-quote">
           {bqLines.map((line, i) => (
-            <p key={i} style={{
-              margin: i === 0 ? 0 : '4px 0 0',
-              color: 'var(--muted)',
-              fontSize: '15px',
-              lineHeight: 1.75,
-              fontStyle: 'italic',
-            }}>
-              {processInline(line, `bq-${key}-${i}`)}
+            <p key={i}>
+              {processInline(line, `bq-${key}-${i}`, basePath)}
             </p>
           ))}
         </blockquote>
@@ -681,39 +638,23 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, headings, 
       const [header, ...body] = rows;
 
       nodes.push(
-        <div key={key} style={{ overflowX: 'auto', marginBottom: '28px', marginTop: '8px' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '14px', lineHeight: 1.6 }}>
+        <div key={key} className="md-table-wrap">
+          <table className="md-table">
             <thead>
               <tr>
                 {header.map((cell, ci) => (
-                  <th key={ci} style={{
-                    background: 'var(--surface2)',
-                    color: 'var(--text)',
-                    fontFamily: 'DM Mono, monospace',
-                    fontSize: '10px',
-                    letterSpacing: '0.1em',
-                    textTransform: 'uppercase',
-                    padding: '10px 16px',
-                    textAlign: 'left',
-                    borderBottom: '2px solid var(--accent)',
-                    whiteSpace: 'nowrap',
-                  }}>
-                    {processInline(cell, `th-${key}-${ci}`)}
+                  <th key={ci} scope="col">
+                    {processInline(cell, `th-${key}-${ci}`, basePath)}
                   </th>
                 ))}
               </tr>
             </thead>
             <tbody>
               {body.map((row, ri) => (
-                <tr key={ri} style={{ borderBottom: '1px solid var(--border)' }}>
+                <tr key={ri}>
                   {row.map((cell, ci) => (
-                    <td key={ci} style={{
-                      padding: '10px 16px',
-                      color: 'var(--muted)',
-                      verticalAlign: 'top',
-                      background: ri % 2 === 1 ? 'var(--surface2)' : 'transparent',
-                    }}>
-                      {processInline(cell, `td-${key}-${ri}-${ci}`)}
+                    <td key={ci}>
+                      {processInline(cell, `td-${key}-${ri}-${ci}`, basePath)}
                     </td>
                   ))}
                 </tr>
@@ -772,7 +713,7 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, headings, 
       // ── HR ──────────────────────────────────────────────────────────────
       if (/^(\*{3,}|-{3,}|_{3,})$/.test(rawLine.trim())) {
         flushAll(key);
-        nodes.push(<hr key={key} style={{ border: 'none', borderTop: '1px solid var(--border)', margin: '40px 0' }} />);
+        nodes.push(<hr key={key} className="md-hr" />);
         return;
       }
 
@@ -806,16 +747,10 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, headings, 
 
         const id = getHeadingId(text);
 
-        const headingStyles: Record<number, React.CSSProperties> = {
-          2: { fontFamily: 'Bricolage Grotesque, sans-serif', fontSize: '22px', fontWeight: 700, marginTop: '52px', marginBottom: '16px', letterSpacing: '-0.02em', color: 'var(--text)' },
-          3: { fontFamily: 'Bricolage Grotesque, sans-serif', fontSize: '17px', fontWeight: 700, marginTop: '36px', marginBottom: '12px', letterSpacing: '-0.01em', color: 'var(--text)' },
-          4: { fontFamily: 'DM Mono, monospace', fontSize: '11px', fontWeight: 700, marginTop: '28px', marginBottom: '10px', letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--muted)' },
-          5: { fontFamily: 'DM Mono, monospace', fontSize: '10px', fontWeight: 600, marginTop: '20px', marginBottom: '6px', letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--muted)' },
-        };
-
+        
         const Tag = `h${Math.min(level, 5)}` as 'h2' | 'h3' | 'h4' | 'h5';
         nodes.push(
-          <Tag key={key} id={id} style={{ ...headingStyles[Math.min(level, 5)], scrollMarginTop: '100px' }}>
+          <Tag key={key} id={id} className={`md-h md-h${Math.min(level, 5)}`}>
             {processInline(text, key)}
           </Tag>
         );
@@ -867,7 +802,7 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, headings, 
   }, [content, headingIdMap, basePath, katexReady]);
 
   return (
-    <div style={{ maxWidth: '68ch' }}>
+    <div className="md-body">
       {rendered}
     </div>
   );

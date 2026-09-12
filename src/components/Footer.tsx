@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Github, Linkedin, Mail, Phone } from 'lucide-react';
 import { appConfig } from '../../config/app.config';
 import { asset } from '../lib/asset';
+import ThemeToggle from './ThemeToggle';
 
 const Footer: React.FC = () => {
   const socialLinks = [
@@ -62,6 +63,7 @@ const Footer: React.FC = () => {
 
       <div className="footer-bottom">
         <p>Made with <span aria-label="love">♥</span> by Saurab</p>
+        <ThemeToggle />
         <nav className="footer-mini-nav" aria-label="Footer navigation">
           {[
             { label: 'Work', to: '/work' },
