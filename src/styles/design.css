@@ -5,12 +5,14 @@
   --surface2: oklch(93.5% 0.008 55);
   --border:   oklch(86% 0.008 55);
   --border2:  oklch(78% 0.01 55);
-  --accent:   #ff5c35;
+  --accent:   #ff5c35;   /* decorative only: borders, dots, edges, fills */
+  --accent-text:   #d93d17;  /* 4.33:1 on --bg — accent as body text */
+  --accent-strong: #c73410;  /* 5.35:1 under white — accent as a button fill */
   --accent2:  #ffb84d;
-  --accent3:  #0d9373;
+  --accent3:  #0a7a5f;   /* 5.06:1 on --bg (was #0d9373 at 3.68:1) */
   --text:     oklch(16% 0.012 50);
   --muted:    oklch(50% 0.014 50);
-  --muted2:   oklch(65% 0.01 50);
+  --muted2:   oklch(54% 0.01 50);  /* 4.86:1 on --bg (was 65% at 3.10:1) */
 
   --font-display: 'Instrument Serif', Georgia, serif;
   --font-sans:    'Geist', system-ui, sans-serif;
@@ -34,6 +36,11 @@
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+  /* Don't leave scroll-revealed content stranded at opacity 0. */
+  .reveal, .reveal-left, .tl-entry {
+    opacity: 1 !important;
+    transform: none !important;
+  }
 }
 
 ::selection {
@@ -56,10 +63,15 @@ body {
   font-size: 15px;
   line-height: 1.65;
   overflow-x: hidden;
-  cursor: none;
 }
 
 /* ─── CUSTOM CURSOR ──────────────────────────────────── */
+/* Decoration layered over the real pointer. The system cursor is never hidden:
+   doing so overrides OS cursor-size and high-contrast-cursor settings, and
+   leaves nothing at all if the rAF loop stalls. */
+@media (hover: none), (pointer: coarse), (prefers-reduced-motion: reduce) {
+  #cursor-dot, #cursor-ring { display: none !important; }
+}
 #cursor-dot {
   position: fixed; top: 0; left: 0; z-index: 99999;
   width: 4px; height: 4px;
@@ -142,7 +154,7 @@ body::after {
   display: flex; align-items: center; gap: 8px;
 }
 
-.nav-logo-dot { color: var(--accent); font-size: 18px; line-height: 0; }
+.nav-logo-dot { color: var(--accent-text); font-size: 18px; line-height: 0; }
 
 .nav-links {
   display: flex; gap: 32px; list-style: none;
@@ -207,7 +219,7 @@ body::after {
   transition: color var(--dur-fast) var(--ease-soft);
 }
 
-.mobile-menu a:hover { color: var(--accent); }
+.mobile-menu a:hover { color: var(--accent-text); }
 
 .nav-cta {
   font-family: var(--font-mono);
@@ -215,7 +227,7 @@ body::after {
   letter-spacing: 0.08em; text-transform: uppercase;
   color: oklch(99% 0.003 60);
   background: var(--accent); border: none;
-  padding: 8px 18px; cursor: none;
+  padding: 8px 18px;
   transition: background var(--dur-fast) var(--ease-soft);
   text-decoration: none;
 }
@@ -309,7 +321,7 @@ h1 .h1-intro {
 
 h1 .name {
   font-style: normal;
-  color: var(--accent);
+  color: var(--accent-text);
   display: block;
 }
 
@@ -356,15 +368,15 @@ h1 .name {
 }
 
 .chip:hover {
-  border-color: var(--accent);
-  color: var(--accent);
+  border-color: var(--accent-text);
+  color: var(--accent-text);
   background: rgba(255, 92, 53, 0.04);
 }
 
 .chip--anchor {
   background: rgba(255, 92, 53, 0.06);
   border-color: rgba(255, 92, 53, 0.28);
-  color: var(--accent);
+  color: var(--accent-text);
 }
 
 .hero-actions {
@@ -377,7 +389,7 @@ h1 .name {
   letter-spacing: 0.08em; text-transform: uppercase;
   color: oklch(99% 0.003 60);
   background: var(--accent); border: none;
-  padding: 13px 24px; cursor: none;
+  padding: 13px 24px; cursor: pointer;
   transition: background var(--dur-fast) var(--ease-soft),
               transform var(--dur-med) var(--ease-out);
   text-decoration: none; display: inline-block;
@@ -391,7 +403,7 @@ h1 .name {
   letter-spacing: 0.08em; text-transform: uppercase;
   color: var(--text); background: transparent;
   border: 1px solid var(--border);
-  padding: 13px 24px; cursor: none;
+  padding: 13px 24px; cursor: pointer;
   transition: border-color var(--dur-fast) var(--ease-soft),
               background var(--dur-fast) var(--ease-soft),
               color var(--dur-fast) var(--ease-soft),
@@ -541,7 +553,7 @@ h1 .name {
 .hero-now-text { color: var(--text); }
 
 .hero-now-text a {
-  color: var(--accent);
+  color: var(--accent-text);
   text-decoration: none;
   border-bottom: 1px solid currentColor;
   transition: opacity var(--dur-fast) var(--ease-soft);
@@ -882,7 +894,7 @@ h3 {
 .project-row-num {
   font-family: var(--font-mono);
   font-size: 12px; font-weight: 500;
-  color: var(--accent);
+  color: var(--accent-text);
   letter-spacing: 0.08em;
 }
 
@@ -901,7 +913,7 @@ h3 {
   transition: color var(--dur-med) var(--ease-soft);
 }
 
-.project-row:hover .project-row-name { color: var(--accent); }
+.project-row:hover .project-row-name { color: var(--accent-text); }
 
 .project-row-desc {
   font-family: var(--font-sans);
@@ -952,8 +964,8 @@ h3 {
 }
 
 .project-row:hover .project-row-cta {
-  color: var(--accent);
-  border-color: var(--accent);
+  color: var(--accent-text);
+  border-color: var(--accent-text);
   gap: 14px;
 }
 
@@ -1014,8 +1026,8 @@ h3 {
 .writing-archive-link svg { transition: transform var(--dur-med) var(--ease-out); }
 
 .writing-archive-link:hover {
-  color: var(--accent);
-  border-color: var(--accent);
+  color: var(--accent-text);
+  border-color: var(--accent-text);
   gap: 12px;
 }
 
@@ -1061,7 +1073,7 @@ h3 {
 }
 
 .writing-entry:hover .writing-entry-num {
-  color: var(--accent);
+  color: var(--accent-text);
   transform: translateX(6px);
 }
 
@@ -1083,7 +1095,7 @@ h3 {
   transition: color var(--dur-med) var(--ease-soft);
 }
 
-.writing-entry:hover .writing-entry-title { color: var(--accent); }
+.writing-entry:hover .writing-entry-title { color: var(--accent-text); }
 
 .writing-entry-excerpt {
   font-family: var(--font-sans);
@@ -1128,7 +1140,7 @@ h3 {
 .writing-entry:hover .writing-entry-arrow {
   opacity: 1;
   transform: translateX(0);
-  color: var(--accent);
+  color: var(--accent-text);
 }
 
 @media (max-width: 768px) {
@@ -1215,7 +1227,7 @@ a.contact-link-row:hover { background: var(--surface); }
 }
 
 .field input:focus,
-.field textarea:focus { border-color: var(--accent); }
+.field textarea:focus { border-color: var(--accent-text); }
 
 .field textarea { height: 100px; }
 
@@ -1360,7 +1372,7 @@ a.contact-link-row:hover { background: var(--surface); }
 }
 
 .footer-contact-links a:hover {
-  color: var(--accent);
+  color: var(--accent-text);
 }
 
 .footer-contact-links svg {
@@ -1426,7 +1438,7 @@ a.contact-link-row:hover { background: var(--surface); }
 }
 
 .footer-socials a:hover {
-  border-color: var(--accent);
+  border-color: var(--accent-text);
   background: var(--accent);
   color: oklch(99% 0.003 60);
   transform: translateY(-3px);
@@ -1806,3 +1818,291 @@ a.contact-link-row:hover { background: var(--surface); }
 @media (max-width: 1024px) {
   .blog-toc-sidebar { display: none; }
 }
+
+/* ─── FOCUS ──────────────────────────────────────────── */
+/* There was previously no focus style anywhere except .field textarea:focus,
+   so keyboard users had no visible position on the page at all. */
+:where(a, button, [role="button"], input, textarea, select, summary, [tabindex]):focus-visible {
+  outline: 2px solid var(--accent-text);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* Cards and rows are large targets — inset the ring so it reads as a frame. */
+.project-row:focus-visible,
+.writing-entry:focus-visible,
+.post-pager-link:focus-visible {
+  outline: 2px solid var(--accent-text);
+  outline-offset: -2px;
+}
+
+/* ─── SKIP LINK ──────────────────────────────────────── */
+.skip-link {
+  position: fixed;
+  top: 0; left: 50%;
+  transform: translate(-50%, -120%);
+  z-index: 100000;
+  padding: 12px 24px;
+  background: var(--text);
+  color: var(--bg);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+.skip-link:focus-visible {
+  transform: translate(-50%, 0);
+  outline-offset: -4px;
+}
+
+/* ─── PAGE MESSAGES (404 / error) ────────────────────── */
+.page-message {
+  min-height: 60dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 160px 24px 120px;
+}
+.page-message-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent-text);
+  margin-bottom: 16px;
+}
+.page-message-title {
+  font-family: var(--font-display);
+  font-size: clamp(38px, 6vw, 64px);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  margin-bottom: 20px;
+}
+.page-message-body {
+  color: var(--muted);
+  max-width: 46ch;
+  margin-bottom: 36px;
+}
+.page-message-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+/* ─── DETAIL PAGES (case study / post) ───────────────── */
+.project-detail,
+.blog-post-page {
+  padding-top: 120px;
+  padding-bottom: 96px;
+}
+
+.detail-head {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 40px 48px;
+}
+.detail-head--wide { max-width: 1200px; }
+
+.detail-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+  text-decoration: none;
+  border: 1px solid var(--border);
+  padding: 7px 14px;
+  margin-bottom: 40px;
+  transition: color var(--dur-fast) var(--ease-soft),
+              border-color var(--dur-fast) var(--ease-soft);
+}
+.detail-back:hover {
+  color: var(--text);
+  border-color: var(--border2);
+}
+
+.detail-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--accent-text);
+  margin-bottom: 12px;
+}
+
+.detail-title {
+  font-family: var(--font-display);
+  font-size: clamp(36px, 5vw, 72px);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  margin-bottom: 40px;
+  text-wrap: balance;
+}
+.detail-title--post {
+  font-size: clamp(32px, 4.5vw, 60px);
+  line-height: 1.08;
+  margin-bottom: 24px;
+}
+
+.detail-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px 48px;
+}
+.detail-meta-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+.detail-meta-value {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  color: var(--text);
+}
+.detail-meta-link {
+  color: var(--accent-text);
+  text-decoration: none;
+  transition: opacity var(--dur-fast) var(--ease-soft);
+}
+.detail-meta-link:hover { opacity: 0.7; }
+
+.detail-meta-inline {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.detail-rule {
+  height: 1px;
+  background: var(--border);
+  margin-top: 48px;
+}
+
+.detail-hero-visual-wrap {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 40px 48px;
+}
+.detail-hero-visual {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: var(--surface);
+  border: 1px solid var(--border);
+}
+
+.detail-next {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 64px 40px 0;
+  border-top: 1px solid var(--border);
+  text-align: center;
+}
+.detail-next-title {
+  display: inline-block;
+  font-family: var(--font-display);
+  font-size: clamp(28px, 3.5vw, 40px);
+  line-height: 1.15;
+  color: var(--text);
+  text-decoration: none;
+  margin-bottom: 12px;
+  transition: color var(--dur-fast) var(--ease-soft);
+}
+.detail-next-title:hover { color: var(--accent-text); }
+.detail-next-desc {
+  color: var(--muted);
+  max-width: 52ch;
+  margin: 0 auto 32px;
+}
+.detail-next-all { display: inline-block; }
+
+/* ─── POST FOOTER ────────────────────────────────────── */
+.post-footer {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 48px 40px 0;
+  border-top: 1px solid var(--border);
+}
+
+.post-share {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+.post-share ul {
+  display: flex;
+  gap: 20px;
+  list-style: none;
+}
+.post-share a {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  text-decoration: none;
+  transition: color var(--dur-fast) var(--ease-soft);
+}
+.post-share a:hover { color: var(--text); }
+
+.post-pager {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-top: 48px;
+  padding-top: 32px;
+  border-top: 1px solid var(--border);
+}
+.post-pager-link {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 20px;
+  border: 1px solid var(--border);
+  text-decoration: none;
+  transition: border-color var(--dur-fast) var(--ease-soft);
+}
+.post-pager-link:hover { border-color: var(--border2); }
+.post-pager-link--next { text-align: right; }
+.post-pager-title {
+  font-family: var(--font-display);
+  font-size: 20px;
+  line-height: 1.25;
+  color: var(--text);
+  text-wrap: balance;
+}
+
+@media (max-width: 768px) {
+  .detail-head,
+  .detail-hero-visual-wrap,
+  .detail-next,
+  .post-footer { padding-left: 20px; padding-right: 20px; }
+  .post-pager { grid-template-columns: 1fr; }
+  .post-pager-link--next { text-align: left; }
+}
+
+/* ─── ARTICLE BODY ───────────────────────────────────── */
+/* MarkdownRenderer still inlines most of its styling; paragraphs are pulled out
+   into a class so they can respond to theme and viewport. */
+.md-p {
+  margin: 0 0 1.5em;
+  line-height: 1.75;
+  color: var(--muted);
+  font-size: 16.5px;
+  max-width: 68ch;          /* 65-75 characters is the readable band */
+  text-wrap: pretty;        /* avoids orphaned last words */
+}
+.md-p:last-child { margin-bottom: 0; }

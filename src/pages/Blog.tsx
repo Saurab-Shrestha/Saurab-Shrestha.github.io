@@ -1,20 +1,14 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
-import { BLOGS_CONTENT } from '../data/content';
+import { BLOGS_LIST, isoDate } from '../data/content';
 
 const Blog: React.FC = () => {
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
-
-  const posts = Object.values(BLOGS_CONTENT);
-
   return (
     <section id="blog" className="blog-page">
       <div className="writing-header">
         <div>
           <div className="section-label"><span className="num">04</span> Writing</div>
-          <h2>The engineering<br /><em>journal</em></h2>
+          <h1>The engineering<br /><em>journal</em></h1>
           <p className="writing-intro">
             Notes from the desk. Long-form on the systems I'm building, the dead-ends I learn from, and the parts of the stack I find myself returning to.
           </p>
@@ -22,7 +16,7 @@ const Blog: React.FC = () => {
       </div>
 
       <div className="writing-list">
-        {posts.map((post, i) => (
+        {BLOGS_LIST.map((post, i) => (
           <Link key={post.id} to={`/blog/${post.id}`} className="writing-entry reveal">
             <span className="writing-entry-num">{String(i + 1).padStart(2, '0')}</span>
             <div className="writing-entry-main">
@@ -31,7 +25,10 @@ const Blog: React.FC = () => {
             </div>
             <div className="writing-entry-meta">
               <span className="writing-entry-tag">{post.tag}</span>
-              <span className="writing-entry-time">{post.readTime}</span>
+              <span className="writing-entry-time">
+                <time dateTime={isoDate(post.date)}>{post.date}</time>
+                {' · '}{post.readTime}
+              </span>
             </div>
             <span className="writing-entry-arrow" aria-hidden="true">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">

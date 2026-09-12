@@ -1,3 +1,14 @@
+---
+name: "Home Decor Ecommerce Store"
+tag: "Full-Stack"
+year: "2024"
+role: "Full-Stack Engineer"
+desc: "A headless Django + Stripe storefront with persistent anonymous carts, atomic inventory, and idempotent webhook handling."
+tech: ["Django", "Stripe", "PostgreSQL", "React"]
+github: ""
+thumbnail: "img:assets/homedecor.webp"
+---
+
 # Home Decor Ecommerce Store
 
 A scalable ecommerce application with seamless shopping experience for home decor products.

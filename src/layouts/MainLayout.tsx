@@ -101,6 +101,8 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
 
   return (
     <div className="portfolio-2026 min-h-screen flex flex-col">
+      <a href="#main-content" className="skip-link">Skip to content</a>
+
       {/* CURSOR */}
       <div id="cursor-dot" ref={cursorDotRef}></div>
       <div id="cursor-ring" ref={cursorRingRef}></div>
@@ -110,7 +112,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
 
       <NavBar />
       
-      <main className="flex-1">
+      <main id="main-content" className="flex-1" tabIndex={-1}>
         {children}
       </main>
 

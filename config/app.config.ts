@@ -1,8 +1,11 @@
 export const appConfig = {
   // App Information
-  title: 'Saurab Shrestha Portfolio',
-  description: 'Personal portfolio showcasing skills and projects',
+  title: 'Saurab Shrestha — Software Developer',
+  description: 'Saurab Shrestha — Software Developer specializing in AI/ML and full-stack development from Bhaktapur, Nepal.',
   version: '1.0.0',
+
+  // Canonical origin + base path. Must stay in sync with `base` in vite.config.ts.
+  siteUrl: 'https://saurab-shrestha.github.io/SaurabShrestha/',
 
   // Development Settings
   dev: {
@@ -15,7 +18,7 @@ export const appConfig = {
   // Build Settings
   build: {
     outDir: 'dist',
-    sourcemap: true,
+    sourcemap: false,
     minify: 'terser',
   },
 
@@ -29,18 +32,6 @@ export const appConfig = {
   contact: {
     email: 'shresthasaurab030@gmail.com',
     phone: '+977-9823590047',
-  },
-
-  // Analytics (for future use)
-  analytics: {
-    googleAnalytics: '',
-    hotjar: '',
-  },
-
-  // API Configuration (for future use)
-  api: {
-    baseUrl: 'http://localhost:3000/api',
-    timeout: 10000,
   },
 } as const;
 

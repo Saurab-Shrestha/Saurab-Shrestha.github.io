@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { asset } from '../../lib/asset';
 
 const HeroSection: React.FC = () => {
   const location = useLocation();
@@ -52,7 +53,14 @@ const HeroSection: React.FC = () => {
         <div className="hero-right-inner">
           <div className="photo-frame">
             <div className="photo-inner">
-              <img src="/assets/saurab-me.png" alt="Saurab Shrestha" />
+              <img
+                src={asset('assets/saurab-me.webp')}
+                alt="Saurab Shrestha"
+                width={900}
+                height={901}
+                fetchPriority="high"
+                decoding="async"
+              />
             </div>
             <div className="photo-frame-meta photo-frame-meta--tl">
               <span>Focus</span>

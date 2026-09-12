@@ -1,67 +1,82 @@
-import React, { useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import { BLOGS_CONTENT } from '../data/content';
+import React from 'react';
+import { useParams, Link } from 'react-router-dom';
+import { BLOGS_CONTENT, BLOGS_LIST, isoDate } from '../data/content';
 import BlogLayout from '../components/BlogLayout';
+import NotFound from './NotFound';
 
 const BlogPost: React.FC = () => {
   const { id } = useParams();
+  const post = id ? BLOGS_CONTENT[id] : undefined;
 
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [id]);
+  if (!post) {
+    return <NotFound kind="post" backTo="/blog" backLabel="Browse all writing" />;
+  }
 
-  const post = BLOGS_CONTENT[id || ""] || BLOGS_CONTENT["disease-detection"];
+  const pos = BLOGS_LIST.findIndex(p => p.id === post.id);
+  const prev = BLOGS_LIST[pos - 1]; // newer
+  const next = BLOGS_LIST[pos + 1]; // older
+
+  const shareUrl = typeof window !== 'undefined' ? window.location.href : '';
+  const shareLinks = [
+    {
+      label: 'Twitter / X',
+      href: `https://twitter.com/intent/tweet?text=${encodeURIComponent(post.title)}&url=${encodeURIComponent(shareUrl)}`,
+    },
+    {
+      label: 'LinkedIn',
+      href: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`,
+    },
+  ];
 
   return (
-    <div className="blog-post-page" style={{ paddingTop: '120px', paddingBottom: '96px' }}>
+    <article className="blog-post-page">
 
-      <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 40px 48px' }}>
-        <div className="blog-tag" style={{ marginBottom: '16px' }}>{post.tag}</div>
-        <h1 style={{
-          fontSize: 'clamp(32px, 4.5vw, 60px)',
-          lineHeight: 1.08,
-          fontWeight: 800,
-          letterSpacing: '-0.03em',
-          marginBottom: '24px',
-          fontFamily: 'Bricolage Grotesque, sans-serif',
-        }}>
-          {post.title}
-        </h1>
-        <div style={{ display: 'flex', gap: '12px', alignItems: 'center', fontSize: '13px', color: 'var(--muted)', fontFamily: 'DM Mono, monospace' }}>
-          <span>{post.date}</span>
-          <span>·</span>
+      <div className="detail-head detail-head--wide">
+        <Link to="/blog" className="detail-back">← Back to Writing</Link>
+
+        <p className="blog-tag">{post.tag}</p>
+        <h1 className="detail-title detail-title--post">{post.title}</h1>
+        <div className="detail-meta-inline">
+          <time dateTime={isoDate(post.date)}>{post.date}</time>
+          <span aria-hidden="true">·</span>
           <span>{post.readTime}</span>
         </div>
 
-        <div style={{ height: '1px', background: 'var(--border)', marginTop: '40px' }} />
+        <div className="detail-rule" />
       </div>
 
-      <BlogLayout content={post.markdown} basePath={`/blog/${id}`} />
+      <BlogLayout content={post.markdown} basePath={`/blog/${post.id}`} />
 
-      <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '48px 40px 0', borderTop: '1px solid var(--border)' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
-          <span style={{ fontSize: '11px', letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--muted)', fontFamily: 'DM Mono, monospace' }}>Share</span>
-          <div style={{ display: 'flex', gap: '12px' }}>
-            {[
-              { label: 'Twitter / X', href: `https://twitter.com/intent/tweet?text=${encodeURIComponent(post.title)}&url=${encodeURIComponent(typeof window !== 'undefined' ? window.location.href : '')}` },
-              { label: 'LinkedIn', href: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(typeof window !== 'undefined' ? window.location.href : '')}` },
-            ].map(({ label, href }) => (
-              <a
-                key={label}
-                href={href}
-                target="_blank"
-                rel="noreferrer"
-                style={{ fontSize: '11px', fontFamily: 'DM Mono, monospace', letterSpacing: '0.08em', color: 'var(--muted)', textDecoration: 'none', transition: 'color 220ms cubic-bezier(0.4,0,0.2,1)' }}
-                onMouseEnter={e => (e.currentTarget.style.color = 'var(--text)')}
-                onMouseLeave={e => (e.currentTarget.style.color = 'var(--muted)')}
-              >
-                {label}
-              </a>
+      <footer className="post-footer">
+        <nav className="post-share" aria-label="Share this post">
+          <span className="detail-meta-label">Share</span>
+          <ul>
+            {shareLinks.map(({ label, href }) => (
+              <li key={label}>
+                <a href={href} target="_blank" rel="noreferrer">{label}</a>
+              </li>
             ))}
-          </div>
-        </div>
-      </div>
-    </div>
+          </ul>
+        </nav>
+
+        {(prev || next) && (
+          <nav className="post-pager" aria-label="More posts">
+            {prev ? (
+              <Link to={`/blog/${prev.id}`} className="post-pager-link post-pager-link--prev">
+                <span className="detail-meta-label">← Newer</span>
+                <span className="post-pager-title">{prev.title}</span>
+              </Link>
+            ) : <span />}
+            {next ? (
+              <Link to={`/blog/${next.id}`} className="post-pager-link post-pager-link--next">
+                <span className="detail-meta-label">Older →</span>
+                <span className="post-pager-title">{next.title}</span>
+              </Link>
+            ) : <span />}
+          </nav>
+        )}
+      </footer>
+    </article>
   );
 };
 

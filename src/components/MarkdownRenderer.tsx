@@ -1,4 +1,5 @@
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo, useEffect } from 'react';
+import { loadKatex, hasMath } from '../lib/katex';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Types
@@ -126,8 +127,6 @@ function tokeniseGeneric(code: string, lang: string): Token[][] {
   const commentChar = ['bash', 'sh', 'python', 'py', 'ruby', 'yml', 'yaml'].includes(lang) ? '#'
     : ['css', 'less', 'scss'].includes(lang) ? null
       : '//';
-  const blockComment = ['css', 'less', 'scss', 'js', 'ts', 'javascript', 'typescript', 'java', 'c', 'cpp'].includes(lang);
-
   return code.split('\n').map(line => {
     const tokens: Token[] = [];
     // Full-line comment
@@ -355,22 +354,22 @@ function processInline(text: string, ctxKey: string, basePath?: string): React.R
   // Math Formulae $$...$$ (block) or $...$ (inline)
   parts = parts.flatMap((item, i) => {
     if (typeof item !== 'string') return [item];
-    return item.split(/(\$\$[\s\S]+?\$\$|\$[^\$]+?\$)/g).map((part, j) => {
+    return item.split(/(\$\$[\s\S]+?\$\$|\$[^$]+?\$)/g).map((part, j) => {
       // Block math $$...$$
       if (part.startsWith('$$') && part.endsWith('$$') && part.length > 4) {
         const math = part.slice(2, -2);
         try {
-          const html = (window as any).katex?.renderToString(math, { displayMode: true, throwOnError: false }) || part;
+          const html = window.katex?.renderToString(math, { displayMode: true, throwOnError: false }) || part;
           return <div key={`${ctxKey}-math-block-${i}-${j}`} style={{ margin: '1.5rem 0', overflowX: 'auto', overflowY: 'hidden' }} dangerouslySetInnerHTML={{ __html: html }} />;
-        } catch (e) { return part; }
+        } catch { return part; }
       }
       // Inline math $...$
       if (part.startsWith('$') && part.endsWith('$') && part.length > 2) {
         const math = part.slice(1, -1);
         try {
-          const html = (window as any).katex?.renderToString(math, { displayMode: false, throwOnError: false }) || part;
+          const html = window.katex?.renderToString(math, { displayMode: false, throwOnError: false }) || part;
           return <span key={`${ctxKey}-math-inline-${i}-${j}`} dangerouslySetInnerHTML={{ __html: html }} />;
-        } catch (e) { return part; }
+        } catch { return part; }
       }
       return part;
     });
@@ -596,7 +595,23 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, headings, 
     [headings]
   );
 
+  // KaTeX is fetched only for documents that actually contain math. `katexReady`
+  // flips once it lands, re-running the render so formulas replace raw $...$.
+  const needsMath = useMemo(() => hasMath(content), [content]);
+  const [katexReady, setKatexReady] = useState(() => typeof window !== 'undefined' && !!window.katex);
+
+  useEffect(() => {
+    if (!needsMath || katexReady) return;
+    let cancelled = false;
+    loadKatex()
+      .then(() => { if (!cancelled) setKatexReady(true); })
+      .catch(() => { /* formulas stay as source text */ });
+    return () => { cancelled = true; };
+  }, [needsMath, katexReady]);
+
   const rendered = useMemo(() => {
+    // Re-render once KaTeX lands; processInline reads window.katex at call time.
+    void katexReady;
     const lines = content.split('\n');
     const nodes: React.ReactNode[] = [];
 
@@ -605,6 +620,7 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, headings, 
     let codeSnippet = '';
 
     // List accumulator
+    let paraLines: string[] = [];
     let listItems: ListItem[] = [];
     let listOrdered = false;
 
@@ -710,7 +726,22 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, headings, 
       tableLines = [];
     };
 
+    // Markdown joins consecutive non-blank lines into one paragraph; only a
+    // blank line starts a new one. Emitting a <p> per source line made every
+    // hard-wrapped document render as a stack of one-line paragraphs.
+    const flushPara = (key: string) => {
+      if (paraLines.length === 0) return;
+      const text = paraLines.join(' ');
+      paraLines = [];
+      nodes.push(
+        <p key={key + '-p'} className="md-p">
+          {processInline(text, key + '-p', basePath)}
+        </p>
+      );
+    };
+
     const flushAll = (key: string) => {
+      flushPara(key);
       flushList(key + '-l');
       flushBlockquote(key + '-bq');
       flushTable(key + '-t');
@@ -823,24 +854,17 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, headings, 
       }
 
       // ── Paragraph ────────────────────────────────────────────────────────
-      flushAll(key);
-      nodes.push(
-        <p key={key} style={{
-          marginBottom: '1.5em',
-          marginTop: '0',
-          lineHeight: 1.9,
-          color: 'var(--muted)',
-          fontSize: '16px',
-        }}>
-          {processInline(rawLine, key, basePath)}
-        </p>
-      );
+      // Not flushAll: consecutive lines accumulate into a single paragraph.
+      flushList(key + '-l');
+      flushBlockquote(key + '-bq');
+      flushTable(key + '-t');
+      paraLines.push(rawLine.trim());
     });
 
     flushAll('end');
 
     return nodes;
-  }, [content, headingIdMap]);
+  }, [content, headingIdMap, basePath, katexReady]);
 
   return (
     <div style={{ maxWidth: '68ch' }}>

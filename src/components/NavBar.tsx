@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { asset } from '../lib/asset';
 
 const NavBar: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -15,8 +16,24 @@ const NavBar: React.FC = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+  const toggleMenu = () => setIsMenuOpen(open => !open);
   const closeMenu = () => setIsMenuOpen(false);
+
+  // Escape closes the menu; body scroll is locked while it's open so the page
+  // behind doesn't slide around under the overlay.
+  useEffect(() => {
+    if (!isMenuOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setIsMenuOpen(false);
+    };
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      document.removeEventListener('keydown', onKey);
+    };
+  }, [isMenuOpen]);
 
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, target: string) => {
     e.preventDefault();
@@ -46,21 +63,32 @@ const NavBar: React.FC = () => {
           <li><a href="#contact" onClick={(e) => handleNavClick(e, '#contact')}>Contact</a></li>
         </ul>
         <div className="nav-right">
-          <a href="/assets/Saurab-Shrestha-CV.pdf" target="_blank" rel="noopener noreferrer" className="nav-cta">Resume →</a>
-          <button className={`hamburger ${isMenuOpen ? 'open' : ''}`} id="hamburger" aria-label="Menu" onClick={toggleMenu}>
+          <a href={asset('assets/Saurab-Shrestha-CV.pdf')} target="_blank" rel="noopener noreferrer" className="nav-cta">Resume →</a>
+          <button
+            className={`hamburger ${isMenuOpen ? 'open' : ''}`}
+            id="hamburger"
+            type="button"
+            aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
+            aria-expanded={isMenuOpen}
+            aria-controls="mobile-menu"
+            onClick={toggleMenu}
+          >
             <span></span><span></span><span></span>
           </button>
         </div>
       </nav>
 
       {/* MOBILE MENU */}
-      <div className={`mobile-menu ${isMenuOpen ? 'open' : ''}`} id="mobile-menu">
+      <div
+        className={`mobile-menu ${isMenuOpen ? 'open' : ''}`}
+        id="mobile-menu"
+      >
         <a href="#about" className="mobile-link" onClick={(e) => handleNavClick(e, '#about')}>About</a>
         <a href="#timeline" className="mobile-link" onClick={(e) => handleNavClick(e, '#timeline')}>Journey</a>
         <Link to="/work" className="mobile-link" onClick={closeMenu}>Work</Link>
         <Link to="/blog" className="mobile-link" onClick={closeMenu}>Blog</Link>
         <a href="#contact" className="mobile-link" onClick={(e) => handleNavClick(e, '#contact')}>Contact</a>
-        <a href="/assets/Saurab-Shrestha-CV.pdf" target="_blank" rel="noopener noreferrer" className="mobile-link" style={{ color: 'var(--accent)' }}>Resume →</a>
+        <a href={asset('assets/Saurab-Shrestha-CV.pdf')} target="_blank" rel="noopener noreferrer" className="mobile-link" style={{ color: 'var(--accent)' }}>Resume →</a>
       </div>
     </>
   );

@@ -1,6 +1,12 @@
-import { parseMarkdown } from '../utils/markdown';
+import { parseMarkdown, asText, asList } from '../utils/markdown';
 
 const blogFiles = import.meta.glob('./blog/**/*.md', {
+  eager: true,
+  query: '?raw',
+  import: 'default',
+}) as Record<string, string>;
+
+const projectFiles = import.meta.glob('./projects/*.md', {
   eager: true,
   query: '?raw',
   import: 'default',
@@ -13,8 +19,10 @@ export interface ProjectContent {
   year: string;
   role: string;
   desc: string;
-  bg: string;
   tech: string[];
+  github: string;
+  /** Rendered by <ProjectThumbnail>: "svg:<key>" or "img:<public path>". */
+  thumbnail: string;
   markdown: string;
 }
 
@@ -28,88 +36,39 @@ export interface BlogContent {
   markdown: string;
 }
 
-export const PROJECTS_CONTENT: Record<string, ProjectContent> = {
-  "neuralnoodle": {
-    id: "neuralnoodle",
-    name: "NeuralNoodle",
-    tag: "AI Research Systems",
-    year: "2025",
-    role: "Architect & Engineer",
-    desc: "An agentic RAG system built for deep technical investigation — stateful, hypothesis-driven, and designed to reach Saturation.",
-    bg: "neuralnoodle-bg",
-    tech: ["LangGraph", "Python", "Qdrant", "FastAPI", "LlamaIndex"],
-    markdown: `
-# NeuralNoodle
+/**
+ * Display order for the work list. Projects not named here still resolve by URL
+ * but won't be listed, so adding a .md file alone never silently changes the page.
+ */
+const PROJECT_ORDER = ['neuralnoodle', 'hdes', 'tdd', 'svufe'];
 
-Standard RAG answers questions. NeuralNoodle investigates them.
+export const PROJECTS_CONTENT: Record<string, ProjectContent> = Object.entries(projectFiles).reduce(
+  (acc, [path, rawContent]) => {
+    const slug = path.split('/').pop()!.replace(/\.md$/, '');
+    const { metadata, content } = parseMarkdown(rawContent);
 
-## The Problem
+    acc[slug] = {
+      id: slug,
+      name: asText(metadata.name, slug),
+      tag: asText(metadata.tag, 'Project'),
+      year: asText(metadata.year),
+      role: asText(metadata.role),
+      desc: asText(metadata.desc),
+      tech: asList(metadata.tech),
+      github: asText(metadata.github),
+      thumbnail: asText(metadata.thumbnail),
+      markdown: content,
+    };
 
-I hit a wall with standard RAG while trying to find contradictions across 40 transformer architecture papers. A retrieval-augmented system returns the three most similar chunks to your query. It can't hold a hypothesis across 40 documents, track what contradicts what, or tell you when it's actually done looking.
-
-The gap is fundamental: standard RAG is stateless. Every query starts from zero. There's no memory of what was already found, no model of what would count as a complete answer, no way to distinguish "I found nothing" from "nothing exists."
-
-For a researcher asking "what do these papers disagree about?", that's not a limitation — it's a non-starter.
-
-## The Approach
-
-NeuralNoodle is built around a different abstraction: the **Investigation**.
-
-An Investigation is a stateful, long-running session that groups multiple Queries under shared Hypotheses. When you start an Investigation, you define what you're trying to confirm or refute. The system then runs Queries, extracts Evidence from retrieved Chunks, and maps each piece of Evidence to your Hypotheses — either supporting or contradicting them.
-
-The core inference engine is the **Evidence Graph**: a directed structure where nodes are Evidence claims and Hypotheses, and edges carry a polarity (supports / contradicts). As an Investigation runs, the graph grows. The agent uses it to decide what to query next — steering toward gaps, away from already-saturated areas.
-
-An Investigation reaches **Saturation** when successive Queries yield no new Evidence for any active Hypothesis. That's the termination condition. Not a timeout, not a turn limit — epistemic completion.
-
-## Key Components
-
-**Investigation Sentry** — The security gateway that resolves research resources (Collections, Documents) while enforcing strict multi-tenant ownership. Every tool call goes through it before touching the vector store.
-
-**Precision Filter** — Transforms raw retrieved Chunks into high-precision Evidence by handling deduplication, semantic reranking, and confidence thresholding. A chunk that's 70% similar to an existing Evidence claim doesn't produce a new node; it strengthens the existing one.
-
-**Research Toolbelt** — A modular, registry-based assembly of the agent's research capabilities. Tools are first-class objects with defined input/output contracts, making the agent's reasoning auditable: you can inspect exactly which tool was called, with what arguments, and what Evidence it produced.
-
-**Vector Silo** — An abstraction over Qdrant collections that captures collection context for simplified search and ingestion. Switching vector backends doesn't ripple through the agent logic.
-
-## What's Different
-
-The language is intentional. "Investigation" instead of "chat session" because the semantics are different: sessions are ephemeral, Investigations are stateful case files. "Saturation" instead of "done" because it's a specific epistemic state, not a timeout. "Evidence" instead of "result" because the unit of output is a verifiable claim, not a string.
-
-The architecture enforces these distinctions. You can't accidentally skip the Precision Filter. The Evidence Graph is the source of truth, not the raw LLM output.
-
-## Status
-
-Active prototype. The LangGraph pipeline, Evidence Graph, and Precision Filter are implemented. The Research Toolbelt and Investigation Sentry are in progress. The goal is a system where a researcher can upload 40 papers, ask a question, and get back a structured Evidence Graph — not a summary, an argument.
-`
+    return acc;
   },
-  "tdd": {
-    id: "tdd",
-    name: "Tomato Disease Detection",
-    tag: "Computer Vision / AI",
-    year: "2023",
-    role: "ML Engineer",
-    desc: "An AI-powered app assisting farmers by detecting diseases in tomato plants.",
-    bg: "tdd-bg",
-    tech: ["Python", "TensorFlow", "OpenCV", "Flask"],
-    markdown: `
-# Tomato Disease Detection
+  {} as Record<string, ProjectContent>
+);
 
-An AI-powered app assisting farmers by detecting diseases in tomato plants.
-
-## The Problem
-In rural Nepal, crop diseases often go undiagnosed until it's too late. Farmers lack immediate access to agricultural experts. The goal was to build a mobile-friendly tool that could accurately identify diseases from a single leaf photograph with minimal latency.
-
-## The Solution
-I developed a vision pipeline utilizing deep learning. The core is a **Convolutional Neural Network (CNN)** trained on the PlantVillage dataset augmented with local disease samples. 
-
-## Key Implementation Details
-- **Classification of 10 distinct tomato leaf status** (late blight, mold, etc.)
-- **High-performance inference engine** optimized for CPU latency
-- **Quantization-Aware Training** to compress model from 100MB+ to under 15MB
-- **Local data caching** for intermittent network connectivity
-`
-  }
-};
+/** Projects in display order, skipping any listed slug with no matching file. */
+export const PROJECTS_LIST: ProjectContent[] = PROJECT_ORDER
+  .map(id => PROJECTS_CONTENT[id])
+  .filter(Boolean);
 
 // Process dynamically imported blog files
 export const BLOGS_CONTENT: Record<string, BlogContent> = Object.entries(blogFiles).reduce(
@@ -122,11 +81,11 @@ export const BLOGS_CONTENT: Record<string, BlogContent> = Object.entries(blogFil
 
     acc[slug] = {
       id: slug,
-      tag: metadata.tag || 'Blog',
-      title: metadata.title || 'Untitled Post',
-      date: metadata.date || 'Unknown Date',
-      readTime: metadata.readTime || '5 min read',
-      excerpt: metadata.excerpt || '',
+      tag: asText(metadata.tag, 'Blog'),
+      title: asText(metadata.title, 'Untitled Post'),
+      date: asText(metadata.date, 'Unknown Date'),
+      readTime: asText(metadata.readTime, '5 min read'),
+      excerpt: asText(metadata.excerpt),
       markdown: content,
     };
 
@@ -135,3 +94,17 @@ export const BLOGS_CONTENT: Record<string, BlogContent> = Object.entries(blogFil
   {} as Record<string, BlogContent>
 );
 
+
+/**
+ * Posts newest first. The raw glob yields alphabetical-by-path order, which made
+ * the numbering on /blog arbitrary.
+ */
+export const BLOGS_LIST: BlogContent[] = Object.values(BLOGS_CONTENT).sort(
+  (a, b) => (Date.parse(b.date) || 0) - (Date.parse(a.date) || 0)
+);
+
+/** ISO date for <time dateTime>, or undefined when the frontmatter date is unparseable. */
+export const isoDate = (date: string): string | undefined => {
+  const t = Date.parse(date);
+  return Number.isNaN(t) ? undefined : new Date(t).toISOString().slice(0, 10);
+};
