@@ -616,9 +616,18 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, headings, 
 
     const flushBlockquote = (key: string) => {
       if (bqLines.length === 0) return;
+
+      // A quote opening with "**Note:**" / "**Citation:**" is a callout, not a
+      // quotation — the label becomes a pill and stops being inline bold.
+      const [first, ...rest] = bqLines;
+      const labelled = first.match(/^\*\*([^*]{1,24}?):\*\*\s*(.*)$/);
+      const label = labelled?.[1] ?? null;
+      const lines = labelled ? [labelled[2], ...rest].filter(Boolean) : bqLines;
+
       nodes.push(
-        <blockquote key={key} className="md-quote">
-          {bqLines.map((line, i) => (
+        <blockquote key={key} className={`md-quote ${label ? 'md-quote--callout' : ''}`}>
+          {label && <p className="md-quote-label">{label}</p>}
+          {lines.map((line, i) => (
             <p key={i}>
               {processInline(line, `bq-${key}-${i}`, basePath)}
             </p>
@@ -754,6 +763,9 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, headings, 
         nodes.push(
           <Tag key={key} id={id} className={`md-h md-h${Math.min(level, 5)}`}>
             {processInline(text, key)}
+            {/* Deep link to the section. Hidden until hover/focus so it doesn't
+                clutter the heading, but reachable by keyboard. */}
+            <a href={`#${id}`} className="md-h-anchor" aria-label={`Link to ${text}`}>#</a>
           </Tag>
         );
         return;

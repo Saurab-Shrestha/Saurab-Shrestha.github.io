@@ -96,9 +96,10 @@ const TableOfContents: React.FC<TableOfContentsProps> = ({
   headings,
   title = 'On this page',
 }) => {
-  // H2s plus their H3s — the previous H2-only filter hid every subsection.
+  // Top-level sections only. Including H3s produced 53 entries on the longest
+  // post — a wall of links rather than a map of the article.
   const items = useMemo(
-    () => headings.filter(h => Number(h.level) <= 3),
+    () => headings.filter(h => Number(h.level) === 2),
     [headings]
   );
 
@@ -125,29 +126,24 @@ const TableOfContents: React.FC<TableOfContentsProps> = ({
 
   if (items.length === 0) return null;
 
-  let h2Count = 0;
-
   return (
     <aside className="toc" aria-label="Table of contents">
       <div className="toc-card">
         <p className="toc-title">{title}</p>
 
         <nav className="toc-nav" aria-label="Page sections">
-          {items.map((h) => {
+          {items.map((h, i) => {
             const isActive = activeId === h.id;
-            const isSub = Number(h.level) === 3;
-            if (!isSub) h2Count += 1;
-
             return (
               <a
                 key={h.id}
                 href={`#${h.id}`}
                 onClick={(e) => handleClick(e, h.id)}
                 aria-current={isActive ? 'location' : undefined}
-                className={`toc-link ${isSub ? 'toc-link--sub' : ''} ${isActive ? 'is-active' : ''}`}
+                className={`toc-link ${isActive ? 'is-active' : ''}`}
               >
                 <span className="toc-num" aria-hidden="true">
-                  {isSub ? '' : String(h2Count).padStart(2, '0')}
+                  {String(i + 1).padStart(2, '0')}
                 </span>
                 <span className="toc-text">{h.text}</span>
               </a>

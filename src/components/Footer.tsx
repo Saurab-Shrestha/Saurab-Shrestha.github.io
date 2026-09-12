@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowUpRight, ArrowUp } from 'lucide-react';
+import { ArrowUpRight } from 'lucide-react';
 import { appConfig } from '../../config/app.config';
 import { asset } from '../lib/asset';
 import ThemeToggle from './ThemeToggle';
@@ -24,10 +24,6 @@ const Footer: React.FC = () => {
     const timer = setInterval(updateTime, 1000 * 30);
     return () => clearInterval(timer);
   }, []);
-
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
 
   return (
     <footer className="site-footer">
@@ -109,17 +105,7 @@ const Footer: React.FC = () => {
         <p className="footer-copy">
           &copy; {new Date().getFullYear()} Saurab Shrestha. All rights reserved.
         </p>
-        <div className="footer-bottom-actions">
-          <ThemeToggle />
-          <button
-            type="button"
-            onClick={scrollToTop}
-            className="footer-back-to-top"
-            aria-label="Back to top of page"
-          >
-            Top <ArrowUp size={13} aria-hidden="true" />
-          </button>
-        </div>
+        <ThemeToggle />
       </div>
     </footer>
   );

@@ -1,12 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { BLOGS_CONTENT, BLOGS_LIST, isoDate } from '../data/content';
+import { asset } from '../lib/asset';
 import BlogLayout from '../components/BlogLayout';
 import NotFound from './NotFound';
 
 const BlogPost: React.FC = () => {
   const { id } = useParams();
   const post = id ? BLOGS_CONTENT[id] : undefined;
+  const [copied, setCopied] = useState(false);
 
   if (!post) {
     return <NotFound kind="post" backTo="/blog" backLabel="Browse all writing" />;
@@ -28,18 +30,39 @@ const BlogPost: React.FC = () => {
     },
   ];
 
+  const handleCopyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      // ignore
+    }
+  };
+
   return (
     <article className="blog-post-page">
-
       <div className="detail-head detail-head--wide">
-        <Link to="/blog" className="detail-back">← Back to Writing</Link>
+        <div className="blog-breadcrumb">
+          <Link to="/blog" className="blog-breadcrumb-link">← Writing</Link>
+          <span className="blog-breadcrumb-sep" aria-hidden="true">/</span>
+          <span className="blog-tag-pill">{post.tag}</span>
+        </div>
 
-        <p className="blog-tag">{post.tag}</p>
         <h1 className="detail-title detail-title--post">{post.title}</h1>
         <div className="detail-meta-inline">
           <time dateTime={isoDate(post.date)}>{post.date}</time>
           <span aria-hidden="true">·</span>
           <span>{post.readTime}</span>
+          <span aria-hidden="true">·</span>
+          <button
+            type="button"
+            onClick={handleCopyLink}
+            className="blog-copy-link-btn"
+            aria-label="Copy link to article"
+          >
+            {copied ? 'Copied ✓' : 'Share link'}
+          </button>
         </div>
 
         <div className="detail-rule" />
@@ -48,8 +71,27 @@ const BlogPost: React.FC = () => {
       <BlogLayout content={post.markdown} basePath={`/blog/${post.id}`} />
 
       <footer className="post-footer">
+        <div className="post-author-card">
+          <img
+            src={asset('assets/saurab-me-avatar.webp')}
+            alt="Saurab Shrestha"
+            className="post-author-avatar"
+            width={60}
+            height={60}
+            loading="lazy"
+            decoding="async"
+          />
+          <div className="post-author-info">
+            <p className="post-author-name">Written by Saurab Shrestha</p>
+            <p className="post-author-role">AI / ML Engineer · Bhaktapur, Nepal</p>
+            <p className="post-author-bio">
+              Building agentic research systems, stateful AI pipelines, and resilient full-stack applications.
+            </p>
+          </div>
+        </div>
+
         <nav className="post-share" aria-label="Share this post">
-          <span className="detail-meta-label">Share</span>
+          <span className="detail-meta-label">Share this post</span>
           <ul>
             {shareLinks.map(({ label, href }) => (
               <li key={label}>

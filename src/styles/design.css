@@ -1101,9 +1101,11 @@ h3 {
   transition: transform 1100ms var(--ease-out);
 }
 
-.project-row:hover .project-row-visual svg,
 @media (hover: hover) and (pointer: fine) {
-  .project-row:hover .project-row-visual img { transform: scale(1.03); }
+  .project-row:hover .project-row-visual svg,
+  .project-row:hover .project-row-visual img {
+    transform: scale(1.03);
+  }
 }
 
 .project-row-content {
@@ -1676,43 +1678,79 @@ a.contact-link-row:hover { background: var(--surface); }
   margin: 0;
 }
 
-.footer-bottom-actions {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.footer-back-to-top {
+/* ─── FLOATING SCROLL TO TOP ────────────────────────── */
+.scroll-to-top-btn {
+  position: fixed;
+  bottom: clamp(20px, 3vw, 32px);
+  right: clamp(20px, 3vw, 32px);
+  z-index: var(--z-nav);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 5px 11px;
-  font-family: var(--font-mono);
-  font-size: 10.5px;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+  justify-content: center;
   color: var(--text);
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 6px;
+  background: color-mix(in oklab, var(--surface) 82%, transparent);
+  border: 1px solid var(--border2);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.28), 0 2px 6px rgba(0, 0, 0, 0.1);
   cursor: pointer;
-  transition: border-color var(--dur-fast) var(--ease-soft),
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(14px) scale(0.9);
+  transition: opacity var(--dur-med) var(--ease-soft),
+              visibility var(--dur-med) var(--ease-soft),
+              transform var(--dur-med) var(--ease-out),
               background var(--dur-fast) var(--ease-soft),
-              color var(--dur-fast) var(--ease-soft);
+              border-color var(--dur-fast) var(--ease-soft),
+              color var(--dur-fast) var(--ease-soft),
+              box-shadow var(--dur-fast) var(--ease-soft);
 }
 
-.footer-back-to-top:hover {
-  border-color: var(--border2);
-  background: var(--surface2);
-  color: var(--accent-text);
+.scroll-to-top-btn.is-visible {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateY(0) scale(1);
 }
 
-.footer-back-to-top svg {
+.scroll-to-top-btn svg {
+  width: 18px;
+  height: 18px;
   transition: transform var(--dur-fast) var(--ease-out);
 }
 
-.footer-back-to-top:hover svg {
-  transform: translateY(-2px);
+@media (hover: hover) and (pointer: fine) {
+  .scroll-to-top-btn:hover {
+    background: var(--surface2);
+    border-color: var(--accent);
+    color: var(--accent-text);
+    transform: translateY(-3px) scale(1.04);
+    box-shadow: 0 12px 28px -4px rgba(0, 0, 0, 0.38),
+                0 0 0 1px color-mix(in oklab, var(--accent) 35%, transparent);
+  }
+
+  .scroll-to-top-btn:hover svg {
+    transform: translateY(-2px);
+  }
+}
+
+.scroll-to-top-btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--accent) 50%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-to-top-btn {
+    transition: opacity var(--dur-fast) linear, visibility var(--dur-fast) linear;
+    transform: none !important;
+  }
+  .scroll-to-top-btn:hover {
+    transform: none !important;
+  }
 }
 
 @media (max-width: 820px) {
@@ -2275,20 +2313,36 @@ a.contact-link-row:hover { background: var(--surface); }
 /* ── Blockquote ── */
 .md-quote {
   position: relative;
-  background: var(--surface);
+  background: color-mix(in oklab, var(--accent) 5%, var(--surface));
   border: 1px solid var(--border);
-  border-left: 2px solid var(--accent);
+  border-left: 3px solid var(--accent);
   padding: 16px 20px;
   margin: 28px 0;
 }
+
+/* Blanket italics made citations and inline code inside a quote harder to read.
+   Upright text, with the tint and rule doing the work of setting it apart. */
 .md-quote p {
   color: var(--muted);
   font-size: 15px;
   line-height: 1.75;
-  font-style: italic;
-  margin: 4px 0 0;
+  margin: 6px 0 0;
 }
 .md-quote p:first-child { margin-top: 0; }
+.md-quote .md-strong { color: var(--text); }
+
+.md-quote-label {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent-text);
+  border: 1px solid color-mix(in oklab, var(--accent) 35%, transparent);
+  padding: 3px 8px;
+  margin-bottom: 10px !important;
+}
 
 /* ── Table ── */
 .md-table-wrap {
@@ -2392,15 +2446,22 @@ a.contact-link-row:hover { background: var(--surface); }
   display: flex;
   align-items: flex-start;
   gap: 12px;
-  padding: 9px 20px;
+  padding: 8px 20px 8px 18px;
   text-decoration: none;
-  font-family: var(--font-mono);
-  transition: background var(--dur-fast) var(--ease-soft);
+  /* Monospace suited the numbers but made wrapped prose titles jagged and hard
+     to scan; it now applies only to .toc-num. */
+  border-left: 2px solid transparent;
+  transition: border-color var(--dur-fast) var(--ease-soft),
+              color var(--dur-fast) var(--ease-soft);
 }
-.toc-link--sub { padding-left: 44px; }
-.toc-link.is-active { background: var(--surface2); }
+
+
+/* A full background slab looked clumsy behind a heading that wrapped to three
+   lines. An accent rule marks position without boxing the text. */
+.toc-link.is-active { border-left-color: var(--accent); }
 
 .toc-num {
+  font-family: var(--font-mono);
   font-size: 11px;
   line-height: 1.6;
   flex-shrink: 0;
@@ -2411,15 +2472,16 @@ a.contact-link-row:hover { background: var(--surface); }
 .toc-link.is-active .toc-num { color: var(--muted); }
 
 .toc-text {
+  font-family: var(--font-sans);
   font-size: 13px;
-  line-height: 1.55;
+  line-height: 1.45;
   color: var(--muted);
+  text-wrap: pretty;
   transition: color var(--dur-fast) var(--ease-soft);
 }
-.toc-link--sub .toc-text { font-size: 12.5px; }
 .toc-link.is-active .toc-text {
   color: var(--text);
-  font-weight: 600;
+  font-weight: 500;
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -3055,3 +3117,128 @@ a.contact-link-row:hover { background: var(--surface); }
 /* ─── CONTACT SURFACE ────────────────────────────────── */
 #contact { position: relative; }
 #contact > .contact-inner { position: relative; z-index: var(--z-base); }
+
+/* ─── HEADING ANCHORS ────────────────────────────────── */
+/* Deep links for readers who want to point at a section. Hidden until the
+   heading is hovered or the link itself is focused, so it never clutters. */
+.md-h { position: relative; }
+
+.md-h-anchor {
+  margin-left: 10px;
+  font-family: var(--font-mono);
+  font-weight: 400;
+  font-size: 0.7em;
+  color: var(--muted2);
+  text-decoration: none;
+  opacity: 0;
+  transition: opacity var(--dur-fast) var(--ease-soft),
+              color var(--dur-fast) var(--ease-soft);
+}
+.md-h-anchor:hover { color: var(--accent-text); }
+.md-h-anchor:focus-visible { opacity: 1; }
+
+@media (hover: hover) and (pointer: fine) {
+  .md-h:hover .md-h-anchor { opacity: 1; }
+}
+/* Touch has no hover, so the anchor would be unreachable — show it faintly. */
+@media (hover: none) {
+  .md-h-anchor { opacity: 0.4; }
+}
+
+/* ─── POST HEADER ────────────────────────────────────── */
+.blog-breadcrumb {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 28px;
+}
+
+.blog-breadcrumb-link {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  text-decoration: none;
+  transition: color var(--dur-fast) var(--ease-soft);
+}
+.blog-breadcrumb-link:hover { color: var(--text); }
+
+.blog-breadcrumb-sep {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--muted2);
+}
+
+.blog-tag-pill {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  border: 1px solid var(--border);
+  padding: 4px 9px;
+}
+
+.blog-copy-link-btn {
+  font-family: var(--font-mono);
+  font-size: inherit;
+  letter-spacing: inherit;
+  color: var(--accent-text);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: opacity var(--dur-fast) var(--ease-soft);
+}
+.blog-copy-link-btn:hover { opacity: 0.7; }
+
+/* ─── AUTHOR CARD ────────────────────────────────────── */
+.post-author-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+  padding: 22px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  margin-bottom: 32px;
+}
+
+.post-author-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  object-fit: cover;
+  background: var(--surface2);
+}
+
+.post-author-info { min-width: 0; }
+
+.post-author-name {
+  font-family: var(--font-sans);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 3px;
+}
+
+.post-author-role {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--accent-text);
+  margin-bottom: 8px;
+}
+
+.post-author-bio {
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--muted);
+  max-width: 56ch;
+  text-wrap: pretty;
+}
+
+@media (max-width: 640px) {
+  .post-author-card { flex-direction: column; gap: 14px; padding: 18px; }
+}

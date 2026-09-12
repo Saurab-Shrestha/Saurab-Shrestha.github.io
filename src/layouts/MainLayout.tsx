@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import NavBar from '../components/NavBar';
 import Footer from '../components/Footer';
+import ScrollToTop from '../components/ScrollToTop';
 import { useScrollReveal } from '../hooks/useScrollReveal';
 
 interface MainLayoutProps {
@@ -103,6 +104,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
       </main>
 
       <Footer />
+      <ScrollToTop />
     </div>
   );
 };

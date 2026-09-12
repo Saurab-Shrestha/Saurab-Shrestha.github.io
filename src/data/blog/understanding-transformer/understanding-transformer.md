@@ -6,9 +6,11 @@ readTime: "30 min read"
 excerpt: "A deep dive into the Transformer architecture, explaining self-attention, multi-head attention, and the encoder-decoder stacks with PyTorch implementation."
 ---
 # Understanding Transformers
-### A Beginner-Friendly, Step-by-Step Guide — With Real Examples
 
-> *Based on "Attention Is All You Need" — Vaswani et al., 2017*
+*A beginner-friendly, step-by-step guide — with real PyTorch examples.*
+
+> **Citation:** Based on *"Attention Is All You Need"* — Vaswani et al., 2017
+
 ---
 
 ## What Is a Transformer?
@@ -42,13 +44,15 @@ This leads to two major problems:
 
 A Transformer is like giving every page in the book a set of sticky notes that say: *"Here are the most relevant parts of the entire book for me."* Each page can directly reference any other page—and assign different levels of importance to them—all at the same time.
 
-| Model | Analogy | Key Problem |
-|-------|---------|-------------|
-| **RNN** | Librarian reading one page at a time, keeping brief notes | Slow + weak long-range memory |
-| **LSTM** | Same librarian, but with a better notepad | Still sequential, still slow |
-| **Transformer** | Every page connects to every other page at once | Higher memory usage, but far more efficient |
+
+| Model           | Analogy                                                   | Key Problem                                 |
+| ----------------- | ----------------------------------------------------------- | --------------------------------------------- |
+| **RNN**         | Librarian reading one page at a time, keeping brief notes | Slow + weak long-range memory               |
+| **LSTM**        | Same librarian, but with a better notepad                 | Still sequential, still slow                |
+| **Transformer** | Every page connects to every other page at once           | Higher memory usage, but far more efficient |
 
 > **The core advantage:** Transformers process entire sequences in parallel, enabling efficient GPU training and much stronger modeling of long-range relationships.
+
 ---
 
 ## The Big Picture
@@ -56,6 +60,7 @@ A Transformer is like giving every page in the book a set of sticky notes that s
 ### Analogy: A Professional Translation Team
 
 Think of the Transformer as a professional translation agency with two departments:
+
 - **The Encoder** is the *reading team*. They read the original French letter and create a rich, contextual representation of the entire sentence—not just word-by-word, but capturing meaning and nuance.
 - **The Decoder** is the *writing team*. They take that representation and produce the English translation, one word at a time, while consulting the reading team's notes as needed.
 
@@ -65,17 +70,20 @@ Both the Encoder and Decoder are made of **stacked layers**—typically 6. Each 
 
 ### What Each Part Does
 
-| Component | Team Role | What It Does |
-|-----------|-----------|--------------|
-| **Token Embedding** | Vocabulary lookup | Converts each word into a numeric vector |
-| **Positional Encoding** | Word order tracker | Adds "I am word #3" information to each token |
-| **Self-Attention** | Context analyzer | Determines which tokens influence each other and by how much |
-| **Feed-Forward Network** | Individual thinker | Processes each token's representation independently |
-| **Layer Norm** | Quality checker | Stabilizes values for smoother training |
-| **Cross-Attention** | Bridge between teams | Lets the decoder consult the encoder's representations |
+
+| Component                | Team Role            | What It Does                                                 |
+| -------------------------- | ---------------------- | -------------------------------------------------------------- |
+| **Token Embedding**      | Vocabulary lookup    | Converts each word into a numeric vector                     |
+| **Positional Encoding**  | Word order tracker   | Adds "I am word#3" information to each token                 |
+| **Self-Attention**       | Context analyzer     | Determines which tokens influence each other and by how much |
+| **Feed-Forward Network** | Individual thinker   | Processes each token's representation independently          |
+| **Layer Norm**           | Quality checker      | Stabilizes values for smoother training                      |
+| **Cross-Attention**      | Bridge between teams | Lets the decoder consult the encoder's representations       |
+
 ---
 
 ## Step 0 — Tokenization
+
 ### Breaking Text Into Model-Readable Pieces
 
 > **TL;DR:** Raw text → integer IDs. The model never sees words directly.
@@ -89,11 +97,13 @@ A Transformer doesn't read words — it reads **tokens**, which are small chunks
 - Common words like `"the"` → `["the"]` — one token
 
 Each token gets mapped to an integer ID:
+
 ```
 "The cat sat" → [464, 3797, 3332]
 ```
 
 These IDs are the actual input to the model — **not the words themselves**. This matters because:
+
 1. We can represent any word, even ones not in training data, by splitting into subwords
 2. The vocabulary stays manageable (~50,000 tokens vs. millions of possible words)
 3. The model learns patterns at the subword level, which helps with morphology
@@ -101,16 +111,19 @@ These IDs are the actual input to the model — **not the words themselves**. Th
 ---
 
 ## Step 1 — Token Embedding
+
 ### Turning Words into Numbers
 
 > **TL;DR:** Token ID → 512 floating-point numbers that capture meaning.
 
 ### Analogy: The Airport Check-In Number
+
 When you check in at an airport, you're assigned a seat number — say, **42A**. That number uniquely identifies you. But a seat number alone doesn't tell the plane anything about you: your weight, your preferences, whether you need extra legroom.
 
 Embedding is like upgrading from a seat number to a **full passenger profile** — a rich description that captures everything relevant about you as a number (so the computer can process it).
 
 In NLP:
+
 - Each word in our vocabulary gets assigned an integer ID (like a seat number)
 - The **embedding layer** maps that ID to a long list of numbers — say, 512 numbers — called a **vector**
 - This vector is *learned* during training, so similar words end up with similar vectors
@@ -156,11 +169,13 @@ class Embedding(nn.Module):
 ---
 
 ## Step 2 — Positional Encoding
+
 ### Giving Tokens a Sense of Order
 
 > **TL;DR:** Adds a unique "position fingerprint" to each token vector so the model knows word order.
 
 ### The Problem: Attention Is Orderblind
+
 Here's a puzzle. Consider these two sentences:
 
 - *"The dog bit the man"*
@@ -186,8 +201,15 @@ Each position gets a unique "fingerprint" of waves. Like a radio station — eac
 
 The actual formula from the paper:
 
-$$ \text{PE}(\text{pos}, 2i) = \sin\left(\frac{\text{pos}}{10000^{2i/d_{\text{model}}}}\right) $$
-$$ \text{PE}(\text{pos}, 2i+1) = \cos\left(\frac{\text{pos}}{10000^{2i/d_{\text{model}}}}\right) $$
+$$
+\text{PE}(\text{pos}, 2i) = \sin\left(\frac{\text{pos}}{10000^{2i/d_{\text{model}}}}\right)
+
+$$
+
+$$
+\text{PE}(\text{pos}, 2i+1) = \cos\left(\frac{\text{pos}}{10000^{2i/d_{\text{model}}}}\right)
+
+$$
 
 Where $\text{pos}$ = position in sequence, $i$ = which dimension, $d_{\text{model}} = 512$.
 
@@ -241,6 +263,7 @@ class PositionalEncoding(nn.Module):
 ---
 
 ## Step 3 — Multi-Head Attention
+
 ### The Heart of the Transformer
 
 > **TL;DR:** Every token looks at every other token and decides how much each one matters — from 8 different perspectives simultaneously.
@@ -263,13 +286,15 @@ In multi-head attention, each **attention head** is like one interviewer — loo
 
 First, let's understand single-head attention. Every token plays **three roles simultaneously**:
 
-| Role | Symbol | Question it answers |
-|------|--------|-------------------|
-| **Query** | Q | "What am I looking for?" |
-| **Key** | K | "What do I contain / offer?" |
-| **Value** | V | "What information should I share?" |
+
+| Role      | Symbol | Question it answers                |
+| ----------- | -------- | ------------------------------------ |
+| **Query** | Q      | "What am I looking for?"           |
+| **Key**   | K      | "What do I contain / offer?"       |
+| **Value** | V      | "What information should I share?" |
 
 Think of it like a search engine:
+
 - Your search query is Q
 - Every webpage has a K (keywords) and V (actual content)
 - The search engine scores Q against all K's, then returns a weighted mix of V's
@@ -286,7 +311,10 @@ The output for "sat" now contains information *from* "cat" and "mat" — it has 
 
 #### The Formula
 
-$$ \text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)V $$
+$$
+\text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)V
+
+$$
 
 The $\sqrt{d_k}$ scaling (where $d_k = 64$ for 8 heads with $d_{\text{model}}=512$) prevents the dot products from becoming so large that softmax returns near-zero gradients — which would stop learning.
 
@@ -387,6 +415,7 @@ class MultiHeadAttention(nn.Module):
 ---
 
 ## Step 4 — Feed-Forward Network
+
 ### Individual Thinking Time
 
 > **TL;DR:** After tokens communicate via attention, each one independently processes its own representation through a two-layer neural network.
@@ -407,7 +436,10 @@ The **expansion to 2048** (4× the model size) gives the network extra capacity 
 
 ### The Formula
 
-$$ \text{FFN}(x) = \max(0, xW_1 + b_1)W_2 + b_2 $$
+$$
+\text{FFN}(x) = \max(0, xW_1 + b_1)W_2 + b_2
+
+$$
 
 ### The Code
 
@@ -437,13 +469,15 @@ class PositionWiseFeedForward(nn.Module):
 ```
 
 > **💡 Attention vs FFN — what's the difference?**
+>
 > - **Attention** = tokens talking to *each other* (cross-token communication)
 > - **FFN** = each token thinking *for itself* (within-token computation)
-> Together they cover both bases: understanding context AND processing meaning.
+>   Together they cover both bases: understanding context AND processing meaning.
 
 ---
 
 ## Step 5 — Encoder Layer
+
 ### Reading & Understanding
 
 > **TL;DR:** One complete "pass" — attention to gather context, then FFN to process it. Repeat 6×.
@@ -519,6 +553,7 @@ class EncoderLayer(nn.Module):
 ---
 
 ## Step 6 — Decoder Layer
+
 ### Writing the Answer
 
 > **TL;DR:** Uses masked self-attention (can't peek at future), then cross-attention (reads encoder's output), then FFN. Also runs 6×.
@@ -596,12 +631,14 @@ class DecoderLayer(nn.Module):
 ```
 
 > **The key difference between encoder and decoder:**
+>
 > - Encoder: all tokens can see all other tokens (full attention)
 > - Decoder: tokens can only see *past* tokens in self-attention, but *all* encoder tokens in cross-attention
 
 ---
 
 ## Step 7 — The Full Transformer
+
 ### Putting It All Together
 
 > **TL;DR:** Encoder reads the full input, builds rich representations. Decoder generates output tokens one-at-a-time using both its own previous output and the encoder's memory.
@@ -773,33 +810,36 @@ print(output.shape)
 ## Quick Recap & What's Next
 
 ### Everything in One Diagram
+
 ![Transformer Architecture](./images/image-14.svg)
 
 ### Concept Cheat Sheet
 
-| Concept | One-Line Summary | Analogy |
-|---------|-----------------|---------|
-| Token Embedding | Word → 512 numbers | Seat number → full passenger profile |
-| Positional Encoding | Adds "I'm word #N" | Queue ticket number |
-| Self-Attention | Tokens talk to each other | Group discussion |
-| Multi-Head | Attention from 8 angles | Panel of 8 interviewers |
-| Feed-Forward | Each token thinks alone | Private expert consultation |
-| Encoder | Reads and understands input | Reading department |
-| Decoder | Generates output word by word | Writing department |
-| Cross-Attention | Decoder reads encoder's notes | Writer consults reader |
-| Add & Norm | Stability tricks | Backup + quality check |
-| Causal Mask | No peeking at future words | Exam rules |
+
+| Concept             | One-Line Summary              | Analogy                               |
+| --------------------- | ------------------------------- | --------------------------------------- |
+| Token Embedding     | Word → 512 numbers           | Seat number → full passenger profile |
+| Positional Encoding | Adds "I'm word#N"             | Queue ticket number                   |
+| Self-Attention      | Tokens talk to each other     | Group discussion                      |
+| Multi-Head          | Attention from 8 angles       | Panel of 8 interviewers               |
+| Feed-Forward        | Each token thinks alone       | Private expert consultation           |
+| Encoder             | Reads and understands input   | Reading department                    |
+| Decoder             | Generates output word by word | Writing department                    |
+| Cross-Attention     | Decoder reads encoder's notes | Writer consults reader                |
+| Add & Norm          | Stability tricks              | Backup + quality check                |
+| Causal Mask         | No peeking at future words    | Exam rules                            |
 
 ### What to Explore Next
 
-| Topic | Why It Matters |
-|-------|---------------|
-| **Training the Transformer** | How backpropagation and the Adam optimizer update all 44M parameters — the "learning" half of the story |
-| **BERT** | An encoder-only Transformer (no decoder) trained on masked word prediction. Powers Google Search and most text classification systems |
-| **GPT / GPT-4** | A decoder-only Transformer trained to predict the next token. The architecture behind ChatGPT — no encoder, all generation |
-| **Vision Transformers (ViT)** | The same attention mechanism applied to *image patches* instead of words. Competitive with or better than CNNs on vision tasks |
-| **Flash Attention** | A hardware-aware reimplementation of attention that's 2–4× faster and uses significantly less GPU memory — important for long-context models |
-| **LLaMA / Mistral** | Open-source Transformers with architectural improvements: RoPE positional encoding, grouped-query attention, SwiGLU activations |
+
+| Topic                         | Why It Matters                                                                                                                                  |
+| ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Training the Transformer**  | How backpropagation and the Adam optimizer update all 44M parameters — the "learning" half of the story                                        |
+| **BERT**                      | An encoder-only Transformer (no decoder) trained on masked word prediction. Powers Google Search and most text classification systems           |
+| **GPT / GPT-4**               | A decoder-only Transformer trained to predict the next token. The architecture behind ChatGPT — no encoder, all generation                     |
+| **Vision Transformers (ViT)** | The same attention mechanism applied to*image patches* instead of words. Competitive with or better than CNNs on vision tasks                   |
+| **Flash Attention**           | A hardware-aware reimplementation of attention that's 2–4× faster and uses significantly less GPU memory — important for long-context models |
+| **LLaMA / Mistral**           | Open-source Transformers with architectural improvements: RoPE positional encoding, grouped-query attention, SwiGLU activations                 |
 
 The Transformer is not a single model — it's a *blueprint*. Once you understand this architecture, every major modern AI system becomes a variation on a theme you already know.
 
