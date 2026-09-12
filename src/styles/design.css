@@ -211,8 +211,19 @@ body::after {
 
 /* hamburger */
 .hamburger {
-  display: none; flex-direction: column; gap: 5px;
-  cursor: none; border: none; background: none; padding: 4px;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  /* 44x44 minimum touch target — the bars are 20x2, the button was 28x21. */
+  min-width: 44px;
+  min-height: 44px;
+  margin-right: -10px;   /* keeps the bars optically aligned to the edge */
+  cursor: pointer;
+  border: none;
+  background: none;
+  padding: 0;
 }
 
 .hamburger span {
@@ -222,9 +233,9 @@ body::after {
               opacity var(--dur-fast) var(--ease-soft);
 }
 
-.hamburger.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+.hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
 .hamburger.open span:nth-child(2) { opacity: 0; }
-.hamburger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+.hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
 /* mobile drawer */
 .mobile-menu {
@@ -333,45 +344,13 @@ h1 {
   color: var(--text);
 }
 
-h1 .h1-intro {
-  display: block;
-  font-family: var(--font-mono);
-  font-size: 0.18em;
-  font-weight: 400;
-  font-style: normal;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--muted);
-  margin-bottom: 0.35em;
-}
 
-h1 .name {
-  font-style: normal;
-  color: var(--accent-text);
-  display: block;
-}
 
-.hero-thesis {
-  font-family: var(--font-sans);
-  font-weight: 600;
-  font-size: clamp(16px, 1.5vw, 20px);
-  line-height: 1.45;
-  letter-spacing: -0.02em;
-  color: var(--text);
-  margin-bottom: 16px;
-  max-width: 460px;
-}
 
-.hero-thesis em {
-  font-family: var(--font-display);
-  font-style: italic;
-  font-size: 1.1em;
-  color: var(--text);
-}
 
 .hero-desc {
   font-family: var(--font-sans);
-  font-size: 14px; color: var(--muted);
+  font-size: 15px; color: var(--muted);
   max-width: 420px; margin-bottom: 36px;
   line-height: 1.85;
 }
@@ -445,6 +424,51 @@ h1 .name {
     background: var(--surface);
     transform: translateY(-2px);
   }
+}
+
+/* ── Hero byline + claim ──
+   The thesis used to sit at 20px below a 96px name. It's the most specific
+   sentence on the site, so it carries the display weight now; identity stays
+   directly above it and the nav carries the name too. */
+.hero-byline {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.hero-name {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: clamp(19px, 2vw, 24px);
+  letter-spacing: -0.02em;
+  color: var(--accent-text);
+}
+
+.hero-role {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.hero-claim {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(32px, 4.6vw, 60px);
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  margin-bottom: 24px;
+  max-width: 20ch;
+  text-wrap: balance;
+}
+
+.hero-claim em {
+  font-style: italic;
+  /* Geist Mono has no true italic; Instrument Serif does, so this stays real. */
 }
 
 /* ─── PHOTO + RIGHT COLUMN ───────────────────────────── */
@@ -725,136 +749,145 @@ h3 {
 }
 
 /* ─── TIMELINE ───────────────────────────────────────── */
-#timeline {
-  background: var(--bg);
-}
+/* One chronological spine, not two parallel columns. The old two-column layout
+   put Education 2018 level with Experience 2023, which read as simultaneous. */
+#timeline { background: var(--bg); }
 
-.tl-header {
-  margin-bottom: 64px;
-}
+.tl-header { margin-bottom: 64px; }
 
 .tl-header-p {
   font-size: 14px;
   color: var(--muted);
-  max-width: 500px;
+  max-width: 52ch;
   line-height: 1.8;
   margin-top: 8px;
 }
 
-.tl-columns {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 64px;
-  align-items: start;
-}
-
-.tl-column-label {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  font-weight: 500;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  margin-bottom: 32px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid var(--border);
-}
-
-.tl-column-items {
-  display: flex;
-  flex-direction: column;
-}
-
-.tl-entry {
-  display: flex;
-  gap: 20px;
-  padding-bottom: 40px;
+.tl-spine {
+  list-style: none;
   position: relative;
+  padding-left: 0;
 }
 
-.tl-column-items .tl-entry:last-child {
-  padding-bottom: 0;
-}
-
-.tl-column-items .tl-entry:not(:last-child)::after {
+/* The spine itself — stops at the last dot rather than running off the end. */
+.tl-spine::before {
   content: '';
   position: absolute;
   left: 5px;
-  top: 12px;
-  bottom: 0;
+  top: 8px;
+  bottom: 8px;
   width: 1px;
-  background: var(--border);
+  background: linear-gradient(
+    to bottom,
+    var(--border) 0%,
+    var(--border) 85%,
+    transparent 100%
+  );
 }
 
-.tl-entry-dot {
+.tl-entry {
+  display: grid;
+  grid-template-columns: 12px 1fr;
+  gap: 24px;
+  padding-bottom: 48px;
+}
+.tl-entry:last-child { padding-bottom: 0; }
+
+.tl-marker {
+  display: flex;
+  justify-content: center;
+  padding-top: 5px;
+}
+
+.tl-dot {
   width: 11px;
   height: 11px;
   border-radius: 50%;
-  flex-shrink: 0;
-  margin-top: 4px;
-  z-index: 1;
+  background: var(--bg);
+  border: 2px solid var(--border2);
+  position: relative;
+  z-index: var(--z-base);
 }
+.tl-entry--experience .tl-dot { border-color: var(--accent3); }
+.tl-entry--education  .tl-dot { border-color: var(--muted2); }
 
-.tl-entry-body {
+.tl-entry-body { min-width: 0; }
+
+.tl-entry-head {
   display: flex;
-  flex-direction: column;
-  min-width: 0;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 10px;
 }
 
 .tl-year {
   font-family: var(--font-mono);
-  font-size: 10px;
-  font-weight: 500;
-  letter-spacing: 0.14em;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Which track an entry belongs to — carries what the two columns used to. */
+.tl-track {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--muted);
-  margin-bottom: 6px;
+  padding: 2px 7px;
+  border: 1px solid var(--border);
+}
+.tl-entry--experience .tl-track { color: var(--accent3); border-color: color-mix(in oklab, var(--accent3) 30%, transparent); }
+
+.tl-badge {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 2px 7px;
+  border: 1px solid transparent;
+}
+.tl-badge--current {
+  color: var(--accent3);
+  border-color: color-mix(in oklab, var(--accent3) 35%, transparent);
+  background: color-mix(in oklab, var(--accent3) 8%, transparent);
+}
+.tl-badge--showcased,
+.tl-badge--completed {
+  color: var(--muted);
+  border-color: var(--border);
 }
 
 .tl-title {
   font-family: var(--font-sans);
+  font-size: 17px;
   font-weight: 600;
-  font-size: 15px;
-  line-height: 1.3;
+  line-height: 1.35;
+  letter-spacing: -0.01em;
   margin-bottom: 4px;
-  color: var(--text);
+  text-wrap: balance;
 }
 
 .tl-org {
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: 12px;
   color: var(--muted);
   margin-bottom: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
 }
 
 .tl-desc {
-  font-family: var(--font-sans);
-  font-size: 13.5px;
+  font-size: 14.5px;
+  line-height: 1.7;
   color: var(--muted);
-  line-height: 1.8;
-  margin: 0;
-}
-
-.tl-badge {
-  display: inline-block;
-  font-family: var(--font-mono);
-  font-weight: 500;
-  font-size: 9px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  padding: 3px 10px;
-  margin-bottom: 10px;
-  border: 1px solid;
-  border-radius: 2px;
-  align-self: flex-start;
+  max-width: 62ch;
+  text-wrap: pretty;
 }
 
 @media (max-width: 768px) {
-  .tl-columns {
-    grid-template-columns: 1fr;
-    gap: 48px;
-  }
+  .tl-entry { gap: 18px; padding-bottom: 36px; }
+  .tl-desc { font-size: 14px; }
 }
 
 /* ─── PROJECTS ───────────────────────────────────────── */
@@ -1633,8 +1666,9 @@ a.contact-link-row:hover { background: var(--surface); }
 }
 
 .hero-tag     { --reveal-delay: calc(var(--stagger) * 1); }
-.hero-left h1 { --reveal-delay: calc(var(--stagger) * 2); }
-.hero-thesis  { --reveal-delay: calc(var(--stagger) * 3); }
+
+.hero-byline  { --reveal-delay: calc(var(--stagger) * 2); }
+.hero-claim   { --reveal-delay: calc(var(--stagger) * 3); }
 .hero-desc    { --reveal-delay: calc(var(--stagger) * 4); }
 .hero-chips   { --reveal-delay: calc(var(--stagger) * 5); }
 .hero-actions { --reveal-delay: calc(var(--stagger) * 6); }
@@ -1721,139 +1755,6 @@ a.contact-link-row:hover { background: var(--surface); }
   .form-row { grid-template-columns: 1fr; }
   .hero-chips { gap: 5px; }
   .chip { font-size: 9px; padding: 5px 10px; }
-}
-
-/* ─── TIMELINE (new layout) ──────────────────────────── */
-@keyframes tlPulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: .5; transform: scale(.7); }
-}
-
-.tl-section { font-family: inherit; }
-
-.tl-section h2 {
-  font-family: var(--font-sans);
-  font-weight: 800; font-size: clamp(30px, 4.5vw, 60px);
-  letter-spacing: -0.03em; line-height: 1.0;
-}
-
-.tl-section h2 em {
-  font-family: var(--font-display);
-  font-style: italic; font-weight: 400; color: var(--text);
-}
-
-.tl-header-p {
-  color: var(--muted); font-size: 14px;
-  line-height: 1.9; max-width: 380px; padding-top: 8px;
-}
-
-.tl-stat-row { display: flex; gap: 32px; }
-.tl-stat-item { text-align: right; }
-
-.tl-stat-value {
-  font-family: var(--font-display);
-  font-style: italic;
-  font-weight: 400; font-size: 28px; line-height: 1; color: var(--text);
-}
-
-.tl-stat-label {
-  font-family: var(--font-mono);
-  font-size: 10px; color: var(--muted); margin-top: 2px;
-}
-
-.tl-col-header {
-  font-family: var(--font-mono);
-  font-size: 9px; font-weight: 500;
-  letter-spacing: 0.14em; text-transform: uppercase;
-  color: var(--muted); padding-bottom: 14px;
-  border-bottom: 1px solid var(--border);
-  margin-bottom: 28px;
-  display: flex; align-items: center; gap: 8px;
-}
-
-.tl-col-dot { width: 6px; height: 6px; border-radius: 50%; }
-
-.tl-line {
-  position: absolute; left: 3px; top: 8px; bottom: 0;
-  width: 0.5px; background: var(--border);
-  transform-origin: top;
-  transition: transform 1200ms var(--ease-out);
-}
-
-.tl-item-wrap {
-  position: relative; padding-bottom: 32px; padding-left: 0;
-  cursor: pointer;
-  transition: opacity var(--dur-slow) var(--ease-out),
-              transform var(--dur-slow) var(--ease-out);
-}
-
-.tl-item-dot-container {
-  position: absolute; left: -24px; top: 6px;
-  width: 14px; height: 14px;
-  display: flex; align-items: center; justify-content: center;
-}
-
-.tl-item-dot {
-  width: 7px; height: 7px; border-radius: 50%;
-  background: var(--bg);
-  transition: background var(--dur-fast) var(--ease-soft),
-              transform var(--dur-med) var(--ease-out),
-              box-shadow var(--dur-fast) var(--ease-soft);
-}
-
-.tl-item-year {
-  font-family: var(--font-mono);
-  font-size: 10px; font-weight: 500;
-  letter-spacing: 0.08em; color: var(--muted);
-  margin-bottom: 4px; text-transform: uppercase;
-}
-
-.tl-item-title {
-  font-family: var(--font-sans);
-  font-size: 14px; font-weight: 500;
-  color: var(--text); line-height: 1.35; margin-bottom: 2px;
-}
-
-.tl-item-org {
-  font-family: var(--font-mono);
-  font-size: 11px; color: var(--muted); margin-bottom: 8px;
-}
-
-.tl-item-desc {
-  font-family: var(--font-sans);
-  font-size: 12.5px; line-height: 1.75; color: var(--muted);
-  overflow: hidden;
-  transition: max-height var(--dur-med) var(--ease-out),
-              opacity var(--dur-med) var(--ease-soft);
-}
-
-.tl-badge-container {
-  display: inline-flex; align-items: center; gap: 5px;
-  margin-top: 8px; padding: 2px 8px;
-  border-radius: 2px; border: 1px solid;
-  font-family: var(--font-mono);
-  font-size: 9px; font-weight: 500; letter-spacing: 0.06em;
-  transition: opacity var(--dur-med) var(--ease-soft) 100ms,
-              transform var(--dur-med) var(--ease-out) 100ms;
-}
-
-.tl-badge-pulse {
-  width: 5px; height: 5px; border-radius: 50%;
-  animation: tlPulse 1.8s ease-in-out infinite;
-}
-
-.tl-header {
-  display: flex; justify-content: space-between;
-  align-items: flex-end; gap: 32px;
-  margin-bottom: 56px; flex-wrap: wrap;
-}
-
-.tl-grid {
-  display: grid; grid-template-columns: 1fr 1fr; gap: 0 48px;
-}
-
-@media (max-width: 768px) {
-  .tl-grid { grid-template-columns: 1fr; gap: 48px 0; }
 }
 
 /* ─── BLOG TOC ───────────────────────────────────────── */
@@ -2287,4 +2188,31 @@ a.contact-link-row:hover { background: var(--surface); }
 
 @media (prefers-reduced-motion: reduce) {
   .toc-progress-bar { transition: none; }
+}
+
+
+/* ─── TOUCH TARGETS ──────────────────────────────────── */
+/* Inline text links sit at ~18-23px tall, under the 24px minimum. Widened at
+   small viewports rather than on (pointer: coarse), so the rule is actually
+   testable — and a narrow desktop window getting roomier targets is harmless. */
+@media (max-width: 900px) {
+  .nav-logo,
+  .writing-archive-link,
+  .footer-mini-nav a,
+  .footer-contact-links a,
+  .footer-socials a,
+  .contact-link-row,
+  .post-share a,
+  .detail-back {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .footer-socials a {
+    min-width: 44px;
+    justify-content: center;
+  }
+
+  .toc-link { padding-block: 12px; }
 }

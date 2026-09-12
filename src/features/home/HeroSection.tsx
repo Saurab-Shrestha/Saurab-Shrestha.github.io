@@ -23,11 +23,14 @@ const HeroSection: React.FC = () => {
 
       <div className="hero-left">
         <div className="hero-tag"><span className="blink"></span> Available for opportunities</div>
-        <h1><span className="h1-intro">Hi, I'm</span><span className="name">Saurab<br />Shrestha</span></h1>
-        <p className="hero-thesis">
+        <p className="hero-byline">
+          <span className="hero-name">Saurab Shrestha</span>
+          <span className="hero-role">Software Developer</span>
+        </p>
+        <h1 className="hero-claim">
           Standard RAG answers questions.<br />
           I'm building a system that <em>investigates</em> them.
-        </p>
+        </h1>
         <p className="hero-desc">
           An agentic research system that tracks hypotheses,
           maps contradictions, and knows when it's done.
