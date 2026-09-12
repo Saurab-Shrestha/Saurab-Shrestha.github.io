@@ -5,6 +5,9 @@ import BlogLayout from '../components/BlogLayout';
 import ProjectThumbnail from '../components/ProjectThumbnail';
 import NotFound from './NotFound';
 
+// 3D bundle is code-split and only ever requested on this one project.
+const EvidenceGraph = React.lazy(() => import('../components/EvidenceGraph'));
+
 const ProjectDetail: React.FC = () => {
   const { id } = useParams();
   const project = id ? PROJECTS_CONTENT[id] : undefined;
@@ -57,12 +60,26 @@ const ProjectDetail: React.FC = () => {
         <div className="detail-rule" />
       </div>
 
-      {/* ── HERO THUMB ── */}
-      <div className="detail-hero-visual-wrap">
-        <div className="detail-hero-visual">
-          <ProjectThumbnail spec={project.thumbnail} name={project.name} />
+      {/* ── HERO VISUAL ──
+          NeuralNoodle gets the live Evidence Graph in place of a static
+          thumbnail; it demonstrates the claim the case study makes. */}
+      {project.id === 'neuralnoodle' ? (
+        <div className="detail-hero-visual-wrap">
+          <React.Suspense fallback={
+            <div className="detail-hero-visual">
+              <ProjectThumbnail spec={project.thumbnail} name={project.name} />
+            </div>
+          }>
+            <EvidenceGraph />
+          </React.Suspense>
         </div>
-      </div>
+      ) : (
+        <div className="detail-hero-visual-wrap">
+          <div className="detail-hero-visual">
+            <ProjectThumbnail spec={project.thumbnail} name={project.name} />
+          </div>
+        </div>
+      )}
 
       {/* ── ARTICLE BODY + TOC SIDEBAR ── */}
       <BlogLayout content={project.markdown} basePath={`/work/${project.id}`} />
