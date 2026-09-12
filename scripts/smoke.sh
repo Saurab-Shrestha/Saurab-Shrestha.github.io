@@ -11,7 +11,7 @@
 # Usage: npm run build && npm run serve &  then: bash scripts/smoke.sh
 set -uo pipefail
 
-BASE="${BASE:-http://localhost:4173/SaurabShrestha}"
+BASE="${BASE:-http://localhost:4173}"
 CHROME="${CHROME:-/Applications/Google Chrome.app/Contents/MacOS/Google Chrome}"
 # "route|expected" — expected is a substring the real page must contain.
 # The catch-all is the one route that is supposed to render NotFound.
@@ -65,10 +65,12 @@ if len(h1) != 1:
     problems.append(f"{len(h1)} <h1> (want 1)")
 
 # internal links that bypass the deploy base path
+# With base "/" every internal href is already root-relative, so this guards
+# against a stray hardcoded sub-path reappearing rather than a missing prefix.
 bad = [h for h in re.findall(r"href=\"(/[^\"]*)\"", root)
-       if not h.startswith("/SaurabShrestha/") and not h.startswith("//")]
+       if h.startswith("/SaurabShrestha/")]
 if bad:
-    problems.append("unprefixed links: " + ", ".join(sorted(set(bad))[:4]))
+    problems.append("stale /SaurabShrestha/ links: " + ", ".join(sorted(set(bad))[:4]))
 
 title = strip(h1[0])[:44] if h1 else "(no h1)"
 print(("FAIL " + "; ".join(problems)) if problems else "ok   " + title)

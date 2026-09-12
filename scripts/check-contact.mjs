@@ -19,7 +19,7 @@
 import { spawn } from 'node:child_process';
 import { setTimeout as sleep } from 'node:timers/promises';
 
-const URL_BASE = process.env.BASE ?? 'http://localhost:4173/SaurabShrestha';
+const URL_BASE = process.env.BASE ?? 'http://localhost:4173';
 const CHROME = process.env.CHROME ?? '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
 const PORT = 9466;
 

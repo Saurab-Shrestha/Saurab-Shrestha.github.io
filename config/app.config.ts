@@ -4,8 +4,8 @@ export const appConfig = {
   description: 'Saurab Shrestha — Software Developer specializing in AI/ML and full-stack development from Bhaktapur, Nepal.',
   version: '1.0.0',
 
-  // Canonical origin + base path. Must stay in sync with `base` in vite.config.ts.
-  siteUrl: 'https://saurab-shrestha.github.io/SaurabShrestha/',
+  // Canonical origin. The site is a GitHub user page, served at the root.
+  siteUrl: 'https://saurab-shrestha.github.io/',
 
   // Development Settings
   dev: {
