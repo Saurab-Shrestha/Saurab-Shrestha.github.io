@@ -1,146 +1,142 @@
 import React from 'react';
+import { asset } from '../../lib/asset';
 
-type Track = 'education' | 'experience';
-
-interface TimelineItem {
-  /** Display string, e.g. "2018 — 2023" or "2023 — Present". */
-  year: string;
-  /** Start year, used for ordering. */
-  from: number;
-  /** End year; null means ongoing. */
-  to: number | null;
-  track: Track;
+interface Role {
+  period: string;
   title: string;
   org: string;
   desc: string;
-  status?: 'current' | 'completed' | 'showcased';
-  /**
-   * Visual weight. Recruiters read the last three years; secondary schooling
-   * carried the same presence as the current role, which flattened the whole
-   * progression into a checklist.
-   */
-  emphasis?: 'primary' | 'compact';
+  /** Short stack summary, shown as a pill on the right. */
+  tags: string;
+  current?: boolean;
 }
 
-const TRACK_LABEL: Record<Track, string> = {
-  education: 'Education',
-  experience: 'Experience',
-};
+interface Study {
+  period: string;
+  title: string;
+  org: string;
+}
 
-const ITEMS: TimelineItem[] = [
+/**
+ * Roles, most recent first.
+ *
+ * Supersedes what the site previously showed — QuickFox as 2023–Present, with no
+ * Bajra role and no internship. Month boundaries are worth a second look.
+ */
+const ROLES: Role[] = [
   {
-    year: '2023 — Present',
-    from: 2023, to: null,
-    track: 'experience',
-    title: 'Asst. Software Engineer',
-    org: 'Quickfox Consulting',
-    desc: 'Building full-stack web applications and AI-powered chatbots for clients. Delivered chatbots, automation scripts, and ML-based solutions.',
-    status: 'current',
-    emphasis: 'primary',
+    period: '2026 — Present',
+    title: 'AI / ML Engineer',
+    org: 'Bajra Technologies',
+    desc: 'Building production AI systems, agentic workflows and LLM infrastructure.',
+    tags: 'AI · LLM · RAG',
+    current: true,
   },
   {
-    year: '2023',
-    from: 2023, to: 2023,
-    track: 'experience',
-    title: 'Signature Verification System',
-    org: 'University Final Year Project',
-    desc: 'CNN-based signature verification achieving high accuracy. Presented at the university annual tech showcase.',
-    status: 'showcased',
+    period: '2023 — 2026',
+    title: 'Software Engineer',
+    org: 'QuickFox Consulting',
+    desc: 'Built document intelligence, compliance automation and AI products.',
+    tags: 'Django · React · OCR',
   },
   {
-    year: '2022',
-    from: 2022, to: 2022,
-    track: 'experience',
-    title: 'Tomato Disease Detection',
-    org: 'Personal Research Project',
-    desc: 'Computer vision model for plant pathology detection. Transfer learning on a small dataset using fast.ai small-data techniques.',
-  },
-  {
-    year: '2021 — 2023',
-    from: 2021, to: 2023,
-    track: 'education',
-    title: 'Self-Directed Learning',
-    org: 'Online — Coursera / fast.ai',
-    desc: 'Deep learning, modern web architectures, and ML engineering. Certifications in full-stack development and machine learning from global platforms.',
-    status: 'completed',
-  },
-  {
-    year: '2018 — 2023',
-    from: 2018, to: 2023,
-    track: 'education',
-    title: 'BSc Computer Science and Information Technology',
-    org: 'Bhaktapur Multiple Campus',
-    desc: 'Focused on algorithms, data structures, and artificial intelligence. Consistently among top performers in the cohort.',
-    status: 'completed',
-  },
-  {
-    year: '2016 — 2018',
-    from: 2016, to: 2018,
-    track: 'education',
-    title: 'Higher Secondary (+2 Science)',
-    org: 'Premier College',
-    desc: 'Science stream, 3.38 GPA. Strong foundation in mathematics and physics — the lens I still use for ML problems.',
-    status: 'completed',
-    emphasis: 'compact',
+    period: 'Apr — Aug 2023',
+    title: 'Intern Software Engineer',
+    org: 'QuickFox Consulting',
+    desc: 'Contributed to internal tools and AI integrations.',
+    tags: 'Python · Django · APIs',
   },
 ];
 
 /**
- * Most recent first, by start year — so the year column reads as a strictly
- * descending sequence. Sorting by end year instead put a one-off 2022 project
- * below a 2018-2023 degree. Ongoing entries win ties.
+ * Education, deliberately compact. It matters, but someone reading this in 2026
+ * looks at the last three years first — giving a 2016 school entry the same
+ * weight as the current role flattened the section into a checklist.
  */
-const ordered = [...ITEMS].sort((a, b) => b.from - a.from || (b.to ?? Infinity) - (a.to ?? Infinity));
+const STUDY: Study[] = [
+  {
+    period: '2018 — 2023',
+    title: 'BSc Computer Science & Information Technology',
+    org: 'Bhaktapur Multiple Campus',
+  },
+  {
+    period: '2021 — 2023',
+    title: 'Self-directed — deep learning & ML engineering',
+    org: 'Coursera / fast.ai',
+  },
+  {
+    period: '2016 — 2018',
+    title: 'Higher Secondary (+2 Science)',
+    org: 'Premier College',
+  },
+];
 
 const JourneyTimeline: React.FC = () => (
   <>
     <div className="section-divider" />
 
     <section id="timeline" className="tl-section">
-      <div className="tl-header">
-        <div className="section-label">
-          <span className="num">02</span> Journey
-        </div>
-        <h2>Education &amp; <em>Experience</em></h2>
-        <p className="tl-header-p">
-          From university coursework to building real-world AI applications.
-        </p>
-      </div>
-
-      <ol className="tl-spine">
-        {ordered.map((item, i) => (
-          <li
-            key={`${item.title}-${i}`}
-            className={[
-              'tl-entry',
-              `tl-entry--${item.track}`,
-              item.emphasis ? `tl-entry--${item.emphasis}` : '',
-              'reveal',
-            ].filter(Boolean).join(' ')}
+      <div className="rail-layout">
+        {/* ── Left rail ── */}
+        <div className="rail-intro reveal">
+          <div className="section-label">
+            <span className="num">02</span> Experience
+          </div>
+          <h2>Education &amp;<br /><em>Experience</em></h2>
+          <p className="rail-intro-p">
+            A short journey of learning, building, and growing.
+          </p>
+          <a
+            className="rail-cta"
+            href={asset('assets/Saurab-Shrestha-CV.pdf')}
+            target="_blank"
+            rel="noopener noreferrer"
           >
-            <div className="tl-marker" aria-hidden="true">
-              <span className="tl-dot" />
-            </div>
+            View resume
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
+              <line x1="5" y1="12" x2="19" y2="12" />
+              <polyline points="13 6 19 12 13 18" />
+            </svg>
+          </a>
+        </div>
 
-            <div className="tl-entry-body">
-              <div className="tl-entry-head">
-                <span className="tl-year">{item.year}</span>
-                <span className="tl-track">{TRACK_LABEL[item.track]}</span>
-                {item.status && (
-                  <span className={`tl-badge tl-badge--${item.status}`}>
-                    {item.status === 'current' ? 'Current'
-                      : item.status === 'showcased' ? 'Showcased'
-                        : 'Completed'}
-                  </span>
-                )}
-              </div>
-              <h3 className="tl-title">{item.title}</h3>
-              <p className="tl-org">{item.org}</p>
-              <p className="tl-desc">{item.desc}</p>
-            </div>
-          </li>
-        ))}
-      </ol>
+        {/* ── Roles ── */}
+        <div className="tl-roles">
+          <ol className="role-list">
+            {ROLES.map(role => (
+              <li
+                key={`${role.org}-${role.period}`}
+                className={`role ${role.current ? 'role--current' : ''} reveal`}
+              >
+                <span className="role-dot" aria-hidden="true" />
+                <div className="role-body">
+                  <p className="role-period">
+                    {role.period}
+                    {role.current && <span className="role-now">Current</span>}
+                  </p>
+                  <h3 className="role-title">{role.title}</h3>
+                  <p className="role-org">{role.org}</p>
+                  <p className="role-desc">{role.desc}</p>
+                </div>
+                <span className="role-tags">{role.tags}</span>
+              </li>
+            ))}
+          </ol>
+
+          <div className="study reveal">
+            <p className="study-label">Education</p>
+            <ul className="study-list">
+              {STUDY.map(s => (
+                <li key={s.title}>
+                  <span className="study-period">{s.period}</span>
+                  <span className="study-title">{s.title}</span>
+                  <span className="study-org">{s.org}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </div>
     </section>
   </>
 );

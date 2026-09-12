@@ -30,10 +30,9 @@ const BlogSection: React.FC = () => {
             <div className="section-label">
               <span className="num">04</span> Writing
             </div>
-            <h2>Notes on<br /><em>building things</em></h2>
+            <h2>Notes on<br /><em>building things</em>.</h2>
             <p className="writing-intro">
-              Occasional long-form on the systems I'm building, the dead-ends I learn
-              from, and the parts of the stack I find myself returning to.
+              Short articles, thoughts and learnings from my journey in tech and AI.
             </p>
           </div>
           {BLOGS_LIST.length > FEATURED_COUNT && (
@@ -57,23 +56,20 @@ const BlogSection: React.FC = () => {
             >
               <span className="writing-entry-num">{String(i + 1).padStart(2, '0')}</span>
 
-              <div className="writing-entry-main">
-                <span className="writing-entry-tag">{post.tag}</span>
-                <h3 className="writing-entry-title">{post.title}</h3>
-                <p className="writing-entry-excerpt">{post.excerpt}</p>
-              </div>
+              <h3 className="writing-entry-title">{post.title}</h3>
 
-              <div className="writing-entry-meta">
-                <time dateTime={isoDate(post.date)}>{post.date}</time>
-                <span className="writing-entry-time">{post.readTime}</span>
+              <div className="writing-entry-foot">
+                <div className="writing-entry-meta">
+                  <time dateTime={isoDate(post.date)}>{post.date}</time>
+                  <span className="writing-entry-time">{post.readTime}</span>
+                </div>
+                <span className="writing-entry-arrow" aria-hidden="true">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
+                    <line x1="7" y1="17" x2="17" y2="7" />
+                    <polyline points="9 7 17 7 17 15" />
+                  </svg>
+                </span>
               </div>
-
-              <span className="writing-entry-arrow" aria-hidden="true">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
-                  <line x1="7" y1="17" x2="17" y2="7" />
-                  <polyline points="9 7 17 7 17 15" />
-                </svg>
-              </span>
             </Link>
           ))}
         </div>

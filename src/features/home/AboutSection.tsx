@@ -3,35 +3,24 @@ import { appConfig } from '../../../config/app.config';
 import LocalTime from '../../components/LocalTime';
 
 /**
- * Capability groups.
+ * Capability areas.
  *
- * These are the five rows that were already in the skills table, regrouped by
- * domain — the wording is unchanged. Nothing has been added: a stack list on a
- * portfolio is a claim, and every entry here is one the rest of the site backs up.
+ * Grouped from what the rest of the site already evidences: NeuralNoodle for
+ * agents and retrieval, the QuickFox work for document intelligence, and the
+ * Django/FastAPI projects for the backend and product rows. Nothing here is a
+ * claim the site doesn't back up somewhere.
  */
-const STACK: Array<{ group: string; items: Array<{ name: string; note: string }> }> = [
-  {
-    group: 'AI & agents',
-    items: [
-      { name: 'LangGraph', note: 'stateful agent pipelines' },
-      { name: 'Qdrant / PyTorch', note: 'vector search + model training' },
-      { name: 'OpenCV', note: 'computer vision systems' },
-    ],
-  },
-  {
-    group: 'Backend & product',
-    items: [
-      { name: 'Python', note: 'ML, backend, automation' },
-      { name: 'React / FastAPI', note: 'full-stack delivery' },
-    ],
-  },
+const AREAS: Array<{ title: string; detail: string }> = [
+  { title: 'AI systems', detail: 'RAG · Agents · LLM applications' },
+  { title: 'Document intelligence', detail: 'OCR · Extraction · Multimodal' },
+  { title: 'Backend systems', detail: 'Python · Django · FastAPI' },
+  { title: 'Product engineering', detail: 'React · APIs · Infrastructure' },
 ];
 
-const SPEC = [
+const DETAILS = [
   { label: 'Location', value: 'Bhaktapur, Nepal' },
-  { label: 'Focus', value: 'AI/ML & full-stack' },
-  { label: 'Currently on', value: 'NeuralNoodle — agentic research system' },
   { label: 'Open to', value: 'Remote · Contract · Full-time' },
+  { label: 'Currently on', value: 'NeuralNoodle — agentic research system' },
 ];
 
 const AboutSection: React.FC = () => (
@@ -39,80 +28,65 @@ const AboutSection: React.FC = () => (
     <div className="section-divider"></div>
 
     <section id="about">
-      <div className="about-head reveal">
-        <div className="section-label">
-          <span className="num">01</span> About
-        </div>
-        <h2>Passionate about<br /><em>building things</em><br />that matter.</h2>
-      </div>
-
-      <div className="bento">
-        {/* ── Narrative ── */}
-        <article className="bento-cell bento-cell--story reveal">
-          <p className="about-body">
-            I build full-stack systems with a deep lean into AI and machine learning,
-            based in Bhaktapur, Nepal. My work sits at the intersection of rigorous
-            engineering and product thinking — systems that hold under pressure and
-            feel good to use.
+      <div className="rail-layout">
+        {/* ── Left rail ── */}
+        <div className="rail-intro reveal">
+          <div className="section-label">
+            <span className="num">01</span> About
+          </div>
+          <h2>Passionate about<br /><em>building things</em><br />that matter.</h2>
+          <p className="rail-intro-p">
+            I work at the intersection of software engineering and applied AI —
+            building products that solve real problems, from model training to the
+            pixel on screen.
           </p>
-          <p className="about-body">
-            I care about the whole stack: from model training to the pixel on screen.
-            That end-to-end ownership is what makes the work interesting.
-          </p>
-        </article>
 
-        {/* ── Availability ── */}
-        <article className="bento-cell bento-cell--status reveal">
-          <p className="bento-label">Availability</p>
           <p className="status-line">
             <span className="status-dot" aria-hidden="true" />
             Available for opportunities
           </p>
-          <dl className="status-meta">
-            <div>
-              <dt>Local time</dt>
-              <dd><LocalTime /></dd>
-            </div>
-            <div>
-              <dt>Open to</dt>
-              <dd>Remote · Contract · Full-time</dd>
-            </div>
-          </dl>
-          <a className="status-email" href={`mailto:${appConfig.contact.email}`}>
-            {appConfig.contact.email}
+
+          <a className="rail-cta" href={`mailto:${appConfig.contact.email}`}>
+            Get in touch
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
+              <line x1="5" y1="12" x2="19" y2="12" />
+              <polyline points="13 6 19 12 13 18" />
+            </svg>
           </a>
-        </article>
+        </div>
 
-        {/* ── Capabilities ── */}
-        <article className="bento-cell bento-cell--stack reveal">
-          <p className="bento-label">What I work in</p>
-          {STACK.map(({ group, items }) => (
-            <div key={group} className="stack-group">
-              <p className="stack-group-name">{group}</p>
-              <ul className="stack-items">
-                {items.map(({ name, note }) => (
-                  <li key={name}>
-                    <span className="stack-name">{name}</span>
-                    <span className="stack-note">{note}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </article>
-
-        {/* ── Spec sheet ── */}
-        <article className="bento-cell bento-cell--spec reveal">
-          <p className="bento-label">Details</p>
-          <dl className="spec-rows">
-            {SPEC.map(({ label, value }) => (
-              <div key={label} className="spec-row">
-                <dt>{label}</dt>
-                <dd>{value}</dd>
-              </div>
+        {/* ── Capability areas ── */}
+        <div className="about-areas">
+          <ol className="area-list">
+            {AREAS.map((area, i) => (
+              <li key={area.title} className="area reveal">
+                <span className="area-num">{String(i + 1).padStart(2, '0')}</span>
+                <div className="area-body">
+                  <h3 className="area-title">{area.title}</h3>
+                  <p className="area-detail">{area.detail}</p>
+                </div>
+              </li>
             ))}
-          </dl>
-        </article>
+          </ol>
+
+          <div className="study reveal">
+            <p className="study-label">Details</p>
+            <ul className="study-list">
+              {DETAILS.map(d => (
+                <li key={d.label}>
+                  <span className="study-period">{d.label}</span>
+                  <span className="study-title">{d.value}</span>
+                  <span className="study-org" />
+                </li>
+              ))}
+              <li>
+                <span className="study-period">Local time</span>
+                <span className="study-title"><LocalTime /></span>
+                <span className="study-org" />
+              </li>
+            </ul>
+          </div>
+        </div>
       </div>
     </section>
   </>
