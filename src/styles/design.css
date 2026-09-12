@@ -12,7 +12,8 @@
   --accent2:  #ffb84d;
   --accent3:  #0a7a5f;   /* 5.06:1 on --bg (was #0d9373 at 3.68:1) */
   --on-accent: oklch(99% 0.003 60);   /* text sitting on an accent fill */
-  --grid-line: var(--grid-line);
+  --grid-line:       oklch(16% 0.012 50 / 0.055);   /* fine 20px rule */
+  --grid-line-major: oklch(16% 0.012 50 / 0.09);    /* coarse 80px rule */
   --grain-opacity: 0.4;
   --nav-bg: oklch(98.5% 0.004 60 / 0.94);
   --accent-hover: #e8471f;
@@ -100,7 +101,8 @@
   --accent3:       #3fd6b0;   /* 10.74:1 */
   --on-accent:     oklch(15% 0.008 55);
 
-  --grid-line:   oklch(94% 0.006 60 / 0.05);
+  --grid-line:       oklch(94% 0.006 60 / 0.05);
+  --grid-line-major: oklch(94% 0.006 60 / 0.085);
   --grain-opacity: 0.22;
   --nav-bg: oklch(15% 0.008 55 / 0.92);
   --accent-hover: #ff7a58;
@@ -137,7 +139,8 @@
     --accent3:       #3fd6b0;   /* 10.74:1 */
     --on-accent:     oklch(15% 0.008 55);
   
-    --grid-line:   oklch(94% 0.006 60 / 0.05);
+    --grid-line:       oklch(94% 0.006 60 / 0.05);
+  --grid-line-major: oklch(94% 0.006 60 / 0.085);
     --grain-opacity: 0.22;
   --nav-bg: oklch(15% 0.008 55 / 0.92);
   --accent-hover: #ff7a58;
@@ -381,21 +384,33 @@ body::after {
 
 .hero::before, .hero::after { display: none; }
 
+/* Engineered-surface grid. Used sparingly — it reads as intentional behind the
+   sparse hero and contact sections, and as wallpaper behind anything dense, so
+   it is deliberately not applied globally. */
+.grid-lines,
 .hero-grid-lines {
   position: absolute;
-  inset: 56px 0 0;
+  inset: 0;
   pointer-events: none;
   background-image:
-    linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+    linear-gradient(to right,  var(--grid-line) 1px, transparent 1px),
     linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px),
-    linear-gradient(to right, oklch(16% 0.012 50 / 0.09) 1px, transparent 1px),
-    linear-gradient(to bottom, oklch(16% 0.012 50 / 0.09) 1px, transparent 1px);
-  background-size: 24px 24px, 24px 24px, 96px 96px, 96px 96px;
-  mask-image:
-    linear-gradient(90deg, transparent 0%, black 10%, black 90%, transparent 100%),
-    linear-gradient(180deg, black 0%, black 68%, transparent 100%);
-  mask-composite: intersect;
-  opacity: 0.82;
+    linear-gradient(to right,  var(--grid-line-major) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-line-major) 1px, transparent 1px);
+  background-size: 20px 20px, 20px 20px, 80px 80px, 80px 80px;
+  opacity: 0.62;
+}
+
+.hero-grid-lines {
+  inset: 56px 0 0;
+  /* Fades out before the fold so it never runs into the content below. */
+  mask-image: linear-gradient(180deg, black 0%, black 62%, transparent 100%);
+}
+
+/* Contact closes the page the way the hero opens it, so the grid bookends
+   rather than repeats. Fades in from the top for the same reason. */
+.contact-grid-lines {
+  mask-image: linear-gradient(180deg, transparent 0%, black 38%, black 100%);
 }
 
 .hero-grid-lines::after {
@@ -3035,3 +3050,8 @@ a.contact-link-row:hover { background: var(--surface); }
   .writing-list { grid-template-columns: 1fr; }
   .writing-entry + .writing-entry { border-left: none; padding-left: 0; }
 }
+
+
+/* ─── CONTACT SURFACE ────────────────────────────────── */
+#contact { position: relative; }
+#contact > .contact-inner { position: relative; z-index: var(--z-base); }

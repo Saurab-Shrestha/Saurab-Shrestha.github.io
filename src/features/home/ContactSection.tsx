@@ -90,6 +90,7 @@ const ContactSection: React.FC = () => {
       <div className="section-divider"></div>
 
       <section id="contact">
+        <div className="grid-lines contact-grid-lines" aria-hidden="true" />
         <div className="contact-inner">
 
           <div className="contact-left reveal">
