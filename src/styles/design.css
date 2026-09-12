@@ -26,7 +26,23 @@
   --dur-fast:   220ms;
   --dur-med:    420ms;
   --dur-slow:   720ms;
-  --dur-reveal: 820ms;
+  /* z-index scale — everything layered lives here, no ad-hoc 99999s. */
+  --z-base:        1;
+  --z-nav:       100;
+  --z-menu:      200;
+  --z-progress:  300;
+  --z-grain:     400;
+  --z-cursor-ring: 500;
+  --z-cursor:      510;
+  --z-skip:        600;
+
+  --container: 1280px;
+
+  --dur-reveal: 560ms;   /* 820ms read as sluggish for a translate-and-fade */
+
+  /* Scroll-reveal geometry, shared by the CSS and the observer in MainLayout. */
+  --reveal-shift: 28px;
+  --stagger:      60ms;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -73,24 +89,22 @@ body {
   #cursor-dot, #cursor-ring { display: none !important; }
 }
 #cursor-dot {
-  position: fixed; top: 0; left: 0; z-index: 99999;
+  position: fixed; top: 0; left: 0; z-index: var(--z-cursor);
   width: 4px; height: 4px;
   background: var(--text);
   border-radius: 50%;
   pointer-events: none;
-  transform: translate(-50%, -50%);
-  will-change: left, top, background;
+  will-change: transform;
   transition: background var(--dur-fast) var(--ease-soft);
 }
 
 #cursor-ring {
-  position: fixed; top: 0; left: 0; z-index: 99998;
+  position: fixed; top: 0; left: 0; z-index: var(--z-cursor-ring);
   width: 28px; height: 28px;
   border: 1px solid oklch(30% 0.012 50 / 0.25);
   border-radius: 50%;
   pointer-events: none;
-  transform: translate(-50%, -50%);
-  will-change: left, top, width, height, border-color;
+  will-change: transform;
   transition: width var(--dur-med) var(--ease-out),
               height var(--dur-med) var(--ease-out),
               border-color var(--dur-fast) var(--ease-soft);
@@ -110,18 +124,30 @@ body:has(button:hover) #cursor-dot {
 /* ─── SCROLL PROGRESS ────────────────────────────────── */
 #scroll-progress {
   position: fixed; top: 0; left: 0; right: 0;
-  z-index: 9997; height: 2px;
-  max-width: 1280px; margin: 0 auto;
+  z-index: var(--z-progress); height: 2px;
+  max-width: var(--container); margin: 0 auto;
   background: var(--text);
   transform-origin: left; transform: scaleX(0);
-  transition: transform 120ms linear;
+}
+
+/* Driven off the main thread where supported — no scroll listener, no layout
+   read per frame. MainLayout only installs its rAF fallback when this is absent. */
+@supports (animation-timeline: scroll()) {
+  #scroll-progress {
+    animation: scroll-progress linear both;
+    animation-timeline: scroll(root block);
+  }
+  @keyframes scroll-progress {
+    from { transform: scaleX(0); }
+    to   { transform: scaleX(1); }
+  }
 }
 
 /* ─── GRAIN ──────────────────────────────────────────── */
 body::after {
   content: '';
   position: fixed; inset: 0;
-  pointer-events: none; z-index: 9990;
+  pointer-events: none; z-index: var(--z-grain);
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
   opacity: 0.4;
 }
@@ -132,7 +158,7 @@ body::after {
 /* ─── NAV ────────────────────────────────────────────── */
 #main-nav {
   position: fixed; top: 0; left: 0; right: 0;
-  z-index: 1000;
+  z-index: var(--z-nav);
   display: flex; align-items: center; justify-content: space-between;
   padding: 0 max(48px, calc((100% - 1200px) / 2));
   height: 56px;
@@ -203,7 +229,7 @@ body::after {
 /* mobile drawer */
 .mobile-menu {
   display: none; position: fixed; inset: 0; top: 56px;
-  z-index: 999; background: var(--bg);
+  z-index: var(--z-menu); background: var(--bg);
   flex-direction: column; padding: 40px 32px; gap: 28px;
   border-top: 1px solid var(--border);
 }
@@ -236,7 +262,7 @@ body::after {
 
 /* ─── HERO ───────────────────────────────────────────── */
 .hero {
-  min-height: 100vh;
+  min-height: 100dvh;
   display: grid; grid-template-columns: 1fr 1fr;
   align-items: center;
   padding: 120px max(48px, calc((100% - 1200px) / 2)) 80px;
@@ -395,7 +421,9 @@ h1 .name {
   text-decoration: none; display: inline-block;
 }
 
-.btn-primary:hover { background: #ff7055; transform: translateY(-2px); }
+@media (hover: hover) and (pointer: fine) {
+  .btn-primary:hover { background: #ff7055; transform: translateY(-2px); }
+}
 
 .btn-ghost {
   font-family: var(--font-mono);
@@ -411,10 +439,12 @@ h1 .name {
   text-decoration: none; display: inline-block;
 }
 
-.btn-ghost:hover {
-  border-color: var(--text);
-  background: var(--surface);
-  transform: translateY(-2px);
+@media (hover: hover) and (pointer: fine) {
+  .btn-ghost:hover {
+    border-color: var(--text);
+    background: var(--surface);
+    transform: translateY(-2px);
+  }
 }
 
 /* ─── PHOTO + RIGHT COLUMN ───────────────────────────── */
@@ -562,7 +592,7 @@ h1 .name {
 .hero-now-text a:hover { opacity: 0.7; }
 
 /* ─── SHARED ─────────────────────────────────────────── */
-.portfolio-2026 { max-width: 1280px; margin: 0 auto; position: relative; }
+.portfolio-2026 { max-width: var(--container); margin: 0 auto; position: relative; }
 
 .section-divider {
   height: 1px; background: var(--border);
@@ -877,7 +907,9 @@ h3 {
 }
 
 .project-row:hover .project-row-visual svg,
-.project-row:hover .project-row-visual img { transform: scale(1.03); }
+@media (hover: hover) and (pointer: fine) {
+  .project-row:hover .project-row-visual img { transform: scale(1.03); }
+}
 
 .project-row-content {
   display: flex; flex-direction: column;
@@ -969,8 +1001,10 @@ h3 {
   gap: 14px;
 }
 
-.project-row:hover .project-row-cta svg {
-  transform: translateX(3px);
+@media (hover: hover) and (pointer: fine) {
+  .project-row:hover .project-row-cta svg {
+    transform: translateX(3px);
+  }
 }
 
 @media (max-width: 860px) {
@@ -1031,7 +1065,9 @@ h3 {
   gap: 12px;
 }
 
-.writing-archive-link:hover svg { transform: translateX(3px); }
+@media (hover: hover) and (pointer: fine) {
+  .writing-archive-link:hover svg { transform: translateX(3px); }
+}
 
 .writing-list {
   display: flex; flex-direction: column;
@@ -1072,9 +1108,11 @@ h3 {
               transform var(--dur-med) var(--ease-out);
 }
 
-.writing-entry:hover .writing-entry-num {
-  color: var(--accent-text);
-  transform: translateX(6px);
+@media (hover: hover) and (pointer: fine) {
+  .writing-entry:hover .writing-entry-num {
+    color: var(--accent-text);
+    transform: translateX(6px);
+  }
 }
 
 .writing-entry-main {
@@ -1083,7 +1121,9 @@ h3 {
   transition: transform var(--dur-med) var(--ease-out);
 }
 
-.writing-entry:hover .writing-entry-main { transform: translateX(6px); }
+@media (hover: hover) and (pointer: fine) {
+  .writing-entry:hover .writing-entry-main { transform: translateX(6px); }
+}
 
 .writing-entry-title {
   font-family: var(--font-sans);
@@ -1137,10 +1177,12 @@ h3 {
               color var(--dur-fast) var(--ease-soft);
 }
 
-.writing-entry:hover .writing-entry-arrow {
-  opacity: 1;
-  transform: translateX(0);
-  color: var(--accent-text);
+@media (hover: hover) and (pointer: fine) {
+  .writing-entry:hover .writing-entry-arrow {
+    opacity: 1;
+    transform: translateX(0);
+    color: var(--accent-text);
+  }
 }
 
 @media (max-width: 768px) {
@@ -1437,11 +1479,13 @@ a.contact-link-row:hover { background: var(--surface); }
   width: 16px; height: 16px;
 }
 
-.footer-socials a:hover {
-  border-color: var(--accent-text);
-  background: var(--accent);
-  color: oklch(99% 0.003 60);
-  transform: translateY(-3px);
+@media (hover: hover) and (pointer: fine) {
+  .footer-socials a:hover {
+    border-color: var(--accent-text);
+    background: var(--accent);
+    color: oklch(99% 0.003 60);
+    transform: translateY(-3px);
+  }
 }
 
 .footer-bottom {
@@ -1549,55 +1593,53 @@ a.contact-link-row:hover { background: var(--surface); }
 }
 
 /* ─── REVEAL ANIMATIONS ──────────────────────────────── */
-.reveal {
-  opacity: 0; transform: translateY(28px);
-  transition: opacity var(--dur-reveal) var(--ease-out),
-              transform var(--dur-reveal) var(--ease-out);
-  will-change: opacity, transform;
-}
-
-.reveal.visible {
-  opacity: 1; transform: translateY(0);
-}
-
-.reveal.exit {
-  opacity: 0; transform: translateY(-12px);
-  transition: opacity var(--dur-med) var(--ease-in),
-              transform var(--dur-med) var(--ease-in);
-}
-
+/* Entrances only. Elements used to re-animate on scroll-out and scroll-back-in,
+   which replays the same entrance every time you scroll up — no purpose, and
+   .reveal-left exited to the right, the opposite of its entry. */
+.reveal,
 .reveal-left {
-  opacity: 0; transform: translateX(-28px);
+  opacity: 0;
   transition: opacity var(--dur-reveal) var(--ease-out),
               transform var(--dur-reveal) var(--ease-out);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+.reveal      { transform: translateY(var(--reveal-shift)); }
+.reveal-left { transform: translateX(calc(var(--reveal-shift) * -1)); }
+
+.reveal.visible,
+.reveal-left.visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* will-change is dropped once the element has arrived — holding a compositor
+   layer for every revealed element on a long page is not free. */
+.reveal:not(.visible),
+.reveal-left:not(.visible) {
   will-change: opacity, transform;
 }
 
-.reveal-left.visible { opacity: 1; transform: translateX(0); }
-
-.reveal-left.exit {
-  opacity: 0; transform: translateX(12px);
-  transition: opacity var(--dur-med) var(--ease-in),
-              transform var(--dur-med) var(--ease-in);
-}
-
+/* ── Hero entrance ── */
 @keyframes fadeUp {
-  from { opacity: 0; transform: translateY(28px) }
-  to   { opacity: 1; transform: translateY(0) }
+  from { opacity: 0; transform: translateY(var(--reveal-shift)) }
+  to   { opacity: 1; transform: none }
 }
 
-.hero-left > * {
+.hero-left > *,
+.hero-right,
+.hero-now {
   animation: fadeUp var(--dur-reveal) var(--ease-out) both;
+  animation-delay: var(--reveal-delay, 0ms);
 }
 
-.hero-tag             { animation-delay:  80ms; }
-.hero-left h1         { animation-delay: 160ms; }
-.hero-thesis          { animation-delay: 260ms; }
-.hero-desc            { animation-delay: 340ms; }
-.hero-chips           { animation-delay: 420ms; }
-.hero-actions         { animation-delay: 500ms; }
-.hero-right           { animation: fadeUp 940ms 320ms var(--ease-out) both; }
-.hero-now             { animation: fadeUp 940ms 640ms var(--ease-out) both; }
+.hero-tag     { --reveal-delay: calc(var(--stagger) * 1); }
+.hero-left h1 { --reveal-delay: calc(var(--stagger) * 2); }
+.hero-thesis  { --reveal-delay: calc(var(--stagger) * 3); }
+.hero-desc    { --reveal-delay: calc(var(--stagger) * 4); }
+.hero-chips   { --reveal-delay: calc(var(--stagger) * 5); }
+.hero-actions { --reveal-delay: calc(var(--stagger) * 6); }
+.hero-right   { --reveal-delay: calc(var(--stagger) * 4); }
+.hero-now     { --reveal-delay: calc(var(--stagger) * 7); }
 
 /* scrollbar */
 ::-webkit-scrollbar { width: 6px; }
@@ -1841,7 +1883,7 @@ a.contact-link-row:hover { background: var(--surface); }
   position: fixed;
   top: 0; left: 50%;
   transform: translate(-50%, -120%);
-  z-index: 100000;
+  z-index: var(--z-skip);
   padding: 12px 24px;
   background: var(--text);
   color: var(--bg);
@@ -2106,3 +2148,143 @@ a.contact-link-row:hover { background: var(--surface); }
   text-wrap: pretty;        /* avoids orphaned last words */
 }
 .md-p:last-child { margin-bottom: 0; }
+
+/* ─── NAV ACTIVE STATE ───────────────────────────────── */
+/* The site had no indication of where you were — the main orientation cue a
+   one-page layout needs. Colour alone isn't the signal; the underline carries it
+   for anyone who can't distinguish the two greys. */
+.nav-links a {
+  position: relative;
+}
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0; bottom: -6px;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+.nav-links a.is-current {
+  color: var(--text);
+}
+.nav-links a.is-current::after {
+  transform: scaleX(1);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .nav-links a:hover::after { transform: scaleX(1); }
+}
+
+.mobile-link.is-current { color: var(--accent-text); }
+.mobile-link--cta { color: var(--accent-text); }
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-links a::after { transition: none; }
+}
+
+/* ─── TABLE OF CONTENTS ──────────────────────────────── */
+/* Was styled entirely with inline literal oklch() values and a hardcoded
+   #ff5c35, so it couldn't follow the theme. Now on tokens. */
+.toc {
+  position: sticky;
+  top: 100px;
+  height: max-content;
+  align-self: flex-start;
+  width: 100%;
+}
+
+.toc-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.toc-title {
+  padding: 22px 20px 10px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+  user-select: none;
+}
+
+.toc-nav {
+  max-height: 62vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: none;
+}
+
+.toc-link {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 9px 20px;
+  text-decoration: none;
+  font-family: var(--font-mono);
+  transition: background var(--dur-fast) var(--ease-soft);
+}
+.toc-link--sub { padding-left: 44px; }
+.toc-link.is-active { background: var(--surface2); }
+
+.toc-num {
+  font-size: 11px;
+  line-height: 1.6;
+  flex-shrink: 0;
+  color: var(--muted2);
+  user-select: none;
+  transition: color var(--dur-fast) var(--ease-soft);
+}
+.toc-link.is-active .toc-num { color: var(--muted); }
+
+.toc-text {
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--muted);
+  transition: color var(--dur-fast) var(--ease-soft);
+}
+.toc-link--sub .toc-text { font-size: 12.5px; }
+.toc-link.is-active .toc-text {
+  color: var(--text);
+  font-weight: 600;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .toc-link:hover .toc-text { color: var(--text); }
+}
+
+.toc-progress {
+  padding: 14px 20px 18px;
+  border-top: 1px solid var(--border);
+}
+.toc-progress-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--muted);
+}
+.toc-progress-track {
+  width: 100%;
+  height: 3px;
+  background: var(--border);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.toc-progress-bar {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 2px;
+  transition: width var(--dur-med) var(--ease-out);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toc-progress-bar { transition: none; }
+}

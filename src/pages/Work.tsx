@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useRouteContentReady } from '../lib/routeReady';
 import { PROJECTS_LIST, type ProjectContent } from '../data/content';
 import ProjectThumbnail from '../components/ProjectThumbnail';
 
@@ -32,24 +33,28 @@ const WorkItem: React.FC<{ project: ProjectContent; index: number }> = ({ projec
   </Link>
 );
 
-const Work: React.FC = () => (
-  <section id="projects" className="work-page">
-    <div className="projects-header" style={{ marginBottom: '72px' }}>
-      <div>
-        <div className="section-label"><span className="num">03</span> Selected Work</div>
-        <h1>Selected <em>technical work</em></h1>
-        <p className="writing-intro">
-          Solving complex problems at the intersection of web architecture and machine learning.
-        </p>
-      </div>
-    </div>
+const Work: React.FC = () => {
+  useRouteContentReady();
 
-    <div className="projects-list">
-      {PROJECTS_LIST.map((p, i) => (
-        <WorkItem key={p.id} project={p} index={i} />
-      ))}
-    </div>
-  </section>
-);
+  return (
+    <section id="projects" className="work-page">
+      <div className="projects-header" style={{ marginBottom: '72px' }}>
+        <div>
+          <div className="section-label"><span className="num">03</span> Selected Work</div>
+          <h1>Selected <em>technical work</em></h1>
+          <p className="writing-intro">
+            Solving complex problems at the intersection of web architecture and machine learning.
+          </p>
+        </div>
+      </div>
+
+      <div className="projects-list">
+        {PROJECTS_LIST.map((p, i) => (
+          <WorkItem key={p.id} project={p} index={i} />
+        ))}
+      </div>
+    </section>
+  );
+};
 
 export default Work;

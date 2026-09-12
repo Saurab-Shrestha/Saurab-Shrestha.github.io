@@ -16,7 +16,9 @@
     "analyze": "vite build --mode analyze",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d dist",
-    "check:content": "node scripts/check-content.mjs"
+    "check:content": "node scripts/check-content.mjs",
+    "check:motion": "node scripts/check-motion.mjs",
+    "check:routes": "bash scripts/smoke.sh"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.11",

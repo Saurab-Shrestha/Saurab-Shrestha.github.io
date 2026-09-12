@@ -1,8 +1,11 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useRouteContentReady } from '../lib/routeReady';
 import { BLOGS_LIST, isoDate } from '../data/content';
 
 const Blog: React.FC = () => {
+  useRouteContentReady();
+
   return (
     <section id="blog" className="blog-page">
       <div className="writing-header">

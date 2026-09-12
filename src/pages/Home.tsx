@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
+import { useRouteContentReady } from '../lib/routeReady';
 import HeroSection from '../features/home/HeroSection';
 import AboutSection from '../features/home/AboutSection';
 import JourneyTimeline from '../features/home/JourneyTimeline';
@@ -9,19 +10,11 @@ import ContactSection from '../features/home/ContactSection';
 
 const Home: React.FC = () => {
   const { hash } = useLocation();
+  useRouteContentReady();
 
+  // Reveal is handled once, in MainLayout via useScrollReveal. This effect only
+  // resolves an incoming #hash.
   useEffect(() => {
-    const io = new IntersectionObserver((entries) => {
-      entries.forEach((e, i) => {
-        if (e.isIntersecting) {
-          setTimeout(() => e.target.classList.add('visible'), i * 80);
-          io.unobserve(e.target);
-        }
-      });
-    }, { threshold: 0.1 });
-
-    document.querySelectorAll('.reveal, .reveal-left, .tl-item').forEach(el => io.observe(el));
-
     if (hash) {
       const el = document.querySelector(hash);
       if (el) {
@@ -30,8 +23,6 @@ const Home: React.FC = () => {
         }, 100);
       }
     }
-
-    return () => io.disconnect();
   }, [hash]);
 
   return (

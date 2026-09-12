@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 
 export interface Heading {
   id: string;
@@ -8,129 +8,135 @@ export interface Heading {
 
 interface TableOfContentsProps {
   headings: Heading[];
-  scrollContainer?: HTMLElement | null;
   title?: string;
-  maxHeight?: number;
 }
 
-// ── Scroll read percent ────────────────────────────────────────────────────
-function useReadPercent(scrollContainer?: HTMLElement | null): number {
+/** Offset from the top of the viewport for scroll-to and active tracking. */
+const SCROLL_OFFSET = 100;
+
+// ── Reading progress ────────────────────────────────────────────────────────
+/** Percent of the document scrolled, batched to one read per frame. */
+function useReadPercent(): number {
   const [pct, setPct] = useState(0);
 
   useEffect(() => {
+    let frame = 0;
+
     const compute = () => {
-      const { scrollTop, scrollHeight, clientHeight } = scrollContainer
-        ? scrollContainer
-        : document.documentElement;
-      setPct(scrollHeight <= clientHeight ? 100 : (scrollTop / (scrollHeight - clientHeight)) * 100);
+      frame = 0;
+      const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+      const max = scrollHeight - clientHeight;
+      setPct(max <= 0 ? 100 : Math.min(100, Math.max(0, (scrollTop / max) * 100)));
+    };
+    // The listener used to call getBoundingClientRect and setState on every
+    // scroll event — unthrottled, forcing layout each time.
+    const onScroll = () => {
+      if (!frame) frame = requestAnimationFrame(compute);
     };
 
-    const target = scrollContainer ?? window;
-    target.addEventListener('scroll', compute, { passive: true });
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll, { passive: true });
     compute();
-    return () => target.removeEventListener('scroll', compute);
-  }, [scrollContainer]);
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
+      if (frame) cancelAnimationFrame(frame);
+    };
+  }, []);
 
   return pct;
 }
 
-// ── Active heading tracker ─────────────────────────────────────────────────
+// ── Active heading ──────────────────────────────────────────────────────────
+/**
+ * Tracks the heading currently being read, via IntersectionObserver rather than
+ * a scroll listener — the intersection maths runs off the main thread.
+ */
 function useActiveHeading(headings: Heading[]): string {
   const [activeId, setActiveId] = useState('');
+  const ids = useMemo(() => headings.map(h => h.id).join('|'), [headings]);
 
   useEffect(() => {
-    if (headings.length === 0) return;
+    const idList = ids ? ids.split('|') : [];
+    const els = idList
+      .map(id => document.getElementById(id))
+      .filter((el): el is HTMLElement => el !== null);
 
-    const headingEls = headings
-      .map(h => document.getElementById(h.id))
-      .filter(Boolean) as HTMLElement[];
+    if (els.length === 0) return;
 
-    const updateActive = () => {
-      const scrollY = window.scrollY + 130;
-      let current = headingEls[0]?.id ?? '';
-      for (const el of headingEls) {
-        const elTop = el.getBoundingClientRect().top + window.scrollY;
-        if (elTop <= scrollY) current = el.id;
+    const visible = new Set<string>();
+    let lastPassed = els[0].id;
+
+    const observer = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        if (entry.isIntersecting) visible.add(entry.target.id);
+        else {
+          visible.delete(entry.target.id);
+          // Scrolled past the top edge: remember it, so a long section with no
+          // heading on screen still shows the heading it belongs to.
+          if (entry.boundingClientRect.top < SCROLL_OFFSET) lastPassed = entry.target.id;
+        }
       }
+      const current = idList.find(id => visible.has(id)) ?? lastPassed;
       setActiveId(current);
-    };
-    window.addEventListener('scroll', updateActive, { passive: true });
-    updateActive();
-    return () => window.removeEventListener('scroll', updateActive);
-  }, [headings]);
+    }, {
+      rootMargin: `-${SCROLL_OFFSET}px 0px -70% 0px`,
+      threshold: 0,
+    });
+
+    els.forEach(el => observer.observe(el));
+    return () => observer.disconnect();
+  }, [ids]);
 
   return activeId;
 }
 
-// ── Component ──────────────────────────────────────────────────────────────
+// ── Component ───────────────────────────────────────────────────────────────
 const TableOfContents: React.FC<TableOfContentsProps> = ({
   headings,
-  scrollContainer,
   title = 'On this page',
-  maxHeight = 620,
 }) => {
-  const activeId = useActiveHeading(headings);
-  const readPercent = useReadPercent(scrollContainer);
+  // H2s plus their H3s — the previous H2-only filter hid every subsection.
+  const items = useMemo(
+    () => headings.filter(h => Number(h.level) <= 3),
+    [headings]
+  );
+
+  const activeId = useActiveHeading(items);
+  const readPercent = useReadPercent();
 
   const handleClick = useCallback((e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
     e.preventDefault();
     const el = document.getElementById(id);
     if (!el) return;
-    const top = el.getBoundingClientRect().top + window.scrollY - 100;
-    window.scrollTo({ top, behavior: 'smooth' });
+
+    window.scrollTo({
+      top: el.getBoundingClientRect().top + window.scrollY - SCROLL_OFFSET,
+      behavior: 'smooth',
+    });
+
+    // Keep the anchor shareable and move focus to the destination — clicking a
+    // TOC link used to leave keyboard users parked in the TOC with an unchanged
+    // URL. replaceState avoids the browser's own instant jump.
+    history.replaceState(null, '', `#${id}`);
+    el.setAttribute('tabindex', '-1');
+    el.focus({ preventScroll: true });
   }, []);
 
-  if (headings.length === 0) return null;
+  if (items.length === 0) return null;
 
-  // Only show H2 headings; fallback to all if none are level 2
-  const h2s = headings.filter(h => Number(h.level) === 2);
-  const items = h2s.length > 0 ? h2s : headings;
+  let h2Count = 0;
 
   return (
-    <aside
-      aria-label="Table of contents"
-      style={{
-        position: 'sticky',
-        top: '100px',
-        height: 'max-content',
-        alignSelf: 'flex-start',
-        width: '100%',
-      }}
-    >
-      <div style={{
-        background: 'oklch(97% 0.005 50)',
-        border: '1px solid oklch(88% 0.006 50)',
-        borderRadius: '8px',
-        overflow: 'hidden',
-      }}>
+    <aside className="toc" aria-label="Table of contents">
+      <div className="toc-card">
+        <p className="toc-title">{title}</p>
 
-        {/* ── Header ── */}
-        <div style={{
-          padding: '22px 20px 10px',
-          fontSize: '10px',
-          letterSpacing: '0.18em',
-          textTransform: 'uppercase',
-          color: 'oklch(52% 0.012 50)',
-          fontFamily: 'DM Mono, monospace',
-          fontWeight: 600,
-          userSelect: 'none',
-        }}>
-          {title}
-        </div>
-
-        {/* ── Nav ── */}
-        <nav
-          aria-label="Page sections"
-          style={{
-            maxHeight: `${maxHeight}px`,
-            overflowY: 'auto',
-            overflowX: 'hidden',
-            scrollbarWidth: 'none',
-          }}
-        >
-          {items.map((h, index) => {
+        <nav className="toc-nav" aria-label="Page sections">
+          {items.map((h) => {
             const isActive = activeId === h.id;
-            const num = String(index + 1).padStart(2, '0');
+            const isSub = Number(h.level) === 3;
+            if (!isSub) h2Count += 1;
 
             return (
               <a
@@ -138,90 +144,33 @@ const TableOfContents: React.FC<TableOfContentsProps> = ({
                 href={`#${h.id}`}
                 onClick={(e) => handleClick(e, h.id)}
                 aria-current={isActive ? 'location' : undefined}
-                style={{
-                  display: 'flex',
-                  alignItems: 'flex-start',
-                  gap: '12px',
-                  padding: '10px 20px',
-                  textDecoration: 'none',
-                  position: 'relative',
-                  background: isActive ? 'oklch(94.5% 0.006 50)' : 'transparent',
-                  transition: 'background 220ms cubic-bezier(0.4,0,0.2,1)',
-                }}
+                className={`toc-link ${isSub ? 'toc-link--sub' : ''} ${isActive ? 'is-active' : ''}`}
               >
-                {/* Number */}
-                <span style={{
-                  fontFamily: 'DM Mono, monospace',
-                  fontSize: '11px',
-                  lineHeight: '1.6',
-                  flexShrink: 0,
-                  color: isActive ? 'oklch(45% 0.015 50)' : 'oklch(68% 0.01 50)',
-                  fontWeight: 400,
-                  transition: 'color 220ms cubic-bezier(0.4,0,0.2,1)',
-                  userSelect: 'none',
-                }}>
-                  {num}
+                <span className="toc-num" aria-hidden="true">
+                  {isSub ? '' : String(h2Count).padStart(2, '0')}
                 </span>
-
-                {/* Heading text */}
-                <span style={{
-                  fontSize: '13px',
-                  lineHeight: '1.55',
-                  color: isActive ? 'oklch(18% 0.01 50)' : 'oklch(45% 0.012 50)',
-                  fontWeight: isActive ? 600 : 400,
-                  fontFamily: 'DM Mono, monospace',
-                  transition: 'color 220ms cubic-bezier(0.4,0,0.2,1), font-weight 220ms cubic-bezier(0.4,0,0.2,1)',
-                }}>
-                  {h.text}
-                </span>
+                <span className="toc-text">{h.text}</span>
               </a>
             );
           })}
         </nav>
 
-        {/* ── Progress ── */}
-        <div style={{
-          padding: '14px 20px 18px',
-          borderTop: '1px solid oklch(88% 0.006 50)',
-        }}>
-          <div style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginBottom: '8px',
-          }}>
-            <span style={{
-              fontSize: '11px',
-              color: 'oklch(52% 0.012 50)',
-              fontFamily: 'DM Mono, monospace',
-            }}>
-              Reading progress
-            </span>
-            <span style={{
-              fontSize: '11px',
-              color: 'oklch(52% 0.012 50)',
-              fontFamily: 'DM Mono, monospace',
-            }}>
-              {Math.round(readPercent)}%
-            </span>
+        <div className="toc-progress">
+          <div className="toc-progress-head">
+            <span>Reading progress</span>
+            <span>{Math.round(readPercent)}%</span>
           </div>
-          <div style={{
-            width: '100%',
-            height: '3px',
-            background: 'oklch(88% 0.006 50)',
-            borderRadius: '2px',
-            overflow: 'hidden',
-          }}>
-            <div style={{
-              height: '100%',
-              width: `${readPercent}%`,
-              background: '#ff5c35',
-              borderRadius: '2px',
-              transition: 'width 420ms cubic-bezier(0.16, 1, 0.3, 1)',
-            }} />
+          <div
+            className="toc-progress-track"
+            role="progressbar"
+            aria-label="Reading progress"
+            aria-valuenow={Math.round(readPercent)}
+            aria-valuemin={0}
+            aria-valuemax={100}
+          >
+            <div className="toc-progress-bar" style={{ width: `${readPercent}%` }} />
           </div>
         </div>
-
       </div>
     </aside>
   );
