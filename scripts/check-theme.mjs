@@ -15,7 +15,7 @@ import { setTimeout as sleep } from 'node:timers/promises';
 const URL_BASE = process.env.BASE ?? 'http://localhost:4173';
 const CHROME = process.env.CHROME ?? '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
 const PORT = 9355;
-const ROUTES = ['', 'work', 'blog', 'work/pranama', 'blog/understanding-transformer'];
+const ROUTES = ['', 'work', 'blog', 'work/pramana', 'blog/understanding-transformer'];
 
 const chrome = spawn(CHROME, ['--headless','--disable-gpu','--no-sandbox',
   `--remote-debugging-port=${PORT}`,'--window-size=1440,900','about:blank'], { stdio: 'ignore' });

@@ -17,9 +17,9 @@ const fail = [];
 const check = (cond, msg) => { if (!cond) fail.push(msg); };
 
 // Mirrors PROJECT_ORDER in src/data/content.ts.
-const ORDER = ['pranama', 'hdes', 'tdd', 'svufe'];
+const ORDER = ['pramana', 'hdes', 'tdd', 'svufe'];
 // Mirrors the SVGS map in src/components/ProjectThumbnail.tsx.
-const SVG_KEYS = ['pranama', 'svufe'];
+const SVG_KEYS = ['pramana', 'svufe'];
 
 const frontmatter = (raw) => {
   const m = raw.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n([\s\S]*)$/);

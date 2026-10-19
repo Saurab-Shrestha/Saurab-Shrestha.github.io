@@ -6,7 +6,7 @@
  * change is the classic way a component like this quietly degrades a SPA.
  * So this asserts:
  *   1. no 3D chunk is requested on the homepage or any other project
- *   2. it is requested on /work/pranama, and a canvas actually renders
+ *   2. it is requested on /work/pramana, and a canvas actually renders
  *   3. prefers-reduced-motion gets the static SVG and loads no 3D at all
  *   4. navigating in and out ten times does not accumulate WebGL contexts
  *   5. with WebGL unavailable it still renders, using the static SVG
@@ -75,13 +75,13 @@ try {
     const hits = await visit(route, 2500);
     const label = `/${route || '(home)'}`.padEnd(22);
     console.log(`  ${label} 3D requests: ${hits.length}`);
-    if (hits.length) fail.push(`3D chunk loaded on /${route || '(home)'} — it should be scoped to pranama`);
+    if (hits.length) fail.push(`3D chunk loaded on /${route || '(home)'} — it should be scoped to pramana`);
   }
 
   // ── 2. Present and rendering where it should be ──────────────────────────
-  const hits = await visit('work/pranama', 4500);
-  console.log(`  /work/pranama     3D requests: ${hits.length}`);
-  if (!hits.length) fail.push('3D chunk was never requested on /work/pranama');
+  const hits = await visit('work/pramana', 4500);
+  console.log(`  /work/pramana     3D requests: ${hits.length}`);
+  if (!hits.length) fail.push('3D chunk was never requested on /work/pramana');
 
   const rendered = await evaluate(`(() => {
     const c = document.querySelector('.eg-canvas canvas');
@@ -102,7 +102,7 @@ try {
 
   // ── 3. Reduced motion gets the SVG and loads nothing ─────────────────────
   await send('Emulation.setEmulatedMedia', { features: [{ name: 'prefers-reduced-motion', value: 'reduce' }] });
-  const reducedHits = await visit('work/pranama', 3500);
+  const reducedHits = await visit('work/pramana', 3500);
   const reduced = await evaluate(`({
     canvas: !!document.querySelector('.eg-canvas canvas'),
     svg: !!document.querySelector('.eg-fallback svg'),
@@ -115,7 +115,7 @@ try {
   await send('Emulation.setEmulatedMedia', { features: [] });
 
   // ── 4. No context accumulation across navigation ─────────────────────────
-  await send('Page.navigate', { url: `${URL_BASE}/work/pranama` });
+  await send('Page.navigate', { url: `${URL_BASE}/work/pramana` });
   await sleep(3500);
   const churn = await evaluate(`(async () => {
     const wait = ms => new Promise(r => setTimeout(r, ms));
@@ -124,7 +124,7 @@ try {
     const before = canvases();
     for (let i = 0; i < 10; i++) {
       nav('/work'); await wait(220);
-      nav('/work/pranama'); await wait(320);
+      nav('/work/pramana'); await wait(320);
     }
     await wait(1500);
     return { before, after: canvases() };
@@ -148,7 +148,7 @@ try {
       };
     })()`,
   });
-  const noGlHits = await visit('work/pranama', 3500);
+  const noGlHits = await visit('work/pramana', 3500);
   const noGl = await evaluate(`({
     svg: !!document.querySelector('.eg-fallback svg'),
     canvas: !!document.querySelector('.eg-canvas canvas'),

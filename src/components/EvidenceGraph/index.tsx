@@ -1,6 +1,6 @@
 import React, { Suspense, lazy, useEffect, useState } from 'react';
 import { useScrollProgress } from '../../hooks/useScrollProgress';
-import { PranamaThumbnail } from '../ProjectThumbnail';
+import { PramanaThumbnail } from '../ProjectThumbnail';
 import { EVIDENCE, HYPOTHESIS } from './graphData';
 
 const GraphScene = lazy(() => import('./GraphScene'));
@@ -29,7 +29,7 @@ function useShouldRender3D(): boolean | null {
 }
 
 /**
- * Scroll-driven Evidence Graph for the Pranama case study.
+ * Scroll-driven Evidence Graph for the Pramana case study.
  *
  * Lives only here, never on the homepage: the 3D bundle stays off the landing
  * page's critical path entirely. The static SVG is both the pre-load placeholder
@@ -47,7 +47,7 @@ const EvidenceGraph: React.FC = () => {
     <figure className="eg" ref={ref}>
       <div className="eg-stage">
         <div className="eg-fallback" data-hidden={render3D === true}>
-          <PranamaThumbnail />
+          <PramanaThumbnail />
         </div>
 
         {render3D && (
@@ -106,7 +106,7 @@ const EvidenceGraph: React.FC = () => {
         <p className="eg-note">
           An illustrative Investigation over the transformer literature — the same
           example this case study opens with. Claims are attributable to published
-          papers; it is not a captured Pranama run.
+          papers; it is not a captured Pramana run.
         </p>
       </figcaption>
     </figure>

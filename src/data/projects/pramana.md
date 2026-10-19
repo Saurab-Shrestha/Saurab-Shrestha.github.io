@@ -1,17 +1,17 @@
 ---
-name: "Pranama"
+name: "Pramana"
 tag: "AI Research Systems"
 year: "2025"
 role: "Architect & Engineer"
 desc: "An agentic RAG system built for deep technical investigation — stateful, hypothesis-driven, and designed to reach Saturation."
 tech: ["LangGraph", "Python", "Qdrant", "FastAPI", "LlamaIndex"]
-github: "https://github.com/Saurab-Shrestha/Pranama"
-thumbnail: "svg:pranama"
+github: "https://github.com/Saurab-Shrestha/Pramana"
+thumbnail: "svg:pramana"
 ---
 
-# Pranama
+# Pramana
 
-Standard RAG answers questions. Pranama investigates them.
+Standard RAG answers questions. Pramana investigates them.
 
 ## The Problem
 
@@ -23,7 +23,7 @@ For a researcher asking "what do these papers disagree about?", that's not a lim
 
 ## The Approach
 
-Pranama is built around a different abstraction: the **Investigation**.
+Pramana is built around a different abstraction: the **Investigation**.
 
 An Investigation is a stateful, long-running session that groups multiple Queries under shared Hypotheses. When you start an Investigation, you define what you're trying to confirm or refute. The system then runs Queries, extracts Evidence from retrieved Chunks, and maps each piece of Evidence to your Hypotheses — either supporting or contradicting them.
 

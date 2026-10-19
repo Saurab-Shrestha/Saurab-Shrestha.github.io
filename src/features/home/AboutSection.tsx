@@ -5,7 +5,7 @@ import LocalTime from '../../components/LocalTime';
 /**
  * Capability areas.
  *
- * Grouped from what the rest of the site already evidences: Pranama for
+ * Grouped from what the rest of the site already evidences: Pramana for
  * agents and retrieval, the QuickFox work for document intelligence, and the
  * Django/FastAPI projects for the backend and product rows. Nothing here is a
  * claim the site doesn't back up somewhere.
@@ -20,7 +20,7 @@ const AREAS: Array<{ title: string; detail: string }> = [
 const DETAILS = [
   { label: 'Location', value: 'Bhaktapur, Nepal' },
   { label: 'Open to', value: 'Remote · Contract · Full-time' },
-  { label: 'Currently on', value: 'Pranama — agentic research system' },
+  { label: 'Currently on', value: 'Pramana — agentic research system' },
 ];
 
 const AboutSection: React.FC = () => (

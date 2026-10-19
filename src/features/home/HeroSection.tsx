@@ -48,7 +48,7 @@ const HeroSection: React.FC = () => {
         </div>
         <p className="hero-now">
           <span className="hero-now-label">Currently</span>
-          <span className="hero-now-text">Building <a href="https://github.com/Saurab-Shrestha/Pranama" target="_blank" rel="noreferrer">Pranama</a> · LangGraph · Qdrant · FastAPI</span>
+          <span className="hero-now-text">Building <a href="https://github.com/Saurab-Shrestha/Pramana" target="_blank" rel="noreferrer">Pramana</a> · LangGraph · Qdrant · FastAPI</span>
         </p>
       </div>
 
