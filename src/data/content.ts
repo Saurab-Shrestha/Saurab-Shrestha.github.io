@@ -40,7 +40,7 @@ export interface BlogContent {
  * Display order for the work list. Projects not named here still resolve by URL
  * but won't be listed, so adding a .md file alone never silently changes the page.
  */
-const PROJECT_ORDER = ['neuralnoodle', 'hdes', 'tdd', 'svufe'];
+const PROJECT_ORDER = ['pranama', 'hdes', 'tdd', 'svufe'];
 
 export const PROJECTS_CONTENT: Record<string, ProjectContent> = Object.entries(projectFiles).reduce(
   (acc, [path, rawContent]) => {

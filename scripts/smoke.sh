@@ -18,7 +18,7 @@ CHROME="${CHROME:-/Applications/Google Chrome.app/Contents/MacOS/Google Chrome}"
 ROUTES=(
   "|Standard RAG"
   "work|Selected"
-  "work/neuralnoodle|NeuralNoodle"
+  "work/pranama|Pranama"
   "work/hdes|Home Decor"
   "work/tdd|Tomato"
   "work/svufe|Signature"

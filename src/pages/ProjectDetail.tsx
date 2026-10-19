@@ -61,9 +61,9 @@ const ProjectDetail: React.FC = () => {
       </div>
 
       {/* ── HERO VISUAL ──
-          NeuralNoodle gets the live Evidence Graph in place of a static
+          Pranama gets the live Evidence Graph in place of a static
           thumbnail; it demonstrates the claim the case study makes. */}
-      {project.id === 'neuralnoodle' ? (
+      {project.id === 'pranama' ? (
         <div className="detail-hero-visual-wrap">
           <React.Suspense fallback={
             <div className="detail-hero-visual">

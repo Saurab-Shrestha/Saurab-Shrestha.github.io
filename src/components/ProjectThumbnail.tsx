@@ -3,7 +3,7 @@ import { asset } from '../lib/asset';
 
 /**
  * Project thumbnails, referenced from project frontmatter by a `thumbnail` key:
- *   "svg:neuralnoodle"      -> the inline SVG below
+ *   "svg:pranama"      -> the inline SVG below
  *   "img:assets/tomato.png" -> a file in public/
  *
  * Single source of truth: ProjectsSection, Work, and ProjectDetail all render
@@ -11,7 +11,7 @@ import { asset } from '../lib/asset';
  * ProjectsSection.tsx and Work.tsx.
  */
 
-const NeuralNoodleThumbnail: React.FC = () => (
+const PranamaThumbnail: React.FC = () => (
   <svg
     viewBox="0 0 480 270"
     xmlns="http://www.w3.org/2000/svg"
@@ -101,7 +101,7 @@ const SvufeThumbnail: React.FC = () => (
   </svg>
 );
 const SVGS: Record<string, React.FC> = {
-  neuralnoodle: NeuralNoodleThumbnail,
+  pranama: PranamaThumbnail,
   svufe: SvufeThumbnail,
 };
 
@@ -149,5 +149,5 @@ const ProjectThumbnail: React.FC<Props> = ({ spec, name }) => {
   return null;
 };
 
-export { NeuralNoodleThumbnail };
+export { PranamaThumbnail };
 export default ProjectThumbnail;

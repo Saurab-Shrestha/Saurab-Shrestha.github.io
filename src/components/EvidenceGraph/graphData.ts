@@ -8,7 +8,7 @@
  * a graph about a system that tracks evidence should not itself assert figures
  * it can't cite.
  *
- * Replace with a serialised graph from an actual NeuralNoodle run when one exists.
+ * Replace with a serialised graph from an actual Pranama run when one exists.
  */
 
 export type Polarity = 'supports' | 'contradicts';
