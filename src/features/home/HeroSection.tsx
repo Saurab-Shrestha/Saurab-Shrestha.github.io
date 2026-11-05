@@ -36,8 +36,8 @@ const HeroSection: React.FC = () => {
           checks its answers for contradictions, and cites every claim.
         </p>
         <div className="hero-actions">
-          <Link to="/work" className="btn-primary">View My Work</Link>
-          <a href="#contact" onClick={handleContactClick} className="btn-ghost">Get In Touch</a>
+          <Link to="/work" className="btn-primary">View my work</Link>
+          <a href="#contact" onClick={handleContactClick} className="btn-ghost">Get in touch</a>
         </div>
         <p className="hero-now">
           <span className="hero-now-label">Currently</span>
@@ -53,7 +53,7 @@ const HeroSection: React.FC = () => {
                 src={asset('assets/saurab-me.webp')}
                 alt="Saurab Shrestha"
                 width={900}
-                height={901}
+                height={900}
                 fetchPriority="high"
                 decoding="async"
               />
