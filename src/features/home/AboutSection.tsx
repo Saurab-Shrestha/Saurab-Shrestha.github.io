@@ -33,11 +33,13 @@ const AboutSection: React.FC = () => (
           <div className="section-label">
             <span className="num">01</span> About
           </div>
-          <h2>Passionate about<br /><em>building things</em><br />that matter.</h2>
+          <h2>Regulator letters in,<br />bank actions out.</h2>
           <p className="rail-intro-p">
-            I work at the intersection of software engineering and applied AI —
-            building products that solve real problems, from model training to the
-            pixel on screen.
+            At QuickFox I built QuickXtract, which automates the enforcement letters
+            Nepal Rastra Bank sends banks: freeze and release orders from police and
+            courts. Document intelligence extracts the named subjects, a fuzzy-matching engine screens
+            them against core banking records, and every action passes maker-checker
+            review before it runs.
           </p>
 
           <a className="rail-cta" href={`mailto:${appConfig.contact.email}`}>

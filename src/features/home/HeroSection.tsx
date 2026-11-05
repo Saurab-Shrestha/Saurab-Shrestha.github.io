@@ -33,7 +33,7 @@ const HeroSection: React.FC = () => {
         </h1>
         <p className="hero-desc">
           An agentic research system that tracks hypotheses,
-          maps contradictions, and knows when it's done.
+          checks its answers for contradictions, and cites every claim.
         </p>
         <div className="hero-actions">
           <Link to="/work" className="btn-primary">View My Work</Link>
