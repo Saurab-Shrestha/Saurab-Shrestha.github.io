@@ -95,10 +95,10 @@ const ContactSection: React.FC = () => {
 
           <div className="contact-left reveal">
             <div className="section-label">
-              <span className="num">05</span> Contact
+              Contact
             </div>
-            <h2>Let's build<br /><em>something.</em></h2>
-            <p>A project idea, a collaboration, or just a chat about technology — I'd love to hear from you.</p>
+            <h2>Get in touch.</h2>
+            <p>I'm open to remote, contract and full-time work. Email is the quickest way to reach me.</p>
             <CopyEmail email={appConfig.contact.email} />
 
             <div className="contact-links">
@@ -214,14 +214,14 @@ const ContactSection: React.FC = () => {
                     aria-disabled={status === 'sending'}
                     style={{ flex: 1, border: 'none', cursor: status === 'sending' ? 'wait' : 'none', opacity: status === 'sending' ? 0.7 : 1 }}
                   >
-                    {status === 'sending' ? 'Sending…' : 'Send Message'}
+                    {status === 'sending' ? 'Sending…' : 'Send message'}
                   </button>
                   <a
                     href={`mailto:${appConfig.contact.email}`}
                     className="btn-ghost"
                     style={{ flex: 1, textAlign: 'center' }}
                   >
-                    Email Directly
+                    Email directly
                   </a>
                 </div>
               </form>

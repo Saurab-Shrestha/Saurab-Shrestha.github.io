@@ -40,10 +40,10 @@ const Work: React.FC = () => {
     <section id="projects" className="work-page">
       <div className="projects-header" style={{ marginBottom: '72px' }}>
         <div>
-          <div className="section-label"><span className="num">03</span> Selected Work</div>
-          <h1>Selected <em>technical work</em></h1>
+          <div className="section-label">Work</div>
+          <h1>Document AI for banks, and the research it led to.</h1>
           <p className="writing-intro">
-            Solving complex problems at the intersection of web architecture and machine learning.
+            Production systems that read compliance letters and cheques, and Pramana, the agentic RAG system that grew out of that work.
           </p>
         </div>
       </div>

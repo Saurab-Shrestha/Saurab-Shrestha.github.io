@@ -13,7 +13,7 @@ const NAV_ITEMS: Array<
   | { kind: 'route'; to: string; label: string }
 > = [
   { kind: 'section', id: 'about', label: 'About' },
-  { kind: 'section', id: 'timeline', label: 'Journey' },
+  { kind: 'section', id: 'timeline', label: 'Experience' },
   { kind: 'route', to: '/work', label: 'Work' },
   { kind: 'route', to: '/blog', label: 'Blog' },
   { kind: 'section', id: 'contact', label: 'Contact' },

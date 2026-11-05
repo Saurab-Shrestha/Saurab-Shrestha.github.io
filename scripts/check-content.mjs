@@ -17,7 +17,7 @@ const fail = [];
 const check = (cond, msg) => { if (!cond) fail.push(msg); };
 
 // Mirrors PROJECT_ORDER in src/data/content.ts.
-const ORDER = ['pramana', 'quickxtract', 'quickcca', 'svufe'];
+const ORDER = ['pramana', 'quickxtract', 'quickcca'];
 // Mirrors the SVGS map in src/components/ProjectThumbnail.tsx.
 const SVG_KEYS = ['pramana', 'svufe', 'quickxtract', 'quickcca'];
 

@@ -62,17 +62,17 @@ const Footer: React.FC = () => {
         <div className="footer-nav-col">
           <p className="footer-col-label">Navigation</p>
           <ul className="footer-links-list">
-            <li><Link to="/work">Selected Work</Link></li>
+            <li><Link to="/work">Selected work</Link></li>
             <li><Link to="/blog">Writing &amp; Notes</Link></li>
             <li><a href="#about">About &amp; Stack</a></li>
-            <li><a href="#contact">Get In Touch</a></li>
+            <li><a href="#contact">Get in touch</a></li>
             <li>
               <a
                 href={asset('assets/Saurab-Shrestha-CV.pdf')}
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                Curriculum Vitae <ArrowUpRight size={13} aria-hidden="true" />
+                Curriculum vitae <ArrowUpRight size={13} aria-hidden="true" />
               </a>
             </li>
           </ul>

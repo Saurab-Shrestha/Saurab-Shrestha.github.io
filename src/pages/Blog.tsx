@@ -10,10 +10,10 @@ const Blog: React.FC = () => {
     <section id="blog" className="blog-page">
       <div className="writing-header">
         <div>
-          <div className="section-label"><span className="num">04</span> Writing</div>
-          <h1>The engineering<br /><em>journal</em></h1>
+          <div className="section-label">Writing</div>
+          <h1>Writing</h1>
           <p className="writing-intro">
-            Notes from the desk. Long-form on the systems I'm building, the dead-ends I learn from, and the parts of the stack I find myself returning to.
+            Long-form notes on the systems I build: what I tried, what I measured and what changed my mind.
           </p>
         </div>
       </div>

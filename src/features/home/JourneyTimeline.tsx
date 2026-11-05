@@ -28,16 +28,16 @@ const ROLES: Role[] = [
     period: "2026 — Present",
     title: "AI / ML Engineer",
     org: "Bajra Technologies",
-    desc: "Building production AI systems, agentic workflows and LLM infrastructure.",
-    tags: "AI · LLM · RAG",
+    desc: "Production AI for a multi-tenant customer support platform: LLM chat and voice, hybrid dense and BM25 retrieval with reranking, and bilingual Nepali and English conversations.",
+    tags: "vLLM · Qdrant · Whisper",
     current: true,
   },
   {
     period: "2023 — 2026",
     title: "Software Engineer",
     org: "QuickFox Consulting",
-    desc: "Built document intelligence, compliance automation and AI products.",
-    tags: "Django · React · OCR",
+    desc: "Built QuickXtract for NRB enforcement letters and the cheque OCR for QuickCCA, and researched RAG on QuickRef, the work that led to Pramana.",
+    tags: "Django · FastAPI · OCR",
   },
   {
     period: "Apr — Aug 2023",
@@ -75,15 +75,12 @@ const JourneyTimeline: React.FC = () => (
         {/* ── Left rail ── */}
         <div className="rail-intro reveal">
           <div className="section-label">
-            <span className="num">02</span> Experience
+            Experience
           </div>
-          <h2>
-            Education &amp;
-            <br />
-            <em>Experience</em>
-          </h2>
+          <h2>Three roles, two companies, since 2023.</h2>
           <p className="rail-intro-p">
-            A short journey of learning, building, and growing.
+            Document intelligence and RAG for banks at QuickFox, then production
+            chat and voice AI at Bajra.
           </p>
           <a
             className="rail-cta"

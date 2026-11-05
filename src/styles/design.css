@@ -19,7 +19,7 @@
   --accent-hover: oklch(62.5% 0.204 34.5);
   --danger: oklch(48% 0.18 22);  /* crimson, not orange: 6.89:1 on --bg, 5.94:1 on --surface2 */
   --code-bg: oklch(20% 0.040 258.3);
-  --photo-blend: multiply;      /* sinks the cutout into the cream paper */
+  --photo-blend: normal;        /* a full photo, not a cutout: multiply would muddy it */
   --photo-filter: contrast(1.04);
   --photo-glow: transparent;
   --browser-chrome-bg: var(--surface2);
@@ -292,9 +292,7 @@ body::after {
   color: var(--muted);
   text-decoration: none;
   font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+  font-size: 12px;
   transition: color var(--dur-fast) var(--ease-soft);
   position: relative; padding-bottom: 2px;
 }
@@ -362,8 +360,7 @@ body::after {
 
 .nav-cta {
   font-family: var(--font-mono);
-  font-size: 11px; font-weight: 500;
-  letter-spacing: 0.08em; text-transform: uppercase;
+  font-size: 12px; font-weight: 500;
   color: var(--on-accent);
   background: var(--accent-strong); border: none;
   padding: 8px 18px;
@@ -425,7 +422,7 @@ body::after {
 .hero-tag {
   display: inline-flex; align-items: center; gap: 8px;
   font-family: var(--font-mono);
-  font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase;
+  font-size: 12px;
   color: var(--accent3); margin-bottom: 24px;
 }
 
@@ -479,8 +476,7 @@ h1 {
 
 .btn-primary {
   font-family: var(--font-mono);
-  font-size: 11px; font-weight: 500;
-  letter-spacing: 0.08em; text-transform: uppercase;
+  font-size: 12px; font-weight: 500;
   color: var(--on-accent);
   background: var(--accent-strong); border: none;
   padding: 13px 24px; cursor: pointer;
@@ -495,8 +491,7 @@ h1 {
 
 .btn-ghost {
   font-family: var(--font-mono);
-  font-size: 11px; font-weight: 500;
-  letter-spacing: 0.08em; text-transform: uppercase;
+  font-size: 12px; font-weight: 500;
   color: var(--text); background: transparent;
   border: 1px solid var(--border);
   padding: 13px 24px; cursor: pointer;
@@ -537,9 +532,7 @@ h1 {
 
 .hero-role {
   font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
+  font-size: 12px;
   color: var(--muted);
 }
 
@@ -657,9 +650,7 @@ h1 {
 }
 
 .photo-frame-meta span {
-  font-size: 9px;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
+  font-size: 11px;
   color: var(--muted2);
 }
 
@@ -686,8 +677,7 @@ h1 {
 }
 
 .hero-now-label {
-  font-size: 9px; letter-spacing: 0.18em;
-  text-transform: uppercase; color: var(--muted2);
+  font-size: 11px; color: var(--muted2);
   flex-shrink: 0;
   position: relative; padding-left: 14px;
 }
@@ -729,7 +719,7 @@ section {
 .section-label {
   display: flex; align-items: center; gap: 12px;
   font-family: var(--font-mono);
-  font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase;
+  font-size: 12px;
   color: var(--muted); margin-bottom: 56px;
 }
 
@@ -738,7 +728,6 @@ section {
   background: var(--border); max-width: 72px;
 }
 
-.section-label .num { color: var(--muted); font-variant-numeric: tabular-nums; }
 
 h2 {
   font-family: var(--font-sans);
@@ -784,10 +773,8 @@ h3 {
 
 .area-title {
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
   color: var(--text);
   margin-bottom: 6px;
 }
@@ -831,9 +818,7 @@ h3 {
   gap: 8px;
   margin-top: 24px;
   font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+  font-size: 12px;
   color: var(--accent-text);
   text-decoration: none;
 }
@@ -885,9 +870,7 @@ h3 {
 }
 
 .role-now {
-  font-size: 9px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
+  font-size: 11px;
   color: var(--accent3);
   border: 1px solid color-mix(in oklab, var(--accent3) 35%, transparent);
   padding: 1px 6px;
@@ -942,9 +925,7 @@ h3 {
 
 .study-label {
   font-family: var(--font-mono);
-  font-size: 9px;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
+  font-size: 11px;
   color: var(--muted);
   margin-bottom: 14px;
 }
@@ -1064,8 +1045,7 @@ h3 {
 
 .project-row-type {
   font-family: var(--font-mono);
-  font-size: 10px; letter-spacing: 0.16em;
-  text-transform: uppercase; color: var(--muted);
+  font-size: 12px; color: var(--muted);
 }
 
 .project-row-name {
@@ -1094,8 +1074,7 @@ h3 {
 
 .tech-badge {
   font-family: var(--font-mono);
-  font-size: 10px; letter-spacing: 0.08em;
-  text-transform: uppercase;
+  font-size: 12px;
   padding: 4px 9px;
   border: 1px solid var(--border); color: var(--muted);
   background: var(--bg);
@@ -1111,9 +1090,7 @@ h3 {
 .project-row-cta {
   display: inline-flex; align-items: center; gap: 10px;
   font-family: var(--font-mono);
-  font-size: 11px; font-weight: 500;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+  font-size: 12px; font-weight: 500;
   color: var(--text);
   align-self: flex-start;
   padding-bottom: 4px;
@@ -1177,8 +1154,7 @@ h3 {
 .writing-archive-link {
   display: inline-flex; align-items: center; gap: 8px;
   font-family: var(--font-mono);
-  font-size: 11px; font-weight: 500;
-  letter-spacing: 0.12em; text-transform: uppercase;
+  font-size: 12px; font-weight: 500;
   color: var(--text);
   text-decoration: none;
   padding-bottom: 4px;
@@ -1285,9 +1261,7 @@ h3 {
 
 .writing-entry-tag {
   font-family: var(--font-mono);
-  font-size: 10px;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
+  font-size: 12px;
   color: var(--muted);
 }
 
@@ -1368,8 +1342,7 @@ a.contact-link-row:hover { background: var(--surface); }
 
 .contact-link-label {
   font-family: var(--font-mono);
-  font-size: 9px; letter-spacing: 0.14em;
-  text-transform: uppercase; color: var(--muted); flex-shrink: 0;
+  font-size: 11px; color: var(--muted); flex-shrink: 0;
 }
 
 .contact-link-value {
@@ -1385,8 +1358,7 @@ a.contact-link-row:hover { background: var(--surface); }
 
 .field label {
   font-family: var(--font-mono);
-  font-size: 9px; letter-spacing: 0.15em;
-  text-transform: uppercase; color: var(--muted);
+  font-size: 11px; color: var(--muted);
 }
 
 .field input,
@@ -1509,10 +1481,8 @@ a.contact-link-row:hover { background: var(--surface); }
   margin: 0;
   color: var(--muted);
   font-family: var(--font-mono);
-  font-size: 10.5px;
+  font-size: 12px;
   font-weight: 500;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
 }
 
 .footer-bio {
@@ -1561,10 +1531,8 @@ a.contact-link-row:hover { background: var(--surface); }
 .footer-col-label {
   margin: 0;
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 600;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
   color: var(--muted2);
 }
 
@@ -1921,9 +1889,7 @@ a.contact-link-row:hover { background: var(--surface); }
 }
 .page-message-eyebrow {
   font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
+  font-size: 12px;
   color: var(--accent-text);
   margin-bottom: 16px;
 }
@@ -1981,9 +1947,7 @@ a.contact-link-row:hover { background: var(--surface); }
 
 .detail-eyebrow {
   font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
+  font-size: 12px;
   color: var(--accent-text);
   margin-bottom: 12px;
 }
@@ -2009,9 +1973,7 @@ a.contact-link-row:hover { background: var(--surface); }
 }
 .detail-meta-label {
   font-family: var(--font-mono);
-  font-size: 10px;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
+  font-size: 12px;
   color: var(--muted);
   margin-bottom: 6px;
 }
@@ -2186,8 +2148,6 @@ a.contact-link-row:hover { background: var(--surface); }
 .md-h4, .md-h5 {
   font-family: var(--font-mono);
   font-weight: 600;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
   color: var(--muted);
 }
 .md-h4 { font-size: 11px; margin: 30px 0 10px; }
@@ -2273,10 +2233,8 @@ a.contact-link-row:hover { background: var(--surface); }
 .md-quote-label {
   display: inline-block;
   font-family: var(--font-mono);
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 600;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
   color: var(--accent-text);
   border: 1px solid color-mix(in oklab, var(--accent) 35%, transparent);
   padding: 3px 8px;
@@ -2299,10 +2257,8 @@ a.contact-link-row:hover { background: var(--surface); }
   background: var(--surface2);
   color: var(--text);
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 600;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
   padding: 10px 16px;
   text-align: left;
   border-bottom: 2px solid var(--accent);
@@ -2366,10 +2322,8 @@ a.contact-link-row:hover { background: var(--surface); }
 .toc-title {
   padding: 22px 20px 10px;
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 600;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
   color: var(--muted);
   user-select: none;
 }
@@ -2495,9 +2449,7 @@ a.contact-link-row:hover { background: var(--surface); }
 
 .theme-toggle-btn {
   font-family: var(--font-mono);
-  font-size: 10px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+  font-size: 12px;
   color: var(--muted);
   background: transparent;
   border: none;
@@ -2564,9 +2516,7 @@ a.contact-link-row:hover { background: var(--surface); }
   display: flex;
   gap: 18px;
   font-family: var(--font-mono);
-  font-size: 9.5px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
+  font-size: 11px;
   color: var(--muted);
 }
 .eg-key { display: inline-flex; align-items: center; gap: 7px; }
@@ -2601,10 +2551,8 @@ a.contact-link-row:hover { background: var(--surface); }
 .eg-hypothesis-label {
   display: block;
   font-family: var(--font-mono);
-  font-size: 9.5px;
+  font-size: 11px;
   font-weight: 500;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
   color: var(--muted);
   margin-bottom: 7px;
 }
@@ -2617,9 +2565,7 @@ a.contact-link-row:hover { background: var(--surface); }
 
 .eg-col-head {
   font-family: var(--font-mono);
-  font-size: 9.5px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
+  font-size: 11px;
   margin-bottom: 12px;
   padding-bottom: 8px;
   border-bottom: 1px solid var(--border);
@@ -2750,9 +2696,7 @@ a.contact-link-row:hover { background: var(--surface); }
 .copy-email-action {
   flex-shrink: 0;
   padding: 5px 10px;
-  font-size: 10px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+  font-size: 12px;
   color: var(--on-accent);
   background: var(--accent-strong);
   border-radius: 2px;
@@ -2812,9 +2756,7 @@ a.contact-link-row:hover { background: var(--surface); }
 .writing-entry-main .writing-entry-tag {
   display: inline-block;
   font-family: var(--font-mono);
-  font-size: 9px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
+  font-size: 11px;
   color: var(--accent-text);
   margin-bottom: 8px;
 }
@@ -2915,9 +2857,7 @@ a.contact-link-row:hover { background: var(--surface); }
 }
 .pcard-tag {
   font-family: var(--font-mono);
-  font-size: 9px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+  font-size: 11px;
   color: var(--muted);
   border: 1px solid var(--border);
   padding: 3px 8px;
@@ -2964,9 +2904,7 @@ a.contact-link-row:hover { background: var(--surface); }
   align-items: center;
   gap: 7px;
   font-family: var(--font-mono);
-  font-size: 10.5px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+  font-size: 12px;
   color: var(--accent-text);
   padding-top: 14px;
   border-top: 1px solid var(--border);
@@ -3102,9 +3040,7 @@ a.contact-link-row:hover { background: var(--surface); }
 
 .blog-tag-pill {
   font-family: var(--font-mono);
-  font-size: 9px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
+  font-size: 11px;
   color: var(--muted);
   border: 1px solid var(--border);
   padding: 4px 9px;

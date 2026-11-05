@@ -26,9 +26,9 @@ const ProjectDetail: React.FC = () => {
 
       {/* ── HERO HEADER ── */}
       <div className="detail-head">
-        <Link to="/work" className="detail-back">← Back to Work</Link>
+        <Link to="/work" className="detail-back">← Back to work</Link>
 
-        <p className="detail-eyebrow">Case Study</p>
+        <p className="detail-eyebrow">Case study</p>
         <h1 className="detail-title">{project.name}</h1>
 
         <div className="detail-meta">

@@ -3,7 +3,7 @@ name: "QuickCCA Cheque OCR"
 tag: "Document Intelligence"
 year: "2023 — 2026"
 role: "Software Engineer, QuickFox Consulting"
-desc: "Cheque reading for QuickCCA, a cheque clearing automation system: from field detection and off-the-shelf OCR, through fine-tuned Donut and Pix2Struct, to a fine-tuned per-field EasyOCR pipeline that handles English and Nepali."
+desc: "Cheque OCR for printed and handwritten fields in English and Nepali, built on fine-tuned EasyOCR after Donut and Pix2Struct fell short on Nepali."
 tech: ["PyTorch", "Transformers", "EasyOCR", "OpenCV", "Donut", "Pix2Struct"]
 github: ""
 thumbnail: "svg:quickcca"

@@ -28,11 +28,11 @@ const BlogSection: React.FC = () => {
         <div className="writing-header">
           <div>
             <div className="section-label">
-              <span className="num">04</span> Writing
+              Writing
             </div>
-            <h2>Notes on<br /><em>building things</em>.</h2>
+            <h2>Notes on models, retrieval and evaluation.</h2>
             <p className="writing-intro">
-              Short articles, thoughts and learnings from my journey in tech and AI.
+              What I tried, what I measured and what changed my mind.
             </p>
           </div>
           {BLOGS_LIST.length > FEATURED_COUNT && (

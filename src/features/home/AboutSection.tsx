@@ -31,7 +31,7 @@ const AboutSection: React.FC = () => (
         {/* ── Left rail ── */}
         <div className="rail-intro reveal">
           <div className="section-label">
-            <span className="num">01</span> About
+            About
           </div>
           <h2>Regulator letters in,<br />bank actions out.</h2>
           <p className="rail-intro-p">

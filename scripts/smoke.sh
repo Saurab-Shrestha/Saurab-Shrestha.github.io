@@ -22,7 +22,7 @@ ROUTES=(
   "work/quickxtract|QuickXtract"
   "work/quickcca|Cheque"
   "work/svufe|Signature"
-  "blog|engineering"
+  "blog|Writing"
   "blog/understanding-transformer|Understanding Transformers"
   "blog/django-stripe|Django"
   "blog/disease-detection|Disease Detection"
