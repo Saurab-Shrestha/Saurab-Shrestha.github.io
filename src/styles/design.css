@@ -6,19 +6,19 @@
   --surface2: oklch(93.5% 0.008 55);
   --border:   oklch(86% 0.008 55);
   --border2:  oklch(78% 0.01 55);
-  --accent:   #ff5c35;   /* decorative only: borders, dots, edges, fills */
-  --accent-text:   #c73410;  /* 5.10:1 on --bg. #d93d17 was 4.33:1 — under AA. */
-  --accent-strong: #c73410;  /* 5.35:1 under white — accent as a button fill */
-  --accent2:  #ffb84d;
-  --accent3:  #0a7a5f;   /* 5.06:1 on --bg (was #0d9373 at 3.68:1) */
+  --accent:   oklch(68.6% 0.205 34.6);   /* decorative only: borders, dots, edges, fills */
+  --accent-text:   oklch(54.9% 0.189 33.9);  /* 5.10:1 on --bg. #d93d17 was 4.33:1 — under AA. */
+  --accent-strong: oklch(54.9% 0.189 33.9);  /* 5.35:1 under white — accent as a button fill */
+  --accent2:  oklch(83.1% 0.145 74.2);
+  --accent3:  oklch(51.7% 0.100 170);   /* 5.06:1 on --bg (was #0d9373 at 3.68:1) */
   --on-accent: oklch(99% 0.003 60);   /* text sitting on an accent fill */
   --grid-line:       oklch(16% 0.012 50 / 0.055);   /* fine 20px rule */
   --grid-line-major: oklch(16% 0.012 50 / 0.09);    /* coarse 80px rule */
   --grain-opacity: 0.4;
   --nav-bg: oklch(98.5% 0.004 60 / 0.94);
-  --accent-hover: #e8471f;
-  --danger: #c0392b;        /* 5.19:1 on light --bg */
-  --code-bg: #0a1628;
+  --accent-hover: oklch(62.5% 0.204 34.5);
+  --danger: oklch(48% 0.18 22);  /* crimson, not orange: 6.89:1 on --bg, 5.94:1 on --surface2 */
+  --code-bg: oklch(20% 0.040 258.3);
   --photo-blend: multiply;      /* sinks the cutout into the cream paper */
   --photo-filter: contrast(1.04);
   --photo-glow: transparent;
@@ -96,17 +96,17 @@
   --muted:    oklch(74% 0.011 55);
   --muted2:   oklch(64% 0.011 55);  /* 5.84:1 on --bg, 4.95:1 on --surface2 */
 
-  --accent-text:   #ff5c35;   /* 6.41:1 here — the real brand colour, usable */
-  --accent-strong: #ff5c35;
-  --accent3:       #3fd6b0;   /* 10.74:1 */
+  --accent-text:   oklch(68.6% 0.205 34.6);   /* 6.41:1 here — the real brand colour, usable */
+  --accent-strong: oklch(68.6% 0.205 34.6);
+  --accent3:       oklch(78.8% 0.137 172);   /* 10.74:1 */
   --on-accent:     oklch(15% 0.008 55);
 
   --grid-line:       oklch(94% 0.006 60 / 0.05);
   --grid-line-major: oklch(94% 0.006 60 / 0.085);
   --grain-opacity: 0.22;
   --nav-bg: oklch(15% 0.008 55 / 0.92);
-  --accent-hover: #ff7a58;
-  --danger: #ff6b5a;        /* 7.04:1 on dark --bg */
+  --accent-hover: oklch(72.9% 0.170 35.4);
+  --danger: oklch(72% 0.16 20);  /* 7.39:1 on dark --bg, 6.27:1 on --surface2 */
   /* multiply against a near-black ground crushes the subject — the cutout has a
      real alpha channel, so normal blending needs no background knock-out. */
   --photo-blend: normal;
@@ -134,17 +134,17 @@
     --muted:    oklch(74% 0.011 55);
     --muted2:   oklch(64% 0.011 55);  /* 5.84:1 on --bg, 4.95:1 on --surface2 */
   
-    --accent-text:   #ff5c35;   /* 6.41:1 here — the real brand colour, usable */
-    --accent-strong: #ff5c35;
-    --accent3:       #3fd6b0;   /* 10.74:1 */
+    --accent-text:   oklch(68.6% 0.205 34.6);   /* 6.41:1 here — the real brand colour, usable */
+    --accent-strong: oklch(68.6% 0.205 34.6);
+    --accent3:       oklch(78.8% 0.137 172);   /* 10.74:1 */
     --on-accent:     oklch(15% 0.008 55);
   
     --grid-line:       oklch(94% 0.006 60 / 0.05);
   --grid-line-major: oklch(94% 0.006 60 / 0.085);
     --grain-opacity: 0.22;
   --nav-bg: oklch(15% 0.008 55 / 0.92);
-  --accent-hover: #ff7a58;
-  --danger: #ff6b5a;        /* 7.04:1 on dark --bg */
+  --accent-hover: oklch(72.9% 0.170 35.4);
+  --danger: oklch(72% 0.16 20);  /* 7.39:1 on dark --bg, 6.27:1 on --surface2 */
     /* multiply against a near-black ground crushes the subject — the cutout has a
      real alpha channel, so normal blending needs no background knock-out. */
   --photo-blend: normal;
@@ -1472,7 +1472,11 @@ a.contact-link-row:hover { background: var(--surface); }
 
 /* form states */
 .field input.field-error,
-.field textarea.field-error { border-color: var(--danger); }
+.field textarea.field-error {
+  border-color: var(--danger);
+  /* doubled edge, so an errored field never reads as an orange-focused one */
+  box-shadow: inset 0 0 0 1px var(--danger);
+}
 
 .field-error-msg {
   font-family: var(--font-mono);
@@ -1483,8 +1487,9 @@ a.contact-link-row:hover { background: var(--surface); }
 .form-error-banner {
   font-family: var(--font-mono);
   font-size: 11px; color: var(--danger);
-  background: rgba(224, 83, 64, 0.06);
-  border: 1px solid rgba(224, 83, 64, 0.2);
+  background: color-mix(in oklab, var(--danger) 6%, transparent);
+  border: 1px solid color-mix(in oklab, var(--danger) 30%, transparent);
+  border-left-width: 3px;
   padding: 10px 14px; line-height: 1.6;
 }
 
