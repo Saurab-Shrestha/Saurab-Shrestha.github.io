@@ -25,7 +25,7 @@ const HeroSection: React.FC = () => {
         <div className="hero-tag"><span className="blink"></span> Available for opportunities</div>
         <p className="hero-byline">
           <span className="hero-name">Saurab Shrestha</span>
-          <span className="hero-role">Software Developer</span>
+          <span className="hero-role">AI / ML Engineer</span>
         </p>
         <h1 className="hero-claim">
           Standard RAG answers questions.<br />
@@ -35,13 +35,6 @@ const HeroSection: React.FC = () => {
           An agentic research system that tracks hypotheses,
           maps contradictions, and knows when it's done.
         </p>
-        {/* Technical anchors only. "Bhaktapur, Nepal" was here as well as on the
-            photo card and in the About details — three times on one page. */}
-        <div className="hero-chips">
-          <span className="chip chip--primary">LangGraph</span>
-          <span className="chip chip--primary">Qdrant</span>
-          <span className="chip">FastAPI</span>
-        </div>
         <div className="hero-actions">
           <Link to="/work" className="btn-primary">View My Work</Link>
           <a href="#contact" onClick={handleContactClick} className="btn-ghost">Get In Touch</a>
@@ -68,10 +61,6 @@ const HeroSection: React.FC = () => {
             <div className="photo-frame-meta photo-frame-meta--tl">
               <span>Focus</span>
               <strong>Agentic RAG</strong>
-            </div>
-            <div className="photo-frame-meta photo-frame-meta--br">
-              <span>Based in</span>
-              <strong>Nepal</strong>
             </div>
           </div>
         </div>

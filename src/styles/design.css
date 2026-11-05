@@ -465,32 +465,12 @@ h1 {
 .hero-desc {
   font-family: var(--font-sans);
   font-size: 15px; color: var(--muted);
-  max-width: 420px; margin-bottom: 36px;
+  max-width: 420px; margin-bottom: 40px;
   line-height: 1.85;
 }
 
 .hero-desc strong { color: var(--text); font-weight: 500; }
 
-.hero-chips {
-  display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 40px;
-}
-
-.chip {
-  font-family: var(--font-mono);
-  font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
-  padding: 5px 12px;
-  border: 1px solid var(--border);
-  color: var(--muted);
-  transition: border-color var(--dur-fast) var(--ease-soft),
-              color var(--dur-fast) var(--ease-soft),
-              background var(--dur-fast) var(--ease-soft);
-}
-
-.chip:hover {
-  border-color: var(--accent-text);
-  color: var(--accent-text);
-  background: rgba(255, 92, 53, 0.04);
-}
 
 
 .hero-actions {
@@ -676,15 +656,6 @@ h1 {
   text-align: left;
 }
 
-.photo-frame-meta--br {
-  bottom: -10px; right: -10px;
-  padding: 10px 16px 10px 14px;
-  background: var(--bg);
-  border-bottom: 1px solid var(--accent);
-  border-right: 1px solid var(--accent);
-  text-align: right;
-}
-
 .photo-frame-meta span {
   font-size: 9px;
   letter-spacing: 0.2em;
@@ -827,42 +798,6 @@ h3 {
   color: var(--muted);
 }
 
-/* Availability sits in the rail, above the call to action. */
-.status-line {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-family: var(--font-mono);
-  font-size: 12px;
-  letter-spacing: 0.06em;
-  color: var(--accent3);
-}
-.rail-intro .status-line { margin: 26px 0 0; }
-
-.status-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--accent3);
-  flex-shrink: 0;
-  position: relative;
-}
-.status-dot::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  background: var(--accent3);
-  animation: status-ping 2.6s var(--ease-out) infinite;
-}
-@keyframes status-ping {
-  0%   { transform: scale(1);   opacity: 0.7; }
-  70%  { transform: scale(2.6); opacity: 0; }
-  100% { transform: scale(2.6); opacity: 0; }
-}
-@media (prefers-reduced-motion: reduce) {
-  .status-dot::after { animation: none; }
-}
 
 .local-time { font-variant-numeric: tabular-nums; }
 .local-time-zone { color: var(--muted); }
@@ -1673,6 +1608,8 @@ a.contact-link-row:hover { background: var(--surface); }
   justify-content: space-between;
   gap: 24px;
   padding-top: 24px;
+  /* clears the fixed scroll-to-top button (44px + its right offset) */
+  padding-right: calc(44px + clamp(20px, 3vw, 32px));
   color: var(--muted);
   font-family: var(--font-mono);
   font-size: 11px;
@@ -1835,7 +1772,6 @@ a.contact-link-row:hover { background: var(--surface); }
 .hero-byline  { --reveal-delay: calc(var(--stagger) * 2); }
 .hero-claim   { --reveal-delay: calc(var(--stagger) * 3); }
 .hero-desc    { --reveal-delay: calc(var(--stagger) * 4); }
-.hero-chips   { --reveal-delay: calc(var(--stagger) * 5); }
 .hero-actions { --reveal-delay: calc(var(--stagger) * 6); }
 .hero-right   { --reveal-delay: calc(var(--stagger) * 4); }
 .hero-now     { --reveal-delay: calc(var(--stagger) * 7); }
@@ -1928,8 +1864,6 @@ a.contact-link-row:hover { background: var(--surface); }
 
 @media (max-width: 480px) {
   .form-row { grid-template-columns: 1fr; }
-  .hero-chips { gap: 5px; }
-  .chip { font-size: 9px; padding: 5px 10px; }
 }
 
 /* ─── BLOG TOC ───────────────────────────────────────── */
@@ -2911,15 +2845,6 @@ a.contact-link-row:hover { background: var(--surface); }
 @media (prefers-reduced-motion: reduce) {
   .writing-entry-arrow { transition: none; }
   .writing-entry:hover .writing-entry-arrow { transform: none; }
-}
-
-/* ─── HERO CHIPS ─────────────────────────────────────── */
-
-/* The specialism carries a top rule in the accent; the rest stay neutral so the
-   emphasis means something. */
-.chip--primary {
-  color: var(--text);
-  border-top-color: var(--accent);
 }
 
 /* ─── PROJECT CARDS ──────────────────────────────────── */

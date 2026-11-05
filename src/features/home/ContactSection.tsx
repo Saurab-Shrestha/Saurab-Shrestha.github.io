@@ -102,14 +102,6 @@ const ContactSection: React.FC = () => {
             <CopyEmail email={appConfig.contact.email} />
 
             <div className="contact-links">
-              <a href={`mailto:${appConfig.contact.email}`} className="contact-link-row">
-                <span className="contact-link-label">Email</span>
-                <span className="contact-link-value">{appConfig.contact.email}</span>
-              </a>
-              <div className="contact-link-row">
-                <span className="contact-link-label">Location</span>
-                <span className="contact-link-value">Bhaktapur, Nepal — open to remote</span>
-              </div>
               <a href="https://github.com/Saurab-Shrestha" target="_blank" rel="noreferrer" className="contact-link-row">
                 <span className="contact-link-label">GitHub</span>
                 <span className="contact-link-value">github.com/Saurab-Shrestha</span>

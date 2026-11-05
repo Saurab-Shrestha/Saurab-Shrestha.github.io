@@ -18,7 +18,6 @@ const AREAS: Array<{ title: string; detail: string }> = [
 ];
 
 const DETAILS = [
-  { label: 'Location', value: 'Bhaktapur, Nepal' },
   { label: 'Open to', value: 'Remote · Contract · Full-time' },
   { label: 'Currently on', value: 'Pramana — agentic research system' },
 ];
@@ -39,11 +38,6 @@ const AboutSection: React.FC = () => (
             I work at the intersection of software engineering and applied AI —
             building products that solve real problems, from model training to the
             pixel on screen.
-          </p>
-
-          <p className="status-line">
-            <span className="status-dot" aria-hidden="true" />
-            Available for opportunities
           </p>
 
           <a className="rail-cta" href={`mailto:${appConfig.contact.email}`}>
