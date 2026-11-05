@@ -71,7 +71,7 @@ try {
   };
 
   // ── 1. Not on pages that shouldn't have it ───────────────────────────────
-  for (const route of ['', 'work', 'work/tdd', 'blog']) {
+  for (const route of ['', 'work', 'work/quickxtract', 'blog']) {
     const hits = await visit(route, 2500);
     const label = `/${route || '(home)'}`.padEnd(22);
     console.log(`  ${label} 3D requests: ${hits.length}`);
