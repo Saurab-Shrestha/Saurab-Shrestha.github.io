@@ -61,9 +61,13 @@ const spaFallback = () => ({
       pages.push([`blog/${d.name}`, `${frontmatterField(raw, 'title')} — ${NAME}`, frontmatterField(raw, 'excerpt')]);
     }
 
+    // GitHub Pages serves /work/pramana from work/pramana.html with a 200 and
+    // no redirect; the folder copy covers /work/pramana/ as well.
     for (const [route, title, description] of pages) {
+      const html = withMeta(shell, route, title, description);
       fs.mkdirSync(path.join(dist, route), { recursive: true });
-      fs.writeFileSync(path.join(dist, route, 'index.html'), withMeta(shell, route, title, description));
+      fs.writeFileSync(path.join(dist, `${route}.html`), html);
+      fs.writeFileSync(path.join(dist, route, 'index.html'), html);
     }
     fs.writeFileSync(path.join(dist, '404.html'), shell);
   },
