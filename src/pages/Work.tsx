@@ -43,7 +43,7 @@ const Work: React.FC = () => {
           <div className="section-label">Work</div>
           <h1>Document AI for banks, and the research it led to.</h1>
           <p className="writing-intro">
-            Production systems that read compliance letters and cheques, and Pramana, the agentic RAG system that grew out of that work.
+            Compliance automation for banks, and Pramana, the agentic RAG system that grew out of that work.
           </p>
         </div>
       </div>

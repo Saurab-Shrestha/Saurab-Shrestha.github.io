@@ -35,7 +35,7 @@ const AboutSection: React.FC = () => (
           </div>
           <h2>Regulator letters in,<br />bank actions out.</h2>
           <p className="rail-intro-p">
-            At QuickFox I built QuickXtract, which automates the enforcement letters
+            At QuickFox I built a system that automates the enforcement letters
             Nepal Rastra Bank sends banks: freeze and release orders from police and
             courts. Document intelligence extracts the named subjects, a fuzzy-matching engine screens
             them against core banking records, and every action passes maker-checker

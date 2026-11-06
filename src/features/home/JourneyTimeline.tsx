@@ -36,7 +36,7 @@ const ROLES: Role[] = [
     period: "2023 — 2026",
     title: "Software Engineer",
     org: "QuickFox Consulting",
-    desc: "Built QuickXtract for NRB enforcement letters and the cheque OCR for QuickCCA, and researched RAG on QuickRef, the work that led to Pramana.",
+    desc: "Built compliance letter automation for banks and researched RAG on QuickRef, the work that led to Pramana.",
     tags: "Django · FastAPI · OCR",
   },
   {

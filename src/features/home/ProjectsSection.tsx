@@ -49,7 +49,7 @@ const ProjectsSection: React.FC = () => {
             <div className="section-label">
               Selected work
             </div>
-            <h2>Document AI, from cheques to research agents.</h2>
+            <h2>Document AI, from compliance letters to research agents.</h2>
           </div>
           {PROJECTS_LIST.length > FEATURED_COUNT && (
             <Link to="/work" className="writing-archive-link">

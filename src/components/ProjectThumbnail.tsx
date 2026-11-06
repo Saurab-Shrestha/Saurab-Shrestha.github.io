@@ -100,8 +100,8 @@ const SvufeThumbnail: React.FC = () => (
     <text x="390" y="88" fontFamily="monospace" fontSize="8" fill="rgba(92,232,200,0.6)" letterSpacing="1.5" textAnchor="middle">MATCH</text>
   </svg>
 );
-/** Letter → extracted names → ranked CBS candidates → maker and checker. */
-const QuickXtractThumbnail: React.FC = () => {
+/** Letter → extracted names → ranked customer matches → maker and checker. */
+const ComplianceThumbnail: React.FC = () => {
   const mono = { fontFamily: 'var(--font-mono)' };
   return (
     <svg
@@ -145,55 +145,7 @@ const QuickXtractThumbnail: React.FC = () => {
       <line x1="397" y1="101" x2="417" y2="101" stroke="var(--border2)" />
 
       <text x="82" y="206" fontSize="9" fill="var(--muted)" textAnchor="middle" style={mono}>letter</text>
-      <text x="250" y="214" fontSize="9" fill="var(--muted)" textAnchor="middle" style={mono}>ranked CBS matches</text>
-    </svg>
-  );
-};
-
-/** A drawn cheque (never a real one) split into the fields the pipeline reads. */
-const QuickCCAThumbnail: React.FC = () => {
-  const mono = { fontFamily: 'var(--font-mono)' };
-  // Only the reported results are coloured: date and amount read well (accent3),
-  // payee is the open problem (accent). The rest are neutral.
-  const fields = [
-    { x: 330, y: 72, w: 104, h: 20, label: 'date', state: 'good' },
-    { x: 66, y: 106, w: 250, h: 20, label: 'payee', state: 'weak' },
-    { x: 330, y: 150, w: 104, h: 22, label: 'amount', state: 'good' },
-    { x: 66, y: 150, w: 250, h: 20, label: 'in words', state: 'none' },
-    { x: 318, y: 190, w: 116, h: 28, label: 'signature', state: 'none' },
-  ] as const;
-  const stroke = { good: 'var(--accent3)', weak: 'var(--accent)', none: 'var(--border2)' };
-  return (
-    <svg
-      viewBox="0 0 480 270"
-      xmlns="http://www.w3.org/2000/svg"
-      aria-hidden="true"
-      style={{ width: '100%', height: '100%', display: 'block' }}
-    >
-      <rect width="480" height="270" fill="var(--surface)" />
-
-      {/* The cheque */}
-      <rect x="46" y="48" width="408" height="182" fill="var(--bg)" stroke="var(--border2)" />
-      <line x1="66" y1="78" x2="170" y2="78" stroke="var(--text)" strokeOpacity="0.5" strokeWidth="3" />
-      <line x1="66" y1="210" x2="250" y2="210" stroke="var(--border2)" strokeWidth="2" strokeDasharray="2 3" />
-
-      {fields.map(f => (
-        <g key={f.label}>
-          <rect
-            x={f.x} y={f.y} width={f.w} height={f.h}
-            fill="none"
-            stroke={stroke[f.state]}
-            strokeWidth="1.5"
-            strokeDasharray={f.state === 'weak' ? '4 3' : undefined}
-          />
-          <text x={f.x + 4} y={f.y - 4} fontSize="8" fill="var(--muted)" style={mono}>{f.label}</text>
-        </g>
-      ))}
-
-      {/* Handwriting stand-ins inside the fields */}
-      <path d="M74 118 q10 -8 20 0 t20 0 t20 0 t20 0" fill="none" stroke="var(--muted)" strokeWidth="1.5" />
-      <path d="M74 162 q12 -6 24 0 t24 0 t24 0 t24 0 t24 0" fill="none" stroke="var(--muted)" strokeWidth="1.5" />
-      <path d="M326 210 q12 -12 24 -2 t24 -4 t26 2" fill="none" stroke="var(--muted)" strokeWidth="1.5" />
+      <text x="250" y="214" fontSize="9" fill="var(--muted)" textAnchor="middle" style={mono}>ranked matches</text>
     </svg>
   );
 };
@@ -201,8 +153,7 @@ const QuickCCAThumbnail: React.FC = () => {
 const SVGS: Record<string, React.FC> = {
   pramana: PramanaThumbnail,
   svufe: SvufeThumbnail,
-  quickxtract: QuickXtractThumbnail,
-  quickcca: QuickCCAThumbnail,
+  compliance: ComplianceThumbnail,
 };
 
 interface Props {

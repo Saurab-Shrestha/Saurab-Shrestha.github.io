@@ -2790,11 +2790,10 @@ a.contact-link-row:hover { background: var(--surface); }
 }
 
 /* ─── PROJECT CARDS ──────────────────────────────────── */
-/* Alternating full-width rows ran ~500px each — three projects filled three
-   screens. A 3-up grid shows the same set at a glance. */
+/* Two featured projects, side by side. */
 .pcards {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 16px;
 }
 
@@ -2918,9 +2917,6 @@ a.contact-link-row:hover { background: var(--surface); }
   .pcard:hover .pcard-cta svg { transform: none; }
 }
 
-@media (max-width: 980px) {
-  .pcards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-}
 @media (max-width: 640px) {
   .pcards { grid-template-columns: 1fr; }
 }
