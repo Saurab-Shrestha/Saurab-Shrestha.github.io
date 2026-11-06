@@ -1,30 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowUpRight } from 'lucide-react';
 import { appConfig } from '../../config/app.config';
 import { asset } from '../lib/asset';
 import ThemeToggle from './ThemeToggle';
+import LocalTime from './LocalTime';
 
 const Footer: React.FC = () => {
-  const [timeString, setTimeString] = useState<string>('');
-
-  useEffect(() => {
-    const updateTime = () => {
-      const now = new Date();
-      setTimeString(
-        now.toLocaleTimeString('en-US', {
-          timeZone: 'Asia/Kathmandu',
-          hour: '2-digit',
-          minute: '2-digit',
-          hour12: true,
-        })
-      );
-    };
-    updateTime();
-    const timer = setInterval(updateTime, 1000 * 30);
-    return () => clearInterval(timer);
-  }, []);
-
   return (
     <footer className="site-footer">
       <div className="footer-colophon">
@@ -50,12 +32,16 @@ const Footer: React.FC = () => {
             Building agentic research systems, stateful AI workflows, and resilient full-stack products.
           </p>
 
-          <div className="footer-telemetry">
-            <span className="telemetry-dot" aria-hidden="true" />
-            <span className="telemetry-text">
-              Bhaktapur, Nepal · {timeString ? `${timeString} NPT` : 'NPT (UTC+5:45)'}
-            </span>
-          </div>
+          <dl className="footer-where">
+            <div>
+              <dt>Based in</dt>
+              <dd>Bhaktapur, Nepal</dd>
+            </div>
+            <div>
+              <dt>Local time</dt>
+              <dd><LocalTime /></dd>
+            </div>
+          </dl>
         </div>
 
         {/* Column 2: Navigation */}

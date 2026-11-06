@@ -178,7 +178,7 @@ body {
   background: var(--bg);
   color: var(--text);
   font-family: var(--font-sans);
-  font-size: 15px;
+  font-size: 16px;
   line-height: 1.65;
   overflow-x: hidden;
 }
@@ -292,7 +292,7 @@ body::after {
   color: var(--muted);
   text-decoration: none;
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: 14px;
   transition: color var(--dur-fast) var(--ease-soft);
   position: relative; padding-bottom: 2px;
 }
@@ -461,8 +461,8 @@ h1 {
 
 .hero-desc {
   font-family: var(--font-sans);
-  font-size: 15px; color: var(--muted);
-  max-width: 420px; margin-bottom: 40px;
+  font-size: 17px; color: var(--muted);
+  max-width: 480px; margin-bottom: 32px;
   line-height: 1.85;
 }
 
@@ -476,7 +476,7 @@ h1 {
 
 .btn-primary {
   font-family: var(--font-mono);
-  font-size: 12px; font-weight: 500;
+  font-size: 14px; font-weight: 500;
   color: var(--on-accent);
   background: var(--accent-strong); border: none;
   padding: 13px 24px; cursor: pointer;
@@ -491,7 +491,7 @@ h1 {
 
 .btn-ghost {
   font-family: var(--font-mono);
-  font-size: 12px; font-weight: 500;
+  font-size: 14px; font-weight: 500;
   color: var(--text); background: transparent;
   border: 1px solid var(--border);
   padding: 13px 24px; cursor: pointer;
@@ -539,11 +539,11 @@ h1 {
 .hero-claim {
   font-family: var(--font-display);
   font-weight: 400;
-  font-size: clamp(32px, 4.6vw, 60px);
+  font-size: clamp(36px, 5.2vw, 72px);
   line-height: 1.12;
   letter-spacing: -0.02em;
   color: var(--text);
-  margin: 28px 0 20px;
+  margin: 20px 0 18px;
   max-width: 20ch;
   text-wrap: balance;
 }
@@ -594,17 +594,6 @@ h1 {
   z-index: 1;
 }
 
-.photo-inner::after {
-  content: '';
-  position: absolute; inset: 0;
-  background: linear-gradient(
-    180deg,
-    rgba(13, 13, 13, 0) 55%,
-    rgba(13, 13, 13, 0.18) 100%
-  );
-  pointer-events: none;
-}
-
 .photo-inner img {
   width: 100%;
   height: 100%;
@@ -612,6 +601,9 @@ h1 {
   object-position: center 18%;
   filter: var(--photo-filter);
   mix-blend-mode: var(--photo-blend);
+  /* The cutout ends at the crop line; fade it out instead of a hard edge. */
+  -webkit-mask-image: linear-gradient(180deg, #000 80%, transparent 100%);
+  mask-image: linear-gradient(180deg, #000 80%, transparent 100%);
   position: relative;
   z-index: 1;
 }
@@ -781,7 +773,7 @@ h3 {
 
 .area-detail {
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: 14px;
   color: var(--muted);
 }
 
@@ -805,7 +797,7 @@ h3 {
 .rail-intro { position: sticky; top: 110px; }
 
 .rail-intro-p {
-  font-size: 14px;
+  font-size: 16px;
   color: var(--muted);
   line-height: 1.8;
   max-width: 34ch;
@@ -832,7 +824,42 @@ h3 {
 }
 
 /* ── Roles ── */
-.role-list { list-style: none; }
+.role-list { list-style: none; position: relative; }
+
+/* The line joining the role dots. Static by default; where scroll-driven
+   animation is supported and motion is welcome, it draws downward as the
+   section scrolls into view. */
+.role-list::before {
+  content: '';
+  position: absolute;
+  left: 4px; top: 10px; bottom: 34px;
+  width: 1px;
+  background: var(--border2);
+  transform-origin: top;
+}
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .role-list::before {
+      animation: tl-draw linear both;
+      animation-timeline: view();
+      animation-range: entry 10% cover 55%;
+    }
+  }
+}
+@keyframes tl-draw {
+  from { transform: scaleY(0); }
+  to   { transform: scaleY(1); }
+}
+/* Stop the line at the last dot: mask it below the final role's dot
+   (22px row padding + 6px dot offset + 9px dot). */
+.role:last-child { position: relative; }
+.role:last-child::after {
+  content: '';
+  position: absolute;
+  left: 0; top: 37px; bottom: 0;
+  width: 12px;
+  background: var(--bg);
+}
 
 .role {
   display: grid;
@@ -851,6 +878,7 @@ h3 {
   margin-top: 6px;
   background: var(--bg);
   border: 2px solid var(--border2);
+  position: relative; z-index: 1;
 }
 .role--current .role-dot {
   background: var(--accent3);
@@ -898,7 +926,7 @@ h3 {
 .role-period { color: var(--muted2); }
 
 .role-desc {
-  font-size: 14px;
+  font-size: 16px;
   line-height: 1.65;
   color: var(--muted);
   max-width: 52ch;
@@ -1144,7 +1172,7 @@ h3 {
 
 .writing-intro {
   font-family: var(--font-sans);
-  font-size: 14.5px;
+  font-size: 16px;
   color: var(--muted);
   line-height: 1.75;
   margin-top: 14px;
@@ -1320,7 +1348,7 @@ h3 {
 }
 
 .contact-left p {
-  color: var(--muted); font-size: 14px;
+  color: var(--muted); font-size: 16px;
   line-height: 1.9; margin-bottom: 32px;
 }
 
@@ -1493,33 +1521,26 @@ a.contact-link-row:hover { background: var(--surface); }
   text-wrap: pretty;
 }
 
-.footer-telemetry {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
+.footer-where {
+  display: grid;
+  gap: 6px;
+  margin: 2px 0 0;
+}
+.footer-where div {
+  display: grid;
+  grid-template-columns: 88px minmax(0, 1fr);
+  align-items: baseline;
+}
+.footer-where dt {
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 12px;
   color: var(--muted);
-  padding: 6px 12px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  width: fit-content;
-  margin-top: 2px;
 }
-
-.telemetry-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--accent3);
-  box-shadow: 0 0 8px color-mix(in oklab, var(--accent3) 60%, transparent);
-  animation: pulse-dot 2.4s ease-in-out infinite;
-}
-
-@keyframes pulse-dot {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.35; transform: scale(0.85); }
+.footer-where dd {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  color: var(--text);
 }
 
 .footer-nav-col {
@@ -1739,8 +1760,18 @@ a.contact-link-row:hover { background: var(--surface); }
 
 .hero-byline  { --reveal-delay: calc(var(--stagger) * 2); }
 .hero-claim   { --reveal-delay: calc(var(--stagger) * 3); }
-.hero-desc    { --reveal-delay: calc(var(--stagger) * 4); }
-.hero-actions { --reveal-delay: calc(var(--stagger) * 6); }
+.hero-desc    { --reveal-delay: calc(var(--stagger) * 7); }
+.hero-actions { --reveal-delay: calc(var(--stagger) * 8); }
+
+/* The headline reveals sentence by sentence: the h1 itself stays put and each
+   line runs the same fadeUp, the second a beat after the first. */
+.hero-left > .hero-claim { animation: none; }
+.hero-claim-line {
+  display: block;
+  animation: fadeUp var(--dur-reveal) var(--ease-out) both;
+  animation-delay: calc(var(--stagger) * 3);
+}
+.hero-claim-line + .hero-claim-line { animation-delay: calc(var(--stagger) * 5); }
 .hero-right   { --reveal-delay: calc(var(--stagger) * 4); }
 .hero-now     { --reveal-delay: calc(var(--stagger) * 7); }
 
@@ -2865,7 +2896,7 @@ a.contact-link-row:hover { background: var(--surface); }
 
 .pcard-name {
   font-family: var(--font-sans);
-  font-size: 19px;
+  font-size: 22px;
   font-weight: 600;
   letter-spacing: -0.015em;
   line-height: 1.25;
@@ -2875,7 +2906,7 @@ a.contact-link-row:hover { background: var(--surface); }
 }
 
 .pcard-desc {
-  font-size: 13.5px;
+  font-size: 15px;
   line-height: 1.6;
   color: var(--muted);
   margin-bottom: 18px;
@@ -2944,7 +2975,7 @@ a.contact-link-row:hover { background: var(--surface); }
 
 .writing-entry-title {
   font-family: var(--font-sans);
-  font-size: 15px;
+  font-size: 17px;
   font-weight: 500;
   line-height: 1.45;
   color: var(--text);

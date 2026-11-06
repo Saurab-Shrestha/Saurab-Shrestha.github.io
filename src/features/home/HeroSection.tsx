@@ -28,8 +28,8 @@ const HeroSection: React.FC = () => {
           <span className="hero-role">AI / ML Engineer</span>
         </p>
         <h1 className="hero-claim">
-          Standard RAG answers questions.<br />
-          I'm building a system that <em>investigates</em> them.
+          <span className="hero-claim-line">Standard RAG answers questions.</span>
+          <span className="hero-claim-line">I'm building a system that <em>investigates</em> them.</span>
         </h1>
         <p className="hero-desc">
           An agentic research system that tracks hypotheses,
